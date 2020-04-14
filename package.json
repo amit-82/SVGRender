@@ -1,5 +1,5 @@
 {
-  "name": "svgpath-render",
+  "name": "svg-render",
   "version": "0.0.1",
   "description": "small library for drawing svg path",
   "license": "MIT",
