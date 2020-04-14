@@ -2,7 +2,21 @@
   "name": "svgpath-render",
   "version": "0.0.1",
   "description": "small library for drawing svg path",
+  "license": "MIT",
   "main": "src/index.js",
+  "keywords": [
+    "svg",
+    "javascript"
+  ],
+  "author": {
+    "name": "Amit Leshem",
+    "url": "http://www.happy-spider.com/"
+  },
+  "homepage": "https://github.com/amit-82/SVGRender",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amit-82/SVGRender.git"
+  },
   "scripts": {
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check -- --watch",
@@ -13,15 +27,6 @@
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
-  "keywords": [
-    "svg",
-    "javascript"
-  ],
-  "author": {
-    "name": "Amit Leshem",
-    "url": "http://www.happy-spider.com/"
-  },
-  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.8.4",
