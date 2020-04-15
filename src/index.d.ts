@@ -1,3 +1,3 @@
 import createSVGElement from "./createSVGElement";
-import Path from "./Path";
-export { createSVGElement, Path };
+import { PathController } from "./controls";
+export { createSVGElement, PathController };
