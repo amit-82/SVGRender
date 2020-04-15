@@ -1,19 +1,21 @@
+import PolylineController from "./PolylineController";
 import { allValuesAssigned } from "../helpers/input_validations";
-import SVGElementController from "./comps/SVGElementController";
 import {
-	Coord,
 	CoordType,
 	CurveCoord,
 	BezierCoord,
 	QuadraticCoord,
 } from "./comps/interfaces";
 
-export default class PathController extends SVGElementController {
-	private element: SVGPathElement | undefined;
+export default class PathController extends PolylineController {
 	private _instructions: stringOrNumber[];
 
-	constructor(element?: SVGPathElement, instructions: stringOrNumber[] = []) {
-		super();
+	constructor(
+		element?: SVGElement,
+		instructions: stringOrNumber[] = [],
+		type: SVGElementTypes = "path"
+	) {
+		super(element, type);
 		this._instructions = instructions;
 		this.element = element;
 	}
@@ -27,27 +29,23 @@ export default class PathController extends SVGElementController {
 			this.element.setAttribute("d", this._instructions.join(" "));
 	}
 
-	public closePath = () => {
+	public closePath() {
 		this._instructions.push("z");
 		return this;
-	};
+	}
 
-	public moveTo = (x: number, y: number) => {
+	public moveTo(x: number, y: number) {
 		this._instructions.push(`M${x},${y}`);
-		const coord: Coord = { type: CoordType.Linear, x, y };
-		this.appendCoord(coord, true);
+		super.moveTo(x, y);
 		return this;
-	};
+	}
 
-	public lineTo = (x: number, y: number) => {
+	public lineTo(x: number, y: number) {
 		this._instructions.push(`L${x},${y}`);
-
 		this.validateOrInsertFirstCoordZeroZero();
-		const coord: Coord = { type: CoordType.Linear, x, y };
-		this.appendCoord(coord);
-
+		super.lineTo(x, y);
 		return this;
-	};
+	}
 
 	public curve = (
 		ctrlX: number,

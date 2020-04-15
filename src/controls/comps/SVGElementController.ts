@@ -1,21 +1,36 @@
 import { Coord, CoordType } from "./interfaces";
 import { coordLengthCalculators } from "./utils/coords_utils";
+import {
+	CoordinatesParser,
+	CoordinatesParsers,
+} from "./coordinates/CoordinatesParser";
 
 let idCounter = 0;
 
 export default abstract class SVGElementController {
 	private _id: number;
+	private _type: SVGElementTypes;
 
+	protected element: SVGElement | undefined;
 	private _coords: Coord[] = [];
 	private _segmentLengths: number[] = [];
 	private _totalLength: number = 0;
 
-	constructor() {
+	protected coordinatesParser: CoordinatesParser;
+
+	constructor(element?: SVGElement, type: SVGElementTypes = "svg") {
 		this._id = ++idCounter;
+		this._type = type;
+		this.element = element;
+		this.coordinatesParser = CoordinatesParsers[type];
 	}
 
 	get id() {
 		return this._id;
+	}
+
+	get type() {
+		return this._type;
 	}
 
 	protected get segmentLengths() {
@@ -30,11 +45,17 @@ export default abstract class SVGElementController {
 		return this._coords.map((coord) => ({ ...coord }));
 	}
 
+	protected getCoordsRef() {
+		return this._coords;
+	}
+
 	protected appendCoord(coord: Coord, isMoveTo: boolean = false) {
 		if (!isMoveTo) {
 			this.validateOrInsertFirstCoordZeroZero();
 		}
+
 		this._coords.push(coord);
+		this.coordinatesParser.validateCoordinates(this._coords);
 	}
 
 	protected validateOrInsertFirstCoordZeroZero() {
