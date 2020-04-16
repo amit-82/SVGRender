@@ -4,8 +4,17 @@ const {
 	LineController,
 	PolylineController,
 	PolygonController,
-} = require("../../lib/index");
+} = require("../../dist/bundle");
 
+/*
+import {
+	PathController,
+	createSVGElement,
+	LineController,
+	PolylineController,
+	PolygonController,
+} from "../lib";
+*/
 const svgElem = document.getElementById("svg");
 const pathElem = createSVGElement("path", svgElem);
 new PathController(pathElem)
