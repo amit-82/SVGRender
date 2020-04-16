@@ -8,7 +8,10 @@ export abstract class CoordinatesParser {
 	}
 
 	public abstract validateCoordinates(coords: Coord[]): boolean;
-	public abstract createElementProps(coords: Coord[]): any;
+	public abstract createElementAttrs(
+		coords: Coord[],
+		instructions?: stringOrNumber[]
+	): any;
 	public validateMaxCoordinates(
 		coordsLength: number,
 		instructions?: stringOrNumber[]
@@ -28,15 +31,16 @@ class StrictOrderProps extends CoordinatesParser {
 	public validateCoordinates(coords: Coord[]): boolean {
 		return coords.length === this.orderedProps.length / 2;
 	}
-	public createElementProps(coords: Coord[]): any {
-		const props: any = {};
+	public createElementAttrs(coords: Coord[]): any {
+		const attrs: any = {};
 		for (let i = 0; i < coords.length; i++) {
 			const propIndex = i * 2;
-			props[this.orderedProps[propIndex]] = coords[i].x;
-			if (this.orderedProps.length < propIndex + 1) {
-				props[this.orderedProps[propIndex + 1]] = coords[i].y;
+			attrs[this.orderedProps[propIndex]] = coords[i].x;
+			if (propIndex + 1 < this.orderedProps.length) {
+				attrs[this.orderedProps[propIndex + 1]] = coords[i].y;
 			}
 		}
+		return attrs;
 	}
 }
 
@@ -47,7 +51,7 @@ class UnlimitedPoints extends CoordinatesParser {
 	public validateCoordinates(): boolean {
 		return true;
 	}
-	public createElementProps(coords: Coord[]): any {
+	public createElementAttrs(coords: Coord[]): any {
 		return coords.reduce(
 			(acc: any, coord) => {
 				acc.points.push(coord.x);
@@ -66,11 +70,11 @@ class PathCoordiantesParser extends CoordinatesParser {
 	public validateCoordinates(): boolean {
 		return true;
 	}
-	public createElementProps(
+	public createElementAttrs(
 		coords: Coord[],
 		instructions: stringOrNumber[] = []
 	): any {
-		return { d: instructions.map((a) => a) };
+		return { d: instructions.join(" ") };
 	}
 }
 

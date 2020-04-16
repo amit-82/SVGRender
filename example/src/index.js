@@ -1,9 +1,12 @@
-const { PathController, createSVGElement } = require("../../lib/index");
+const {
+	PathController,
+	createSVGElement,
+	LineController,
+} = require("../../lib/index");
 
-const svgPath = createSVGElement("path", document.getElementById("svg"));
-
-const path = new PathController(svgPath);
-path
+const svgElem = document.getElementById("svg");
+const pathElem = createSVGElement("path", svgElem);
+new PathController(pathElem)
 	.moveTo(100, 50)
 	.lineTo(300, 50)
 	.lineTo(300, 150)
@@ -11,5 +14,8 @@ path
 	.closePath()
 	.updateElement();
 
-window.pp = path;
-console.log("!!!");
+const lineElem = createSVGElement("line", svgElem);
+new LineController(lineElem).moveTo(10, 10).lineTo(20, 30).updateElement();
+
+const lineElem2 = createSVGElement("line", svgElem);
+new LineController(lineElem2).lineTo(10, 60).updateElement();

@@ -11,65 +11,65 @@ const getParentFunctionByType = createProxy<Function>(
 
 export default function createSVGElement(
 	type: "svg",
-	svgParent?: optonalSVGOrString,
-	id?: optonalString,
-	classNames?: optonalString
+	svgParent?: optionalSVGOrString,
+	id?: optionalString,
+	classNames?: optionalString
 ): SVGElement;
 
 export default function createSVGElement(
 	type: "circle",
-	svgParent?: optonalSVGOrString,
-	id?: optonalString,
-	classNames?: optonalString
+	svgParent?: optionalSVGOrString,
+	id?: optionalString,
+	classNames?: optionalString
 ): SVGCircleElement;
 
 export default function createSVGElement(
 	type: "ellipse",
-	svgParent?: optonalSVGOrString,
-	id?: optonalString,
-	classNames?: optonalString
+	svgParent?: optionalSVGOrString,
+	id?: optionalString,
+	classNames?: optionalString
 ): SVGEllipseElement;
 
 export default function createSVGElement(
 	type: "line",
-	svgParent?: optonalSVGOrString,
-	id?: optonalString,
-	classNames?: optonalString
+	svgParent?: optionalSVGOrString,
+	id?: optionalString,
+	classNames?: optionalString
 ): SVGLineElement;
 
 export default function createSVGElement(
 	type: "path",
-	svgParent?: optonalSVGOrString,
-	id?: optonalString,
-	classNames?: optonalString
+	svgParent?: optionalSVGOrString,
+	id?: optionalString,
+	classNames?: optionalString
 ): SVGPathElement;
 
 export default function createSVGElement(
 	type: "polygon",
-	svgParent?: optonalSVGOrString,
-	id?: optonalString,
-	classNames?: optonalString
+	svgParent?: optionalSVGOrString,
+	id?: optionalString,
+	classNames?: optionalString
 ): SVGPolygonElement;
 
 export default function createSVGElement(
 	type: "polyline",
-	svgParent?: optonalSVGOrString,
-	id?: optonalString,
-	classNames?: optonalString
+	svgParent?: optionalSVGOrString,
+	id?: optionalString,
+	classNames?: optionalString
 ): SVGPolylineElement;
 
 export default function createSVGElement(
 	type: "rect",
-	svgParent?: optonalSVGOrString,
-	id?: optonalString,
-	classNames?: optonalString
+	svgParent?: optionalSVGOrString,
+	id?: optionalString,
+	classNames?: optionalString
 ): SVGRectElement;
 
 export default function createSVGElement(
 	type: SVGElementTypes,
-	svgParent?: optonalSVGOrString,
-	id?: optonalString,
-	classNames?: optonalString
+	svgParent?: optionalSVGOrString,
+	id?: optionalString,
+	classNames?: optionalString
 ): SVGElement {
 	const elem = document.createElementNS("http://www.w3.org/2000/svg", type);
 

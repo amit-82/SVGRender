@@ -1,4 +1,15 @@
 import createSVGElement from "./createSVGElement";
-import { PathController } from "./controls";
+import {
+	LineController,
+	PathController,
+	PolygonController,
+	PolylineController,
+} from "./controls";
 
-export { createSVGElement, PathController };
+export {
+	createSVGElement,
+	LineController,
+	PathController,
+	PolygonController,
+	PolylineController,
+};

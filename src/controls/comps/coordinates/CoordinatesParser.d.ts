@@ -1,9 +1,9 @@
 import { Coord } from "../interfaces";
-export default abstract class CoordinatesParser {
+export declare abstract class CoordinatesParser {
     protected maxCoordinates: number;
     constructor(maxCoordinates: number);
     abstract validateCoordinates(coords: Coord[]): boolean;
-    abstract createElementProps(coords: Coord[]): any;
+    abstract createElementAttrs(coords: Coord[], instructions?: stringOrNumber[]): any;
     validateMaxCoordinates(coordsLength: number, instructions?: stringOrNumber[]): boolean;
 }
 export declare const CoordinatesParsers: {

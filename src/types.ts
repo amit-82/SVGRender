@@ -1,6 +1,8 @@
 type stringOrNumber = string | number;
 type undefinedOrNull = undefined | null;
 
+type optionalSVGOrString = SVGElement | string | undefinedOrNull;
+type optionalString = string | undefinedOrNull;
 type SVGElementTypes =
 	| "svg"
 	| "circle"
@@ -10,5 +12,3 @@ type SVGElementTypes =
 	| "polygon"
 	| "polyline"
 	| "rect";
-type optonalSVGOrString = SVGElement | string | undefinedOrNull;
-type optonalString = string | undefinedOrNull;

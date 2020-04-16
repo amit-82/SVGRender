@@ -1,9 +1,9 @@
 import PolylineController from "./PolylineController";
 export default class PathController extends PolylineController {
     private _instructions;
-    constructor(element?: SVGElement, instructions?: stringOrNumber[]);
+    constructor(element?: SVGElement, instructions?: stringOrNumber[], type?: SVGElementTypes);
     getInstructions(): stringOrNumber[];
-    updateElement(): void;
+    getAttributesForElement(): any;
     closePath(): this;
     moveTo(x: number, y: number): this;
     lineTo(x: number, y: number): this;

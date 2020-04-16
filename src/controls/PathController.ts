@@ -24,9 +24,12 @@ export default class PathController extends PolylineController {
 		return [...this._instructions];
 	}
 
-	public updateElement() {
-		this.element &&
-			this.element.setAttribute("d", this._instructions.join(" "));
+	public getAttributesForElement() {
+		console.log(">>>>>", "PATH!");
+		return this.coordinatesParser.createElementAttrs(
+			this.getCoordsRef(),
+			this._instructions
+		);
 	}
 
 	public closePath() {

@@ -16,13 +16,13 @@ export default abstract class SVGElementController {
 	private _segmentLengths: number[] = [];
 	private _totalLength: number = 0;
 
-	protected coordinatesParser: CoordinatesParser;
+	private _coordinatesParser: CoordinatesParser;
 
 	constructor(element?: SVGElement, type: SVGElementTypes = "svg") {
 		this._id = ++idCounter;
 		this._type = type;
 		this.element = element;
-		this.coordinatesParser = CoordinatesParsers[type];
+		this._coordinatesParser = CoordinatesParsers[type];
 	}
 
 	get id() {
@@ -31,6 +31,23 @@ export default abstract class SVGElementController {
 
 	get type() {
 		return this._type;
+	}
+
+	get coordinatesParser() {
+		return this._coordinatesParser;
+	}
+
+	public getAttributesForElement() {
+		return this._coordinatesParser.createElementAttrs(this._coords);
+	}
+
+	public updateElement() {
+		if (this.element) {
+			const attrs = this.getAttributesForElement();
+			Object.entries(attrs).forEach(([key, value]) => {
+				this.element!.setAttribute(key, value as string);
+			});
+		}
 	}
 
 	protected get segmentLengths() {
@@ -55,7 +72,7 @@ export default abstract class SVGElementController {
 		}
 
 		this._coords.push(coord);
-		this.coordinatesParser.validateCoordinates(this._coords);
+		this._coordinatesParser.validateCoordinates(this._coords);
 	}
 
 	protected validateOrInsertFirstCoordZeroZero() {

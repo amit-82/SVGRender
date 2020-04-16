@@ -1,5 +1,5 @@
 import { Coord } from "./interfaces";
-import CoordinatesParser from "./coordinates/CoordinatesParser";
+import { CoordinatesParser } from "./coordinates/CoordinatesParser";
 export default abstract class SVGElementController {
     private _id;
     private _type;
@@ -7,10 +7,13 @@ export default abstract class SVGElementController {
     private _coords;
     private _segmentLengths;
     private _totalLength;
-    protected coordinatesParser: CoordinatesParser;
+    private _coordinatesParser;
     constructor(element?: SVGElement, type?: SVGElementTypes);
     get id(): number;
     get type(): SVGElementTypes;
+    get coordinatesParser(): CoordinatesParser;
+    getAttributesForElement(): any;
+    updateElement(): void;
     protected get segmentLengths(): number[];
     protected get totalLength(): number;
     getCoords(): Coord[];

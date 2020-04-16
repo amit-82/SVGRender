@@ -1,6 +1,4 @@
-import SVGElementController from "./comps/SVGElementController";
-export default class PolylineController extends SVGElementController {
-    moveTo(x: number, y: number): this;
-    lineTo(x: number, y: number): this;
-    updateElement(): void;
+import LineContoller from "./LineController";
+export default class PolylineController extends LineContoller {
+    constructor(element?: SVGElement, type?: SVGElementTypes);
 }
