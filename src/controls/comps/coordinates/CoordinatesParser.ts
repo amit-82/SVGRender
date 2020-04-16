@@ -12,10 +12,7 @@ export abstract class CoordinatesParser {
 		coords: Coord[],
 		instructions?: stringOrNumber[]
 	): any;
-	public validateMaxCoordinates(
-		coordsLength: number,
-		instructions?: stringOrNumber[]
-	): boolean {
+	public validateMaxCoordinates(coordsLength: number): boolean {
 		return coordsLength <= this.maxCoordinates;
 	}
 }

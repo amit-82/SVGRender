@@ -4,7 +4,7 @@ export declare abstract class CoordinatesParser {
     constructor(maxCoordinates: number);
     abstract validateCoordinates(coords: Coord[]): boolean;
     abstract createElementAttrs(coords: Coord[], instructions?: stringOrNumber[]): any;
-    validateMaxCoordinates(coordsLength: number, instructions?: stringOrNumber[]): boolean;
+    validateMaxCoordinates(coordsLength: number): boolean;
 }
 export declare const CoordinatesParsers: {
     [key: string]: CoordinatesParser;
