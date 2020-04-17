@@ -25,7 +25,6 @@ export default class PathController extends PolylineController {
 	}
 
 	public getAttributesForElement() {
-		console.log(">>>>>", "PATH!");
 		return this.coordinatesParser.createElementAttrs(
 			this.getCoordsRef(),
 			this._instructions
@@ -50,7 +49,7 @@ export default class PathController extends PolylineController {
 		return this;
 	}
 
-	public curve = (
+	public curveTo = (
 		ctrlX: number,
 		ctrlY: number,
 		ctrlX2: number,
@@ -74,7 +73,7 @@ export default class PathController extends PolylineController {
 		return this;
 	};
 
-	public bezier = (
+	public bezierTo = (
 		ctrlX: number,
 		ctrlY: number,
 		endX: number,
@@ -92,7 +91,7 @@ export default class PathController extends PolylineController {
 		return this;
 	};
 
-	public quadratic = (
+	public quadraticTo = (
 		ctrlX: number,
 		ctrlY: number,
 		endX: number,
