@@ -1,4 +1,5 @@
 export enum CoordType {
+	Scalar = "SCALAR",
 	Linear = "LINEAR",
 	Bezier = "BEZIER",
 	Curve = "CURVE",
@@ -8,7 +9,7 @@ export enum CoordType {
 export interface Coord {
 	type: CoordType;
 	x: number;
-	y: number;
+	y?: number;
 }
 
 export interface BezierCoord extends Coord {
