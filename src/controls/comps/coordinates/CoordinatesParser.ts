@@ -1,33 +1,36 @@
 import { Coord, CoordType } from "../interfaces";
 import { createProxy } from "../../../helpers/object_utils";
+import { valueAssigned } from "../../../helpers/input_validations";
 
 export abstract class CoordinatesParser {
-	protected maxCoordinates: number;
-	constructor(maxCoordinates: number) {
-		this.maxCoordinates = maxCoordinates;
-	}
-
 	public abstract validateCoordinates(coords: Coord[]): boolean;
 	public abstract createElementAttrs(
 		coords: Coord[],
 		instructions?: stringOrNumber[]
 	): any;
-	public validateMaxCoordinates(coordsLength: number): boolean {
-		return coordsLength <= this.maxCoordinates;
-	}
 }
 
 class StrictOrderProps extends CoordinatesParser {
 	private orderedProps: string[];
 
 	constructor(orderedProps: string[]) {
-		super(Math.floor(orderedProps.length / 2));
+		super();
 		this.orderedProps = orderedProps;
 	}
 
 	public validateCoordinates(coords: Coord[]): boolean {
-		return coords.length === this.orderedProps.length / 2;
+		const coordsCount = this.orderedProps.length / 2;
+		if (coordsCount === Math.round(coordsCount)) {
+			return coords.length === coordsCount;
+		}
+
+		// validate when last coord should not have seconds value ('y' member should be undefined)
+		return (
+			coords.length === Math.ceil(coordsCount) &&
+			!valueAssigned(coords[coords.length - 1].y)
+		);
 	}
+
 	public createElementAttrs(coords: Coord[]): any {
 		const attrs: any = {};
 		let propIndex: number = 0;
@@ -48,7 +51,7 @@ class StrictOrderProps extends CoordinatesParser {
 
 class UnlimitedPoints extends CoordinatesParser {
 	constructor() {
-		super(Number.MAX_VALUE);
+		super();
 	}
 	public validateCoordinates(): boolean {
 		return true;
@@ -67,7 +70,7 @@ class UnlimitedPoints extends CoordinatesParser {
 
 class PathCoordiantesParser extends CoordinatesParser {
 	constructor() {
-		super(Number.MAX_VALUE);
+		super();
 	}
 	public validateCoordinates(): boolean {
 		return true;
