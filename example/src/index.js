@@ -20,8 +20,9 @@ const pathElem = createSVGElement("path", svgElem);
 new PathController(pathElem)
 	.moveTo(100, 50)
 	.lineTo(300, 50)
-	.lineTo(300, 150)
-	.lineTo(100, 150)
+	.curveTo(400, 0, 400, 200, 300, 150)
+	.bezierTo(100, 200, 100, 150)
+	.quadraticTo(0, 150, 100, 100, 100, 50)
 	.closePath()
 	.updateElement();
 
@@ -42,8 +43,8 @@ new PolylineController(polyline)
 
 const polygon = createSVGElement("polygon", svgElem);
 new PolygonController(polygon)
-	.moveTo(250, 120)
-	.lineTo(300, 150)
-	.lineTo(350, 120)
-	.lineTo(300, 200)
+	.moveTo(150, 10)
+	.lineTo(200, 40)
+	.lineTo(250, 10)
+	.lineTo(200, 100)
 	.updateElement();

@@ -1,10 +1,6 @@
 const path = require("path");
 const RemovePlugin = require("remove-files-webpack-plugin");
 
-console.log(
-	">>>>>>>>>>>>>>>>>>>>>> +++++++++++++++++++++++++++++++++++++++++++++++++ <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-);
-
 module.exports = {
 	mode: "development",
 	entry: "./src/index.ts",

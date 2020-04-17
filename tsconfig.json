@@ -1,5 +1,5 @@
 {
-  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "dist"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "dist", "*.config.js"],
   "compilerOptions": {
     /* Basic Options */
     // "incremental": true,                   /* Enable incremental compilation */
