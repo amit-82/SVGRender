@@ -6,6 +6,7 @@ import {
 	PolylineController,
 	CircleController,
 	EllipseController,
+	RectController,
 } from "./controls";
 
 export {
@@ -16,4 +17,5 @@ export {
 	PolylineController,
 	CircleController,
 	EllipseController,
+	RectController,
 };

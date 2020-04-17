@@ -6,6 +6,7 @@ const {
 	PolygonController,
 	CircleController,
 	EllipseController,
+	RectController,
 } = require("../../dist/bundle");
 
 const svgElem = document.getElementById("svg");
@@ -51,4 +52,14 @@ const ellipse = createSVGElement("ellipse", svgElem);
 new EllipseController(ellipse)
 	.moveTo(50, 180)
 	.setRadius(30, 15)
+	.updateElement();
+
+const rect = createSVGElement("rect", svgElem);
+new RectController(rect).moveTo(250, 160).setDimensions(50, 30).updateElement();
+
+const rect2 = createSVGElement("rect", svgElem);
+new RectController(rect2)
+	.moveTo(325, 140)
+	.setDimensions(50, 50)
+	.setCornerRadius(10, 20)
 	.updateElement();

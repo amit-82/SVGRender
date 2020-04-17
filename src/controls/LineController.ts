@@ -2,6 +2,7 @@ import SVGElementController from "./comps/SVGElementController";
 import { Coord, CoordType } from "./comps/interfaces";
 
 export default class LineContoller extends SVGElementController {
+	/* istanbul ignore next */
 	constructor(element?: SVGElement, type: SVGElementTypes = "line") {
 		super(element, type);
 	}

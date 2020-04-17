@@ -4,6 +4,7 @@ import PolygonController from "./PolygonController";
 import PolylineController from "./PolylineController";
 import CircleController from "./CircleController";
 import EllipseController from "./EllipseController";
+import RectController from "./RectController";
 
 export {
 	LineController,
@@ -12,4 +13,5 @@ export {
 	PolylineController,
 	CircleController,
 	EllipseController,
+	RectController,
 };
