@@ -103,4 +103,10 @@ export default abstract class SVGElementController {
 			}
 		});
 	}
+
+	public moveTo(x: number, y: number) {
+		const coord: Coord = { type: CoordType.Linear, x, y };
+		this.appendCoord(coord, true);
+		return this;
+	}
 }

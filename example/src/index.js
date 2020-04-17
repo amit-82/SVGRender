@@ -4,19 +4,14 @@ const {
 	LineController,
 	PolylineController,
 	PolygonController,
+	CircleController,
+	EllipseController,
 } = require("../../dist/bundle");
 
-/*
-import {
-	PathController,
-	createSVGElement,
-	LineController,
-	PolylineController,
-	PolygonController,
-} from "../lib";
-*/
 const svgElem = document.getElementById("svg");
+
 const pathElem = createSVGElement("path", svgElem);
+
 new PathController(pathElem)
 	.moveTo(100, 50)
 	.lineTo(300, 50)
@@ -47,4 +42,13 @@ new PolygonController(polygon)
 	.lineTo(200, 40)
 	.lineTo(250, 10)
 	.lineTo(200, 100)
+	.updateElement();
+
+const circle = createSVGElement("circle", svgElem);
+new CircleController(circle).moveTo(20, 180).setRadius(15).updateElement();
+
+const ellipse = createSVGElement("ellipse", svgElem);
+new EllipseController(ellipse)
+	.moveTo(50, 180)
+	.setRadius(30, 15)
 	.updateElement();

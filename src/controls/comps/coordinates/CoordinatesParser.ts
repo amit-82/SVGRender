@@ -1,4 +1,4 @@
-import { Coord } from "../interfaces";
+import { Coord, CoordType } from "../interfaces";
 import { createProxy } from "../../../helpers/object_utils";
 
 export abstract class CoordinatesParser {
@@ -30,12 +30,17 @@ class StrictOrderProps extends CoordinatesParser {
 	}
 	public createElementAttrs(coords: Coord[]): any {
 		const attrs: any = {};
+		let propIndex: number = 0;
 		for (let i = 0; i < coords.length; i++) {
-			const propIndex = i * 2;
-			attrs[this.orderedProps[propIndex]] = coords[i].x;
-			if (propIndex + 1 < this.orderedProps.length) {
-				attrs[this.orderedProps[propIndex + 1]] = coords[i].y;
+			const coord = coords[i];
+			attrs[this.orderedProps[propIndex]] = coord.x;
+			if (
+				coord.type !== CoordType.Scalar &&
+				propIndex + 1 < this.orderedProps.length
+			) {
+				attrs[this.orderedProps[++propIndex]] = coord.y;
 			}
+			++propIndex;
 		}
 		return attrs;
 	}
@@ -68,7 +73,7 @@ class PathCoordiantesParser extends CoordinatesParser {
 		return true;
 	}
 	public createElementAttrs(
-		coords: Coord[],
+		_: Coord[],
 		instructions: stringOrNumber[] = []
 	): any {
 		return { d: instructions.join(" ") };

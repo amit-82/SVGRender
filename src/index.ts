@@ -4,6 +4,8 @@ import {
 	PathController,
 	PolygonController,
 	PolylineController,
+	CircleController,
+	EllipseController,
 } from "./controls";
 
 export {
@@ -12,4 +14,6 @@ export {
 	PathController,
 	PolygonController,
 	PolylineController,
+	CircleController,
+	EllipseController,
 };

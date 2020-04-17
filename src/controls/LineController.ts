@@ -6,12 +6,6 @@ export default class LineContoller extends SVGElementController {
 		super(element, type);
 	}
 
-	public moveTo(x: number, y: number) {
-		const coord: Coord = { type: CoordType.Linear, x, y };
-		this.appendCoord(coord, true);
-		return this;
-	}
-
 	public lineTo(x: number, y: number) {
 		const coord: Coord = { type: CoordType.Linear, x, y };
 		this.appendCoord(coord);
