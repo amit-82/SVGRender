@@ -30,7 +30,9 @@
 		"xxxbuild:types": "tsc --emitDeclarationOnly",
 		"xxxbuild:js": "babel src --out-dir lib --extensions \".ts,.tsx\" --source-maps inline"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"enhanced-resolve": "^4.1.1"
+	},
 	"devDependencies": {
 		"@babel/cli": "^7.8.4",
 		"@babel/core": "^7.9.0",

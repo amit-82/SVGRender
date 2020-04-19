@@ -1,5 +1,5 @@
+import createSVGElement from "src/createSVGElement";
 import PathController from "./PathController";
-import createSVGElement from "../createSVGElement";
 
 describe("Test Path class", () => {
 	test("Creating a path without a PathElement", () => {
