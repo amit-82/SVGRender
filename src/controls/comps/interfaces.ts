@@ -1,9 +1,14 @@
 export enum CoordType {
 	Scalar = "SCALAR",
 	Linear = "LINEAR",
+	BezierMirror = "BEZIER_MIRROR",
 	Bezier = "BEZIER",
-	Curve = "CURVE",
 	Quadratic = "QUADRATIC",
+}
+
+export interface Point {
+	x: number;
+	y: number;
 }
 
 export interface Coord {
@@ -12,17 +17,17 @@ export interface Coord {
 	y?: number;
 }
 
-export interface BezierCoord extends Coord {
+export interface BezierMirrorCoord extends Coord {
 	ctrlX: number;
 	ctrlY: number;
 }
 
-export interface CurveCoord extends BezierCoord {
+export interface BezierCoord extends BezierMirrorCoord {
 	ctrlX2: number;
 	ctrlY2: number;
 }
 
-export interface QuadraticCoord extends BezierCoord {
+export interface QuadraticCoord extends BezierMirrorCoord {
 	mirrorX?: number;
 	mirrorY?: number;
 }

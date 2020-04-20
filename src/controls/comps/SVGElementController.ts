@@ -1,28 +1,25 @@
-import { Coord, CoordType } from "./interfaces";
-import { coordLengthCalculators } from "./utils/coords_utils";
-import {
-	CoordinatesParser,
-	CoordinatesParsers,
-} from "./coordinates/CoordinatesParser";
+import { Coord, CoordType } from './interfaces';
+import { CoordinatesParser, CoordinatesParsers } from './coordinates/CoordinatesParser';
+import SegmentsDescriptor from './descriptors/SegmentsDescriptor';
 
 let idCounter = 0;
 
 export default abstract class SVGElementController {
 	private _id: number;
 	private _type: SVGElementTypes;
+	private _segmentsDescriptor: SegmentsDescriptor;
 
 	protected element: SVGElement | undefined;
 	private _coords: Coord[] = [];
-	private _segmentLengths: number[] = [];
-	private _totalLength: number = 0;
 
 	private _coordinatesParser: CoordinatesParser;
 
-	constructor(element?: SVGElement, type: SVGElementTypes = "svg") {
+	constructor(element?: SVGElement, type: SVGElementTypes = 'svg') {
 		this._id = ++idCounter;
 		this._type = type;
 		this.element = element;
 		this._coordinatesParser = CoordinatesParsers[type];
+		this._segmentsDescriptor = new SegmentsDescriptor();
 	}
 
 	get id() {
@@ -51,19 +48,26 @@ export default abstract class SVGElementController {
 	}
 
 	protected get segmentLengths() {
-		return this._segmentLengths;
+		return this._segmentsDescriptor.segmentLengths;
 	}
 
 	protected get totalLength() {
-		return this._totalLength;
+		return this._segmentsDescriptor.totalLength;
 	}
 
 	public getCoords(): Coord[] {
-		return this._coords.map((coord) => ({ ...coord }));
+		return this._coords.map(coord => ({ ...coord }));
 	}
 
 	protected getCoordsRef() {
 		return this._coords;
+	}
+
+	/**
+	 * @description must be called after manipulation (or a series of manipulation) of the shape that may effect size
+	 */
+	protected calculate(): void {
+		this._segmentsDescriptor.calculate(this._coords);
 	}
 
 	protected appendCoord(coord: Coord, isMoveTo: boolean = false) {
@@ -76,32 +80,7 @@ export default abstract class SVGElementController {
 	}
 
 	protected validateOrInsertFirstCoordZeroZero() {
-		this._coords.length === 0 &&
-			this._coords.push({ type: CoordType.Linear, x: 0, y: 0 });
-	}
-
-	/**
-	 * @description must be called after any manipulation (or a series of manipulation) of the shape
-	 */
-	protected calculate(): void {
-		// reset data
-		this._totalLength = 0;
-		this._segmentLengths.length = 0;
-
-		// calculate totalLength of shape and
-		this._coords.forEach((coord, index) => {
-			if (index > 0) {
-				const lengthCalculator = coordLengthCalculators[coord.type.toString()];
-
-				const segmentLength: number = lengthCalculator(
-					coord,
-					this._coords[index - 1]
-				);
-
-				this._segmentLengths.push(segmentLength);
-				this._totalLength += segmentLength;
-			}
-		});
+		this._coords.length === 0 && this._coords.push({ type: CoordType.Linear, x: 0, y: 0 });
 	}
 
 	public moveTo(x: number, y: number) {
