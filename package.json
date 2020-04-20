@@ -23,7 +23,7 @@
 		"build": "webpack --config webpack.config.js",
 		"build:watch": "webpack --config webpack.config.js --watch && nodemon --watch src/**.* --ignore *.test.ts",
 		"example:build": "webpack --config webpack-demo.config.js",
-		"example:watch": "nodemon --watch example/src/**.* --exec npm run example:build",
+		"example:watch": "webpack --config webpack-demo.config.js --watch && nodemon --watch example/src/**.* --exec npm run example:build",
 		"test": "jest",
 		"test:coverage": "jest --coverage",
 		"xxxbuild:watch": "nodemon --watch src/**.* --watch example/src/**.* --ignore *.d.ts --ignore *.test.ts --exec npm run build",
