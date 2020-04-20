@@ -49,7 +49,7 @@ export default class PathController extends PolylineController {
 		return this;
 	}
 
-	public curveTo = (
+	public bezierTo = (
 		ctrlX: number,
 		ctrlY: number,
 		ctrlX2: number,
@@ -73,7 +73,7 @@ export default class PathController extends PolylineController {
 		return this;
 	};
 
-	public bezierTo = (
+	public bezierMirrorTo = (
 		ctrlX: number,
 		ctrlY: number,
 		endX: number,

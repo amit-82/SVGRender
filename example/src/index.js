@@ -16,8 +16,8 @@ const pathElem = createSVGElement("path", svgElem);
 new PathController(pathElem)
 	.moveTo(100, 50)
 	.lineTo(300, 50)
-	.curveTo(400, 0, 400, 200, 300, 150)
-	.bezierTo(100, 200, 100, 150)
+	.bezierTo(400, 0, 400, 200, 300, 150)
+	.bezierMirrorTo(100, 200, 100, 150)
 	.quadraticTo(0, 150, 100, 100, 100, 50)
 	.closePath()
 	.updateElement();
