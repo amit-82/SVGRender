@@ -21,7 +21,7 @@
 		"type-check": "tsc --noEmit",
 		"type-check:watch": "npm run type-check -- --watch",
 		"build": "webpack --config webpack.config.js",
-		"build:watch": "nodemon --watch src/**.* --ignore *.test.ts --exec npm run build",
+		"build:watch": "webpack --config webpack.config.js --watch && nodemon --watch src/**.* --ignore *.test.ts",
 		"example:build": "webpack --config webpack-demo.config.js",
 		"example:watch": "nodemon --watch example/src/**.* --exec npm run example:build",
 		"test": "jest",
