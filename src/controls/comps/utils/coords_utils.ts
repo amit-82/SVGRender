@@ -28,9 +28,9 @@ function getPointXorYOnBezier(t:number, start:number, startCtrl:number, endCtrl:
 
 
 export function getBezierSegments(c1: Coord, c2: Coord, segmentsCount = 50):Point[] {
-	const sectionDelta = 1 / segmentsCount;
+	const sectionDelta = 1 / (segmentsCount - 1);
 	const coordsAlongCurve:Point[] = [];
-	for (let i = 0; i <= segmentsCount; i++) {
+	for (let i = 0; i < segmentsCount; i++) {
 		coordsAlongCurve.push({
 			x: getPointXorYOnBezier(sectionDelta * i, c1.x, (c2 as BezierCoord).ctrlX, (c2 as BezierCoord).ctrlX2, c2.x ),
 			y: getPointXorYOnBezier(sectionDelta * i, c1.y as number, (c2 as BezierCoord).ctrlY, (c2 as BezierCoord).ctrlY2, c2.y as number )});

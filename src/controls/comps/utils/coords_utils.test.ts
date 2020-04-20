@@ -1,6 +1,19 @@
-import { coordLengthCalculators, CoordLengthCalculator } from "./coords_utils";
+import { coordLengthCalculators, CoordLengthCalculator, getBezierSegments } from "./coords_utils";
 import { CoordType, BezierCoord } from "../interfaces";
 import {bezierControlPointOffsetForQuarterCircle} from "../../../helpers/shape_utils";
+
+describe("Test getBezierSegments function", () => {
+	const segmentsCount = 11;
+	const segments = getBezierSegments({type:CoordType.Linear, x: 0, y: 0}, {type:CoordType.Bezier, ctrlX: 0, ctrlY: 20, ctrlX2:100, ctrlY2: 20, x: 100, y: 0} as BezierCoord, segmentsCount);
+	test("should return segments of bezier with correct count", () => {
+		expect(segments).toHaveLength(segmentsCount)
+	})
+	test("first, last and center points should be correct", () => {
+		expect(segments[0]).toEqual({x: 0, y: 0})
+		expect(segments[segmentsCount - 1]).toEqual({x: 100, y: 0})
+		expect(segments[Math.floor(segmentsCount / 2)]).toEqual({x: 50, y: 15})
+	})
+})
 
 describe("Test coordLengthCalculator linear function", () => {
 	test("Throwing error for invalid type", () => {
@@ -36,7 +49,6 @@ describe("Test coordLengthCalculator bezier function", () => {
 		//const length
 		const radius = 100;
 		const bezierControlOffset = bezierControlPointOffsetForQuarterCircle;
-		console.log(bezierControlOffset);
 
 		const length = calcFunc(
 			{ type: CoordType.Linear, x: radius, y: 0 },
