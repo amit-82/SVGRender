@@ -25,10 +25,7 @@
 		"example:build": "webpack --config webpack-demo.config.js",
 		"example:watch": "webpack --config webpack-demo.config.js --watch && nodemon --watch example/src/**.* --exec npm run example:build",
 		"test": "jest",
-		"test:coverage": "jest --coverage",
-		"xxxbuild:watch": "nodemon --watch src/**.* --watch example/src/**.* --ignore *.d.ts --ignore *.test.ts --exec npm run build",
-		"xxxbuild:types": "tsc --emitDeclarationOnly",
-		"xxxbuild:js": "babel src --out-dir lib --extensions \".ts,.tsx\" --source-maps inline"
+		"test:coverage": "jest --coverage"
 	},
 	"dependencies": {
 		"enhanced-resolve": "^4.1.1"
