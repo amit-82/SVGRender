@@ -23,7 +23,7 @@ export default class SegmentsDescriptor {
 		this._totalLength = 0;
 		this._segmentLengths.length = 0;
 
-		// calculate totalLength of shape and
+		// calculate totalLength of shape and fill segment length
 		coords.forEach((coord, index) => {
 			if (index > 0) {
 				const lengthCalculator = coordLengthCalculators[coord.type.toString()];
