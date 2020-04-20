@@ -1,7 +1,7 @@
 import { coordLengthCalculators, CoordLengthCalculator } from "./coords_utils";
 import { CoordType } from "../interfaces";
 
-describe("Test coordLengthCalculator", () => {
+describe("Test coordLengthCalculator linear function", () => {
 	test("Throwing error for invalid type", () => {
 		expect(coordLengthCalculators["blabla"]).toThrow();
 	});
