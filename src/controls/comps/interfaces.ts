@@ -6,6 +6,11 @@ export enum CoordType {
 	Quadratic = "QUADRATIC",
 }
 
+export interface Point {
+	x: number;
+	y: number;
+}
+
 export interface Coord {
 	type: CoordType;
 	x: number;
