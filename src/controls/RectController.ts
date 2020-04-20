@@ -1,6 +1,6 @@
+import { valueAssigned } from "../helpers/input_validations";
 import SVGElementController from "./comps/SVGElementController";
 import { CoordType } from "./comps/interfaces";
-import { isEmpty, valueAssigned } from "../helpers/input_validations";
 
 export default class RectController extends SVGElementController {
 	/* istanbul ignore next */

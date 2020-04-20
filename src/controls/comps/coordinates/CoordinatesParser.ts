@@ -1,6 +1,6 @@
+import { createProxy } from "src/helpers/object_utils";
+import { valueAssigned } from "src/helpers/input_validations";
 import { Coord, CoordType } from "../interfaces";
-import { createProxy } from "../../../helpers/object_utils";
-import { valueAssigned } from "../../../helpers/input_validations";
 
 export abstract class CoordinatesParser {
 	public abstract validateCoordinates(coords: Coord[]): boolean;

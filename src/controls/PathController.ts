@@ -1,5 +1,5 @@
-import PolylineController from "./PolylineController";
 import { allValuesAssigned } from "../helpers/input_validations";
+import PolylineController from "./PolylineController";
 import {
 	CoordType,
 	CurveCoord,

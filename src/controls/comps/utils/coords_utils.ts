@@ -1,6 +1,6 @@
+import { createProxy } from "src/helpers/object_utils";
+import { getDistance } from "src/helpers/shape_utils";
 import { Coord } from "../interfaces";
-import { createProxy } from "../../../helpers/object_utils";
-import { getDistance } from "../../../helpers/shape_utils";
 
 export type CoordLengthCalculator = (
 	coord: Coord,
