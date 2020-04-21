@@ -2,9 +2,8 @@ import { allValuesAssigned } from "../helpers/input_validations";
 import PolylineController from "./PolylineController";
 import {
 	CoordType,
-	BezierCoord,
-	BezierMirrorCoord,
-	QuadraticCoord,
+	CubicBezierCoord,
+	QuadraticBezierCoord,
 } from "./comps/interfaces";
 
 export default class PathController extends PolylineController {
@@ -49,19 +48,29 @@ export default class PathController extends PolylineController {
 		return this;
 	}
 
-	public bezierTo = (
+	public bezierCubicTo = (
 		ctrlX: number,
 		ctrlY: number,
 		ctrlX2: number,
 		ctrlY2: number,
 		endX: number,
-		endY: number
+		endY: number,
+		mirrorX?: number,
+		mirrorY?: number
 	) => {
+
+		// add mirror S
+
 		this._instructions.push(
 			`C${ctrlX},${ctrlY},${ctrlX2},${ctrlY2},${endX},${endY}`
 		);
-		const coord: BezierCoord = {
-			type: CoordType.Bezier,
+
+		if (allValuesAssigned(mirrorX, mirrorY)) {
+			this._instructions.push(`S${mirrorX},${mirrorY}`);
+		}
+
+		const coord: CubicBezierCoord = {
+			type: CoordType.BezierCubic,
 			x: endX,
 			y: endY,
 			ctrlX,
@@ -73,25 +82,7 @@ export default class PathController extends PolylineController {
 		return this;
 	};
 
-	public bezierMirrorTo = (
-		ctrlX: number,
-		ctrlY: number,
-		endX: number,
-		endY: number
-	) => {
-		this._instructions.push(`S${ctrlX},${ctrlY},${endX},${endY}`);
-		const coord: BezierMirrorCoord = {
-			type: CoordType.BezierMirror,
-			x: endX,
-			y: endY,
-			ctrlX,
-			ctrlY,
-		};
-		this.appendCoord(coord);
-		return this;
-	};
-
-	public quadraticTo = (
+	public bezierQuadraticTo = (
 		ctrlX: number,
 		ctrlY: number,
 		endX: number,
@@ -103,7 +94,7 @@ export default class PathController extends PolylineController {
 		if (allValuesAssigned(mirrorX, mirrorY)) {
 			this._instructions.push(`T${mirrorX},${mirrorY}`);
 		}
-		const coord: QuadraticCoord = {
+		const coord: QuadraticBezierCoord = {
 			type: CoordType.BezierMirror,
 			x: endX,
 			y: endY,

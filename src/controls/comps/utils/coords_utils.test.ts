@@ -1,10 +1,10 @@
 import { coordLengthCalculators, CoordLengthCalculator, getBezierSegments } from "./coords_utils";
-import { CoordType, BezierCoord, BezierMirrorCoord } from "../interfaces";
+import { CoordType, CubicBezierCoord } from "../interfaces";
 import {bezierControlPointOffsetForQuarterCircle} from "../../../helpers/shape_utils";
 
 describe("Test getBezierSegments function", () => {
 	const segmentsCount = 11;
-	const segments = getBezierSegments({type:CoordType.Linear, x: 0, y: 0}, {type:CoordType.Bezier, ctrlX: 0, ctrlY: 20, ctrlX2:100, ctrlY2: 20, x: 100, y: 0} as BezierCoord, segmentsCount);
+	const segments = getBezierSegments({type:CoordType.Linear, x: 0, y: 0}, {type:CoordType.BezierCubic, ctrlX: 0, ctrlY: 20, ctrlX2:100, ctrlY2: 20, x: 100, y: 0} as CubicBezierCoord, segmentsCount);
 	test("should return segments of bezier with correct count", () => {
 		expect(segments).toHaveLength(segmentsCount)
 	})
@@ -41,50 +41,33 @@ describe("Test coordLengthCalculator linear function", () => {
 	});
 });
 
-describe("Test coordLengthCalculator bezier function", () => {
+describe("Test coordLengthCalculator cubic bezier function", () => {
+
+
+	// TODO: TEST WITH mirrorX & mirrorY
 
 	const calcFunc: CoordLengthCalculator =
-		coordLengthCalculators[CoordType.Bezier.toString()];
-	test("Getting correct length of bezier curve equal to a quarter of a circle with radius of 100", () => {
+		coordLengthCalculators[CoordType.BezierCubic.toString()];
+	test("Getting correct length of cubic bezier curve equal to a quarter of a circle with radius of 100", () => {
 		//const length
 		const radius = 100;
 		const bezierControlOffset = bezierControlPointOffsetForQuarterCircle;
 
 		const length = calcFunc(
 			{ type: CoordType.Linear, x: radius, y: 0 },
-			{ type: CoordType.Bezier, x: 0, y: radius, ctrlX: radius, ctrlY: radius * bezierControlOffset, ctrlX2: 0, ctrlY2: radius * bezierControlOffset} as BezierCoord
+			{ type: CoordType.BezierCubic, x: 0, y: radius, ctrlX: radius, ctrlY: radius * bezierControlOffset, ctrlX2: 0, ctrlY2: radius * bezierControlOffset} as CubicBezierCoord
 		);
 		
 		expect(length / radius).toBeCloseTo(628 / 4 / radius, .1); // should not exceed 10% off from real
 	})
 
-	test("Getting correct length of a bezier curve", () => {
+	test("Getting correct length of a cubic bezier curve", () => {
 		const length = calcFunc(
 			{ type: CoordType.Linear, x: 0, y: 0 },
-			{ type: CoordType.Bezier, x: 100, y: 0, ctrlX: 25, ctrlY: 50, ctrlX2: 90, ctrlY2: 80 } as BezierCoord
+			{ type: CoordType.BezierCubic, x: 100, y: 0, ctrlX: 25, ctrlY: 50, ctrlX2: 90, ctrlY2: 80 } as CubicBezierCoord
 		);
 		expect(length).toBeCloseTo(151.43, .01);
 	});
 });
-/*
-describe("Test coordLengthCalculator bezier function", () => {
-	const calcFunc: CoordLengthCalculator =
-		coordLengthCalculators[CoordType.BezierMirror.toString()];
-	const regularBezierCalcFunc: CoordLengthCalculator =
-		coordLengthCalculators[CoordType.Bezier.toString()];
 
-	test("bezier mirror length to be normal bezier times 2", () => {
-		const regular_length = regularBezierCalcFunc(
-			{ type: CoordType.Linear, x: 0, y: 0 },
-			{ type: CoordType.Bezier, x: 100, y: 0, ctrlX: 25, ctrlY: 50, ctrlX2: 75, ctrlY2: 50 } as BezierCoord
-			);
-			
-			const length = calcFunc(
-			{ type: CoordType.Bezier, x: 100, y: 0, ctrlX: 25, ctrlY: 50, ctrlX2: 75, ctrlY2: 50 } as BezierCoord,
-			{ type: CoordType.BezierMirror, x: 200, y: 0, ctrlX: 125, ctrlY: 175 } as BezierMirrorCoord
-		);
-
-		expect(length).toBe(regular_length * 2);
-	});
-});
-*/
+// TODO: TEST QUAD BEZIER

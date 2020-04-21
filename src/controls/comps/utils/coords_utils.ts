@@ -1,11 +1,8 @@
 import { createProxy } from "src/helpers/object_utils";
 import { getDistance } from "src/helpers/shape_utils";
 import {
-	CoordType,
 	Coord,
-	BezierCoord,
-	BezierMirrorCoord,
-	QuadraticCoord,
+	CubicBezierCoord,
 	Point,
 } from "../interfaces";
 
@@ -32,8 +29,8 @@ export function getBezierSegments(c1: Coord, c2: Coord, segmentsCount = 50):Poin
 	const coordsAlongCurve:Point[] = [];
 	for (let i = 0; i < segmentsCount; i++) {
 		coordsAlongCurve.push({
-			x: getPointXorYOnBezier(sectionDelta * i, c1.x, (c2 as BezierCoord).ctrlX, (c2 as BezierCoord).ctrlX2, c2.x ),
-			y: getPointXorYOnBezier(sectionDelta * i, c1.y as number, (c2 as BezierCoord).ctrlY, (c2 as BezierCoord).ctrlY2, c2.y as number )});
+			x: getPointXorYOnBezier(sectionDelta * i, c1.x, (c2 as CubicBezierCoord).ctrlX, (c2 as CubicBezierCoord).ctrlX2, c2.x ),
+			y: getPointXorYOnBezier(sectionDelta * i, c1.y as number, (c2 as CubicBezierCoord).ctrlY, (c2 as CubicBezierCoord).ctrlY2, c2.y as number )});
 	}
 	return coordsAlongCurve;
 }
@@ -79,7 +76,7 @@ export const coordLengthCalculators = createProxy<CoordLengthCalculator>(
 		LINEAR: (c1: Coord, c2: Coord) =>
 			getDistance(c1.x, c1.y || 0, c2.x, c2.y || 0),
 		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) => 
-		BEZIER: getBezierLength
+		BEZIER_CUBIC: getBezierLength
 		//QUADRATIC:
 	},
 	(prevCoord: Coord, coord: Coord) => {
