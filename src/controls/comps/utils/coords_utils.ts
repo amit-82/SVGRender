@@ -49,17 +49,36 @@ function getBezierLength(c1: Coord, c2: Coord, segmentsCount = 50):number {
 
 	return lengthSum;
 }
+/*
+function bezierMirror(c1: Coord, c2: Coord, c3?:Coord, segmentsCount = 50):number {
+	if (c3 && (c3.type === CoordType.BezierMirror || c3.type === CoordType.Bezier)) {
+		// got previous segment
+		const {type, x, y = 0} = c2;
+		if (type === CoordType.Bezier) {
+			// prev is bezier
+		} else {
+			// prev is bezier mirror
 
+		}
+		const prevCtrlX = x + (x - (c2 as BezierCoord).ctrlX2);
+		const prevCtrlY = y || 0 + (y || 0 - (c2 as BezierCoord).ctrlY2);
+	}
+
+	// no pre-previous coord or pre-previous not of continues type
+	return getBezierLength(c1, c2, segmentsCount);
+}
+*/
 export type CoordLengthCalculator = (
 	coord: Coord,
-	previousCoord: Coord
+	previousCoord: Coord,
+	beforePreviousCoord?: Coord
 ) => number | never;
 
 export const coordLengthCalculators = createProxy<CoordLengthCalculator>(
 	{
 		LINEAR: (c1: Coord, c2: Coord) =>
 			getDistance(c1.x, c1.y || 0, c2.x, c2.y || 0),
-		//BEZIER_MIRROR:
+		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) => 
 		BEZIER: getBezierLength
 		//QUADRATIC:
 	},

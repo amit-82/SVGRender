@@ -1,5 +1,5 @@
 import { coordLengthCalculators, CoordLengthCalculator, getBezierSegments } from "./coords_utils";
-import { CoordType, BezierCoord } from "../interfaces";
+import { CoordType, BezierCoord, BezierMirrorCoord } from "../interfaces";
 import {bezierControlPointOffsetForQuarterCircle} from "../../../helpers/shape_utils";
 
 describe("Test getBezierSegments function", () => {
@@ -66,3 +66,25 @@ describe("Test coordLengthCalculator bezier function", () => {
 		expect(length).toBeCloseTo(151.43, .01);
 	});
 });
+/*
+describe("Test coordLengthCalculator bezier function", () => {
+	const calcFunc: CoordLengthCalculator =
+		coordLengthCalculators[CoordType.BezierMirror.toString()];
+	const regularBezierCalcFunc: CoordLengthCalculator =
+		coordLengthCalculators[CoordType.Bezier.toString()];
+
+	test("bezier mirror length to be normal bezier times 2", () => {
+		const regular_length = regularBezierCalcFunc(
+			{ type: CoordType.Linear, x: 0, y: 0 },
+			{ type: CoordType.Bezier, x: 100, y: 0, ctrlX: 25, ctrlY: 50, ctrlX2: 75, ctrlY2: 50 } as BezierCoord
+			);
+			
+			const length = calcFunc(
+			{ type: CoordType.Bezier, x: 100, y: 0, ctrlX: 25, ctrlY: 50, ctrlX2: 75, ctrlY2: 50 } as BezierCoord,
+			{ type: CoordType.BezierMirror, x: 200, y: 0, ctrlX: 125, ctrlY: 175 } as BezierMirrorCoord
+		);
+
+		expect(length).toBe(regular_length * 2);
+	});
+});
+*/
