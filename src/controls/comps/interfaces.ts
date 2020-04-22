@@ -6,6 +6,11 @@ export enum CoordType {
 	BezierQuadratic = "BEZIER_QUADRATIC",
 }
 
+export interface deformableSVGController {
+	readonly segmentLengths:number[];
+	readonly totalLength:number;
+}
+
 export interface Point {
 	x: number;
 	y: number;

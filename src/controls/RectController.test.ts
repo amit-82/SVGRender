@@ -61,8 +61,4 @@ describe("Test RectController", () => {
 			{ type: CoordType.Linear, x: 25, y: 0 },
 		]);
 	});
-
-	test("Test rect getLength", () => {
-		expect(rect.setDimensions(100, 25).calculate().totalLength).toBe(250);
-	})
 });

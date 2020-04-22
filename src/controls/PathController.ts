@@ -4,10 +4,14 @@ import {
 	CoordType,
 	CubicBezierCoord,
 	QuadraticBezierCoord,
+	deformableSVGController,
 } from "./comps/interfaces";
+import SegmentsDescriptor from "./comps/descriptors/SegmentsDescriptor";
 
-export default class PathController extends PolylineController {
+export default class PathController extends PolylineController implements deformableSVGController {
+	
 	private _instructions: stringOrNumber[];
+	private _segmentsDescriptor: SegmentsDescriptor;
 
 	constructor(
 		element?: SVGElement,
@@ -17,6 +21,7 @@ export default class PathController extends PolylineController {
 		super(element, type);
 		this._instructions = instructions;
 		this.element = element;
+		this._segmentsDescriptor = new SegmentsDescriptor(type);
 	}
 
 	public getInstructions(): stringOrNumber[] {
@@ -35,9 +40,27 @@ export default class PathController extends PolylineController {
 		return super.clear(updateElement);
 	}
 
+	public get segmentLengths() {
+		return this._segmentsDescriptor.segmentLengths;
+	}
+
+	public get totalLength() {
+		return this._segmentsDescriptor.totalLength;
+	}
+
+	public calculate() {
+		this._segmentsDescriptor.calculate(this.getCoordsRef());
+		return super.calculate();
+	}
+
 	public closePath() {
 		this._instructions.push("z");
+		// TODO: should be part of the segments and total length in the segment desc... make sure it is working
 		return this;
+	}
+
+	public get isClosed() {
+		return this._instructions[this._instructions.length - 1] === "z";
 	}
 
 	public moveTo(x: number, y: number) {

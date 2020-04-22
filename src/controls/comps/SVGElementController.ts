@@ -1,13 +1,12 @@
 import { Coord, CoordType } from './interfaces';
 import { CoordsToElemAttrs, CoordsToElemAttrsMap } from './coordinates/CoordsToElemAttrs';
-import SegmentsDescriptor from './descriptors/SegmentsDescriptor';
 
 let idCounter = 0;
 
 export default abstract class SVGElementController {
 	private _id: number;
 	private _type: SVGElementTypes;
-	private _segmentsDescriptor: SegmentsDescriptor;
+	
 
 	protected element: SVGElement | undefined;
 	private _coords: Coord[] = [];
@@ -19,7 +18,6 @@ export default abstract class SVGElementController {
 		this._type = type;
 		this.element = element;
 		this._coordinatesParser = CoordsToElemAttrsMap[type];
-		this._segmentsDescriptor = new SegmentsDescriptor(this._type);
 	}
 
 	get id() {
@@ -49,14 +47,6 @@ export default abstract class SVGElementController {
 		return this;
 	}
 
-	public get segmentLengths() {
-		return this._segmentsDescriptor.segmentLengths;
-	}
-
-	public get totalLength() {
-		return this._segmentsDescriptor.totalLength;
-	}
-
 	public getCoords(): Coord[] {
 		return this._coords.map(coord => ({ ...coord }));
 	}
@@ -69,7 +59,6 @@ export default abstract class SVGElementController {
 	 * @description must be called after manipulation (or a series of manipulation) of the shape that may effect size
 	 */
 	public calculate() {
-		this._segmentsDescriptor.calculate(this._coords);
 		return this;
 	}
 
