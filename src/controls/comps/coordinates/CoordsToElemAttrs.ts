@@ -2,7 +2,7 @@ import { createProxy } from "src/helpers/object_utils";
 import { valueAssigned } from "src/helpers/input_validations";
 import { Coord, CoordType } from "../interfaces";
 
-export abstract class CoordinatesParser {
+export abstract class CoordsToElemAttrs {
 	public abstract validateCoordinates(coords: Coord[]): boolean;
 	public abstract createElementAttrs(
 		coords: Coord[],
@@ -10,7 +10,7 @@ export abstract class CoordinatesParser {
 	): any;
 }
 
-class StrictOrderProps extends CoordinatesParser {
+class StrictOrderProps extends CoordsToElemAttrs {
 	private orderedProps: string[];
 
 	constructor(orderedProps: string[]) {
@@ -49,7 +49,7 @@ class StrictOrderProps extends CoordinatesParser {
 	}
 }
 
-class UnlimitedPoints extends CoordinatesParser {
+class UnlimitedPoints extends CoordsToElemAttrs {
 	constructor() {
 		super();
 	}
@@ -68,7 +68,7 @@ class UnlimitedPoints extends CoordinatesParser {
 	}
 }
 
-class PathCoordiantesParser extends CoordinatesParser {
+class PathCoordiantesParser extends CoordsToElemAttrs {
 	constructor() {
 		super();
 	}
@@ -85,7 +85,7 @@ class PathCoordiantesParser extends CoordinatesParser {
 
 const unlimitedPoints = new UnlimitedPoints();
 
-export const CoordinatesParsers = createProxy<CoordinatesParser>({
+export const CoordsToElemAttrsMap = createProxy<CoordsToElemAttrs>({
 	circle: new StrictOrderProps(["cx", "cy", "r"]),
 	ellipse: new StrictOrderProps(["cx", "cy", "rx", "ry"]),
 	line: new StrictOrderProps(["x1", "y1", "x2", "y2"]),

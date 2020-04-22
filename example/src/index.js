@@ -12,14 +12,14 @@ const {
 const svgElem = document.getElementById("svg");
 
 const pathElem = createSVGElement("path", svgElem);
-
-new PathController(pathElem)
-	.moveTo(100, 50)
-	.lineTo(300, 50)
-	.bezierCubicTo(400, 0, 400, 200, 300, 150)
-	.bezierQuadraticTo(0, 150, 100, 100, 100, 50)
+const path = new PathController(pathElem)
+	.moveTo(50, 50)
+	.quadTo(75, 0, 100, 50)
+	.lineTo(100, 100)
+	.cubicTo(75,10,75,10,50,150)
 	.closePath()
 	.updateElement();
+
 
 const lineElem = createSVGElement("line", svgElem);
 new LineController(lineElem).moveTo(10, 10).lineTo(20, 30).updateElement();

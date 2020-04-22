@@ -30,6 +30,11 @@ export default class PathController extends PolylineController {
 		);
 	}
 
+	public clear(updateElement = false) {
+		this._instructions.length = 0;
+		return super.clear(updateElement);
+	}
+
 	public closePath() {
 		this._instructions.push("z");
 		return this;
@@ -48,15 +53,15 @@ export default class PathController extends PolylineController {
 		return this;
 	}
 
-	public bezierCubicTo = (
+	public cubicTo = (
 		ctrlX: number,
 		ctrlY: number,
 		ctrlX2: number,
 		ctrlY2: number,
 		endX: number,
 		endY: number,
-		mirrorX?: number,
-		mirrorY?: number
+		mirrorEndX?: number,
+		mirrorEndY?: number
 	) => {
 
 		// add mirror S
@@ -65,8 +70,9 @@ export default class PathController extends PolylineController {
 			`C${ctrlX},${ctrlY},${ctrlX2},${ctrlY2},${endX},${endY}`
 		);
 
-		if (allValuesAssigned(mirrorX, mirrorY)) {
-			this._instructions.push(`S${mirrorX},${mirrorY}`);
+		if (allValuesAssigned(mirrorEndX, mirrorEndY)) {
+			throw "bezierCubic with mirror not implemented";
+			this._instructions.push(`S${mirrorEndX},${mirrorEndY}`);
 		}
 
 		const coord: CubicBezierCoord = {
@@ -82,17 +88,18 @@ export default class PathController extends PolylineController {
 		return this;
 	};
 
-	public bezierQuadraticTo = (
+	public quadTo = (
 		ctrlX: number,
 		ctrlY: number,
 		endX: number,
 		endY: number,
-		mirrorX?: number,
-		mirrorY?: number
+		mirrorEndX?: number,
+		mirrorEndY?: number
 	) => {
 		this._instructions.push(`Q${ctrlX},${ctrlY},${endX},${endY}`);
-		if (allValuesAssigned(mirrorX, mirrorY)) {
-			this._instructions.push(`T${mirrorX},${mirrorY}`);
+		if (allValuesAssigned(mirrorEndX, mirrorEndY)) {
+			throw "bezierCubic with mirror not implemented";
+			this._instructions.push(`T${mirrorEndX},${mirrorEndY}`);
 		}
 		const coord: QuadraticBezierCoord = {
 			type: CoordType.BezierMirror,
@@ -100,8 +107,8 @@ export default class PathController extends PolylineController {
 			y: endY,
 			ctrlX,
 			ctrlY,
-			mirrorX,
-			mirrorY,
+			mirrorX: mirrorEndX,
+			mirrorY: mirrorEndY,
 		};
 		this.appendCoord(coord);
 

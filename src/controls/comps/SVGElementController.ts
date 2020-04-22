@@ -1,5 +1,5 @@
 import { Coord, CoordType } from './interfaces';
-import { CoordinatesParser, CoordinatesParsers } from './coordinates/CoordinatesParser';
+import { CoordsToElemAttrs, CoordsToElemAttrsMap } from './coordinates/CoordsToElemAttrs';
 import SegmentsDescriptor from './descriptors/SegmentsDescriptor';
 
 let idCounter = 0;
@@ -12,14 +12,14 @@ export default abstract class SVGElementController {
 	protected element: SVGElement | undefined;
 	private _coords: Coord[] = [];
 
-	private _coordinatesParser: CoordinatesParser;
+	private _coordinatesParser: CoordsToElemAttrs;
 
 	constructor(element?: SVGElement, type: SVGElementTypes = 'svg') {
 		this._id = ++idCounter;
 		this._type = type;
 		this.element = element;
-		this._coordinatesParser = CoordinatesParsers[type];
-		this._segmentsDescriptor = new SegmentsDescriptor();
+		this._coordinatesParser = CoordsToElemAttrsMap[type];
+		this._segmentsDescriptor = new SegmentsDescriptor(this._type);
 	}
 
 	get id() {
@@ -45,13 +45,15 @@ export default abstract class SVGElementController {
 				this.element!.setAttribute(key, value as string);
 			});
 		}
+
+		return this;
 	}
 
-	protected get segmentLengths() {
+	public get segmentLengths() {
 		return this._segmentsDescriptor.segmentLengths;
 	}
 
-	protected get totalLength() {
+	public get totalLength() {
 		return this._segmentsDescriptor.totalLength;
 	}
 
@@ -66,8 +68,9 @@ export default abstract class SVGElementController {
 	/**
 	 * @description must be called after manipulation (or a series of manipulation) of the shape that may effect size
 	 */
-	protected calculate(): void {
+	public calculate() {
 		this._segmentsDescriptor.calculate(this._coords);
+		return this;
 	}
 
 	protected appendCoord(coord: Coord, isMoveTo: boolean = false) {
@@ -77,6 +80,14 @@ export default abstract class SVGElementController {
 
 		this._coords.push(coord);
 		this._coordinatesParser.validateCoordinates(this._coords);
+	}
+
+	public clear(updateElement = false) {
+		this._coords.length = 0;
+		if (updateElement) {
+			this.updateElement();
+		}
+		return this;
 	}
 
 	protected validateOrInsertFirstCoordZeroZero() {

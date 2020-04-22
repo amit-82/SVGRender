@@ -3,8 +3,13 @@ import { coordLengthCalculators } from '../utils/coords_utils';
 
 export default class SegmentsDescriptor {
 
+	private _svgElemType:SVGElementTypes
 	private _segmentLengths: number[] = [];
 	private _totalLength: number = 0;
+
+	constructor(elementType:SVGElementTypes) {
+		this._svgElemType = elementType;
+	}
 
 	public get segmentLengths() {
 		return this._segmentLengths;
@@ -23,8 +28,12 @@ export default class SegmentsDescriptor {
 		this._totalLength = 0;
 		this._segmentLengths.length = 0;
 
+		console.log(coords);
+
 		// calculate totalLength of shape and fill segment length
 		coords.forEach((coord, index) => {
+
+			// skip first coord. it's just a moveTo.
 			if (index > 0) {
 				const lengthCalculator = coordLengthCalculators[coord.type.toString()];
 

@@ -1,8 +1,8 @@
-import { CoordinatesParsers, CoordinatesParser } from "./CoordinatesParser";
+import { CoordsToElemAttrsMap, CoordsToElemAttrs } from "./CoordsToElemAttrs";
 import { CoordType } from "../interfaces";
 
 describe("Test circle CoordinateParser", () => {
-	const parser: CoordinatesParser = CoordinatesParsers["circle"];
+	const parser: CoordsToElemAttrs = CoordsToElemAttrsMap["circle"];
 	test("CoordinateParser reject validation of no coords", () => {
 		expect(parser.validateCoordinates([])).toBeFalsy();
 	});
@@ -46,7 +46,7 @@ describe("Test circle CoordinateParser", () => {
 });
 
 describe("test Ellipse CoordinateParser", () => {
-	const parser: CoordinatesParser = CoordinatesParsers["ellipse"];
+	const parser: CoordsToElemAttrs = CoordsToElemAttrsMap["ellipse"];
 
 	test("CoordinateParser reject validation with too many coords", () => {
 		const coords = [
@@ -85,7 +85,7 @@ describe("test Ellipse CoordinateParser", () => {
 });
 
 describe("test Polyline CoordinateParser", () => {
-	const parser: CoordinatesParser = CoordinatesParsers["polyline"];
+	const parser: CoordsToElemAttrs = CoordsToElemAttrsMap["polyline"];
 
 	test("CoordinateParser approve having coords", () => {
 		const coords = [
