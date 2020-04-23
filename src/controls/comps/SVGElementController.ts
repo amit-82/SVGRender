@@ -6,7 +6,6 @@ let idCounter = 0;
 export default abstract class SVGElementController {
 	private _id: number;
 	private _type: SVGElementTypes;
-	
 
 	protected element: SVGElement | undefined;
 	private _coords: Coord[] = [];

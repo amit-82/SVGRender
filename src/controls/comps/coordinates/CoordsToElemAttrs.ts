@@ -1,13 +1,10 @@
-import { createProxy } from "src/helpers/object_utils";
-import { valueAssigned } from "src/helpers/input_validations";
-import { Coord, CoordType } from "../interfaces";
+import { createProxy } from 'src/helpers/object_utils';
+import { valueAssigned } from 'src/helpers/input_validations';
+import { Coord, CoordType } from '../interfaces';
 
 export abstract class CoordsToElemAttrs {
 	public abstract validateCoordinates(coords: Coord[]): boolean;
-	public abstract createElementAttrs(
-		coords: Coord[],
-		instructions?: stringOrNumber[]
-	): any;
+	public abstract createElementAttrs(coords: Coord[], instructions?: stringOrNumber[]): any;
 }
 
 class StrictOrderProps extends CoordsToElemAttrs {
@@ -26,8 +23,7 @@ class StrictOrderProps extends CoordsToElemAttrs {
 
 		// validate when last coord should not have seconds value ('y' member should be undefined)
 		return (
-			coords.length === Math.ceil(coordsCount) &&
-			!valueAssigned(coords[coords.length - 1].y)
+			coords.length === Math.ceil(coordsCount) && !valueAssigned(coords[coords.length - 1].y)
 		);
 	}
 
@@ -37,10 +33,7 @@ class StrictOrderProps extends CoordsToElemAttrs {
 		for (let i = 0; i < coords.length; i++) {
 			const coord = coords[i];
 			attrs[this.orderedProps[propIndex]] = coord.x;
-			if (
-				coord.type !== CoordType.Scalar &&
-				propIndex + 1 < this.orderedProps.length
-			) {
+			if (coord.type !== CoordType.Scalar && propIndex + 1 < this.orderedProps.length) {
 				attrs[this.orderedProps[++propIndex]] = coord.y;
 			}
 			++propIndex;
@@ -75,22 +68,19 @@ class PathCoordiantesParser extends CoordsToElemAttrs {
 	public validateCoordinates(): boolean {
 		return true;
 	}
-	public createElementAttrs(
-		_: Coord[],
-		instructions: stringOrNumber[] = []
-	): any {
-		return { d: instructions.join(" ") };
+	public createElementAttrs(_: Coord[], instructions: stringOrNumber[] = []): any {
+		return { d: instructions.join(' ') };
 	}
 }
 
 const unlimitedPoints = new UnlimitedPoints();
 
 export const CoordsToElemAttrsMap = createProxy<CoordsToElemAttrs>({
-	circle: new StrictOrderProps(["cx", "cy", "r"]),
-	ellipse: new StrictOrderProps(["cx", "cy", "rx", "ry"]),
-	line: new StrictOrderProps(["x1", "y1", "x2", "y2"]),
+	circle: new StrictOrderProps(['cx', 'cy', 'r']),
+	ellipse: new StrictOrderProps(['cx', 'cy', 'rx', 'ry']),
+	line: new StrictOrderProps(['x1', 'y1', 'x2', 'y2']),
 	path: new PathCoordiantesParser(),
 	polygon: unlimitedPoints,
 	polyline: unlimitedPoints,
-	rect: new StrictOrderProps(["x", "y", "width", "height", "rx", "ry"]),
+	rect: new StrictOrderProps(['x', 'y', 'width', 'height', 'rx', 'ry']),
 });

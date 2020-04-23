@@ -1,14 +1,14 @@
 export enum CoordType {
-	Scalar = "SCALAR",
-	Linear = "LINEAR",
-	BezierMirror = "BEZIER_MIRROR",
-	BezierCubic = "BEZIER_CUBIC",
-	BezierQuadratic = "BEZIER_QUADRATIC",
+	Scalar = 'SCALAR',
+	Linear = 'LINEAR',
+	BezierMirror = 'BEZIER_MIRROR',
+	BezierCubic = 'BEZIER_CUBIC',
+	BezierQuadratic = 'BEZIER_QUADRATIC',
 }
 
 export interface deformableSVGController {
-	readonly segmentLengths:number[];
-	readonly totalLength:number;
+	readonly segmentLengths: number[];
+	readonly totalLength: number;
 }
 
 export interface Point {

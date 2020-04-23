@@ -2,12 +2,11 @@ import { Coord } from '../interfaces';
 import { coordLengthCalculators } from '../utils/coords_utils';
 
 export default class SegmentsDescriptor {
-
-	private _svgElemType:SVGElementTypes
+	private _svgElemType: SVGElementTypes;
 	private _segmentLengths: number[] = [];
 	private _totalLength: number = 0;
 
-	constructor(elementType:SVGElementTypes) {
+	constructor(elementType: SVGElementTypes) {
 		this._svgElemType = elementType;
 	}
 
@@ -30,7 +29,6 @@ export default class SegmentsDescriptor {
 
 		// calculate totalLength of shape and fill segment length
 		coords.forEach((coord, index) => {
-
 			// skip first coord. it's just a moveTo.
 			if (index > 0) {
 				const lengthCalculator = coordLengthCalculators[coord.type.toString()];
@@ -40,6 +38,6 @@ export default class SegmentsDescriptor {
 				this._segmentLengths.push(segmentLength);
 				this._totalLength += segmentLength;
 			}
-        });
+		});
 	}
 }

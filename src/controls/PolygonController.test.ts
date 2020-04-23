@@ -1,18 +1,14 @@
-import PolygonController from "./PolygonController";
-import { CoordType } from "./comps/interfaces";
+import PolygonController from './PolygonController';
+import { CoordType } from './comps/interfaces';
 
-describe("Test PolygonController", () => {
+describe('Test PolygonController', () => {
 	let polygon: PolygonController;
 	beforeEach(() => {
 		polygon = new PolygonController();
 	});
 
-	test("Append coords for multiple lines without initial moveTo", () => {
-		const coords = polygon
-			.lineTo(25, 30)
-			.lineTo(25, 50)
-			.lineTo(10, 75)
-			.getCoords();
+	test('Append coords for multiple lines without initial moveTo', () => {
+		const coords = polygon.lineTo(25, 30).lineTo(25, 50).lineTo(10, 75).getCoords();
 		expect(coords).toEqual([
 			{ type: CoordType.Linear, x: 0, y: 0 },
 			{ type: CoordType.Linear, x: 25, y: 30 },
@@ -21,7 +17,7 @@ describe("Test PolygonController", () => {
 		]);
 	});
 
-	test("Append coords for multiple lines with initial moveTo", () => {
+	test('Append coords for multiple lines with initial moveTo', () => {
 		const coords = polygon
 			.moveTo(10, 30)
 			.lineTo(25, 30)

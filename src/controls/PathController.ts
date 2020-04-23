@@ -1,22 +1,21 @@
-import { allValuesAssigned } from "../helpers/input_validations";
-import PolylineController from "./PolylineController";
+import { allValuesAssigned } from '../helpers/input_validations';
+import PolylineController from './PolylineController';
 import {
 	CoordType,
 	CubicBezierCoord,
 	QuadraticBezierCoord,
 	deformableSVGController,
-} from "./comps/interfaces";
-import SegmentsDescriptor from "./comps/descriptors/SegmentsDescriptor";
+} from './comps/interfaces';
+import SegmentsDescriptor from './comps/descriptors/SegmentsDescriptor';
 
 export default class PathController extends PolylineController implements deformableSVGController {
-	
 	private _instructions: stringOrNumber[];
 	private _segmentsDescriptor: SegmentsDescriptor;
 
 	constructor(
 		element?: SVGElement,
 		instructions: stringOrNumber[] = [],
-		type: SVGElementTypes = "path"
+		type: SVGElementTypes = 'path'
 	) {
 		super(element, type);
 		this._instructions = instructions;
@@ -29,10 +28,7 @@ export default class PathController extends PolylineController implements deform
 	}
 
 	public getAttributesForElement() {
-		return this.coordinatesParser.createElementAttrs(
-			this.getCoordsRef(),
-			this._instructions
-		);
+		return this.coordinatesParser.createElementAttrs(this.getCoordsRef(), this._instructions);
 	}
 
 	public clear(updateElement = false) {
@@ -54,13 +50,13 @@ export default class PathController extends PolylineController implements deform
 	}
 
 	public closePath() {
-		this._instructions.push("z");
+		this._instructions.push('z');
 		// TODO: should be part of the segments and total length in the segment desc... make sure it is working
 		return this;
 	}
 
 	public get isClosed() {
-		return this._instructions[this._instructions.length - 1] === "z";
+		return this._instructions[this._instructions.length - 1] === 'z';
 	}
 
 	public moveTo(x: number, y: number) {
@@ -86,15 +82,12 @@ export default class PathController extends PolylineController implements deform
 		mirrorEndX?: number,
 		mirrorEndY?: number
 	) => {
-
 		// add mirror S
 
-		this._instructions.push(
-			`C${ctrlX},${ctrlY},${ctrlX2},${ctrlY2},${endX},${endY}`
-		);
+		this._instructions.push(`C${ctrlX},${ctrlY},${ctrlX2},${ctrlY2},${endX},${endY}`);
 
 		if (allValuesAssigned(mirrorEndX, mirrorEndY)) {
-			throw "bezierCubic with mirror not implemented";
+			throw 'bezierCubic with mirror not implemented';
 			this._instructions.push(`S${mirrorEndX},${mirrorEndY}`);
 		}
 
@@ -121,7 +114,7 @@ export default class PathController extends PolylineController implements deform
 	) => {
 		this._instructions.push(`Q${ctrlX},${ctrlY},${endX},${endY}`);
 		if (allValuesAssigned(mirrorEndX, mirrorEndY)) {
-			throw "bezierCubic with mirror not implemented";
+			throw 'bezierCubic with mirror not implemented';
 			this._instructions.push(`T${mirrorEndX},${mirrorEndY}`);
 		}
 		const coord: QuadraticBezierCoord = {

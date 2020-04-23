@@ -7,27 +7,26 @@ const {
 	CircleController,
 	EllipseController,
 	RectController,
-} = require("../../dist/bundle");
+} = require('../../dist/bundle');
 
-const svgElem = document.getElementById("svg");
+const svgElem = document.getElementById('svg');
 
-const pathElem = createSVGElement("path", svgElem);
+const pathElem = createSVGElement('path', svgElem);
 const path = new PathController(pathElem)
 	.moveTo(50, 50)
 	.quadTo(75, 0, 100, 50)
 	.lineTo(100, 100)
-	.cubicTo(75,10,75,10,50,150)
+	.cubicTo(75, 10, 75, 10, 50, 150)
 	.closePath()
 	.updateElement();
 
-
-const lineElem = createSVGElement("line", svgElem);
+const lineElem = createSVGElement('line', svgElem);
 new LineController(lineElem).moveTo(10, 10).lineTo(20, 30).updateElement();
 
-const lineElem2 = createSVGElement("line", svgElem);
+const lineElem2 = createSVGElement('line', svgElem);
 new LineController(lineElem2).lineTo(10, 60).updateElement();
 
-const polyline = createSVGElement("polyline", svgElem);
+const polyline = createSVGElement('polyline', svgElem);
 new PolylineController(polyline)
 	.moveTo(30, 5)
 	.lineTo(40, 35)
@@ -36,7 +35,7 @@ new PolylineController(polyline)
 	.lineTo(35, 80)
 	.updateElement();
 
-const polygon = createSVGElement("polygon", svgElem);
+const polygon = createSVGElement('polygon', svgElem);
 new PolygonController(polygon)
 	.moveTo(150, 10)
 	.lineTo(200, 40)
@@ -44,19 +43,16 @@ new PolygonController(polygon)
 	.lineTo(200, 100)
 	.updateElement();
 
-const circle = createSVGElement("circle", svgElem);
+const circle = createSVGElement('circle', svgElem);
 new CircleController(circle).moveTo(20, 180).setRadius(15).updateElement();
 
-const ellipse = createSVGElement("ellipse", svgElem);
-new EllipseController(ellipse)
-	.moveTo(50, 180)
-	.setRadius(30, 15)
-	.updateElement();
+const ellipse = createSVGElement('ellipse', svgElem);
+new EllipseController(ellipse).moveTo(50, 180).setRadius(30, 15).updateElement();
 
-const rect = createSVGElement("rect", svgElem);
+const rect = createSVGElement('rect', svgElem);
 new RectController(rect).moveTo(250, 160).setDimensions(50, 30).updateElement();
 
-const rect2 = createSVGElement("rect", svgElem);
+const rect2 = createSVGElement('rect', svgElem);
 new RectController(rect2)
 	.moveTo(325, 140)
 	.setDimensions(50, 50)

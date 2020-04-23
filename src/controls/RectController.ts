@@ -1,10 +1,10 @@
-import { valueAssigned } from "../helpers/input_validations";
-import SVGElementController from "./comps/SVGElementController";
-import { CoordType } from "./comps/interfaces";
+import { valueAssigned } from '../helpers/input_validations';
+import SVGElementController from './comps/SVGElementController';
+import { CoordType } from './comps/interfaces';
 
 export default class RectController extends SVGElementController {
 	/* istanbul ignore next */
-	constructor(element?: SVGElement, type: SVGElementTypes = "rect") {
+	constructor(element?: SVGElement, type: SVGElementTypes = 'rect') {
 		super(element, type);
 	}
 
