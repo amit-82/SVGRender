@@ -11,6 +11,10 @@ export interface deformableSVGController {
 	readonly totalLength: number;
 }
 
+export interface lineToAble {
+	lineTo(x: number, y: number): lineToAble;
+}
+
 export interface Point {
 	x: number;
 	y: number;

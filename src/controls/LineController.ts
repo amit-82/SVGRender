@@ -1,9 +1,9 @@
-import SVGElementController from './comps/SVGElementController';
-import { Coord, CoordType } from './comps/interfaces';
+import SVGGeometryController from './SVGGeometryController';
+import { Coord, CoordType, lineToAble } from './comps/interfaces';
 
-export default class LineContoller extends SVGElementController {
+export default class LineContoller extends SVGGeometryController implements lineToAble {
 	/* istanbul ignore next */
-	constructor(element?: SVGElement, type: SVGElementTypes = 'line') {
+	constructor(element?: SVGGeometryElement, type: SVGElementTypes = 'line') {
 		super(element, type);
 	}
 

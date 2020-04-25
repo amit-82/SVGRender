@@ -13,7 +13,7 @@ export default class PathController extends PolylineController implements deform
 	private _segmentsDescriptor: SegmentsDescriptor;
 
 	constructor(
-		element?: SVGElement,
+		element?: SVGGeometryElement,
 		instructions: stringOrNumber[] = [],
 		type: SVGElementTypes = 'path'
 	) {

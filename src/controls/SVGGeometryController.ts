@@ -1,18 +1,18 @@
-import { Coord, CoordType } from './interfaces';
-import { CoordsToElemAttrs, CoordsToElemAttrsMap } from './coordinates/CoordsToElemAttrs';
+import { Coord, CoordType } from './comps/interfaces';
+import { CoordsToElemAttrs, CoordsToElemAttrsMap } from './comps/coordinates/CoordsToElemAttrs';
 
 let idCounter = 0;
 
-export default abstract class SVGElementController {
+export default abstract class SVGGeometryController {
 	private _id: number;
 	private _type: SVGElementTypes;
 
-	protected element: SVGElement | undefined;
+	protected element: SVGGeometryElement | undefined;
 	private _coords: Coord[] = [];
 
 	private _coordinatesParser: CoordsToElemAttrs;
 
-	constructor(element?: SVGElement, type: SVGElementTypes = 'svg') {
+	constructor(element?: SVGGeometryElement, type: SVGElementTypes = 'svg') {
 		this._id = ++idCounter;
 		this._type = type;
 		this.element = element;
