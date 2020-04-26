@@ -7,12 +7,12 @@ export default abstract class SVGGeometryController {
 	private _id: number;
 	private _type: SVGElementTypes;
 
-	protected element: SVGGeometryElement | undefined;
+	protected element: SVGElement | undefined;
 	private _coords: Coord[] = [];
 
 	private _coordinatesParser: CoordsToElemAttrs;
 
-	constructor(element?: SVGGeometryElement, type: SVGElementTypes = 'svg') {
+	constructor(element?: SVGElement, type: SVGElementTypes = 'svg') {
 		this._id = ++idCounter;
 		this._type = type;
 		this.element = element;

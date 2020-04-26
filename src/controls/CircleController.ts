@@ -3,7 +3,7 @@ import { CoordType } from './comps/interfaces';
 
 export default class CircleController extends SVGGeometryController {
 	/* istanbul ignore next */
-	constructor(element?: SVGGeometryElement, type: SVGElementTypes = 'circle') {
+	constructor(element?: SVGElement, type: SVGElementTypes = 'circle') {
 		super(element, type);
 	}
 

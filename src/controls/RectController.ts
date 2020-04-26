@@ -4,7 +4,7 @@ import { CoordType } from './comps/interfaces';
 
 export default class RectController extends SVGGeometryController {
 	/* istanbul ignore next */
-	constructor(element?: SVGGeometryElement, type: SVGElementTypes = 'rect') {
+	constructor(element?: SVGElement, type: SVGElementTypes = 'rect') {
 		super(element, type);
 	}
 

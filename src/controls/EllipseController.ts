@@ -3,7 +3,7 @@ import { CoordType } from './comps/interfaces';
 
 export default class EllipseController extends SVGGeometryController {
 	/* istanbul ignore next */
-	constructor(element?: SVGGeometryElement, type: SVGElementTypes = 'ellipse') {
+	constructor(element?: SVGElement, type: SVGElementTypes = 'ellipse') {
 		super(element, type);
 	}
 

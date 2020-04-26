@@ -1,26 +1,18 @@
 import { allValuesAssigned } from '../helpers/input_validations';
 import PolylineController from './PolylineController';
-import {
-	CoordType,
-	CubicBezierCoord,
-	QuadraticBezierCoord,
-	deformableSVGController,
-} from './comps/interfaces';
-import SegmentsDescriptor from './comps/descriptors/SegmentsDescriptor';
+import { CoordType, CubicBezierCoord, QuadraticBezierCoord } from './comps/interfaces';
 
-export default class PathController extends PolylineController implements deformableSVGController {
+export default class PathController extends PolylineController {
 	private _instructions: stringOrNumber[];
-	private _segmentsDescriptor: SegmentsDescriptor;
 
 	constructor(
-		element?: SVGGeometryElement,
+		element?: SVGElement,
 		instructions: stringOrNumber[] = [],
 		type: SVGElementTypes = 'path'
 	) {
 		super(element, type);
 		this._instructions = instructions;
 		this.element = element;
-		this._segmentsDescriptor = new SegmentsDescriptor(type);
 	}
 
 	public getInstructions(): stringOrNumber[] {
@@ -34,19 +26,6 @@ export default class PathController extends PolylineController implements deform
 	public clear(updateElement = false) {
 		this._instructions.length = 0;
 		return super.clear(updateElement);
-	}
-
-	public get segmentLengths() {
-		return this._segmentsDescriptor.segmentLengths;
-	}
-
-	public get totalLength() {
-		return this._segmentsDescriptor.totalLength;
-	}
-
-	public calculate() {
-		this._segmentsDescriptor.calculate(this.getCoordsRef());
-		return super.calculate();
 	}
 
 	public closePath() {
