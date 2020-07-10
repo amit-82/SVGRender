@@ -1,3 +1,6 @@
+import SegmentsDescriptor from './descriptors/SegmentsDescriptor';
+import SVGGeometryController from '../SVGGeometryController';
+
 export enum CoordType {
 	Scalar = 'SCALAR',
 	Linear = 'LINEAR',
@@ -34,10 +37,12 @@ export interface lineToAble {
 	lineTo(x: number, y: number): lineToAble;
 }
 
+export interface hasSegmentsDescriptor extends SVGGeometryController {
+	readonly segmentsDescriptor: SegmentsDescriptor;
+}
+
 // deform capabilities
 export interface deformableSVGController {
-	readonly segmentLengths: number[];
-	readonly totalLength: number;
 	addDeformableSegmentIndices(indices: number[]): deformableSVGController;
 	removeDeformableSegmentIndices(indices: number[]): deformableSVGController;
 	clearDeformableSegmentIndices(): deformableSVGController;

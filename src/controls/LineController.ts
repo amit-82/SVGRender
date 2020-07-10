@@ -1,17 +1,18 @@
 import SVGGeometryController from './SVGGeometryController';
-import { Coord, CoordType, lineToAble, deformableSVGController } from './comps/interfaces';
+import { Coord, CoordType, lineToAble, hasSegmentsDescriptor } from './comps/interfaces';
 import SegmentsDescriptor from './comps/descriptors/SegmentsDescriptor';
 
 export default class LineContoller extends SVGGeometryController
-	implements lineToAble, deformableSVGController {
-	private deformableSegmentIndices: Set<number>;
+	implements lineToAble, hasSegmentsDescriptor {
 	private _segmentsDescriptor: SegmentsDescriptor;
 
 	/* istanbul ignore next */
 	constructor(element?: SVGElement, type: SVGElementTypes = 'line') {
 		super(element, type);
-		this.deformableSegmentIndices = new Set<number>();
 		this._segmentsDescriptor = new SegmentsDescriptor(type);
+	}
+	public get segmentsDescriptor(): SegmentsDescriptor {
+		return this._segmentsDescriptor;
 	}
 
 	public lineTo(x: number, y: number) {
@@ -31,21 +32,5 @@ export default class LineContoller extends SVGGeometryController
 	public calculate() {
 		this._segmentsDescriptor.calculate(this.getCoordsRef());
 		return super.calculate();
-	}
-
-	public addDeformableSegmentIndices(indices: number[]): deformableSVGController {
-		throw 'Method not implemented';
-		return this;
-	}
-	public removeDeformableSegmentIndices(indices: number[]): deformableSVGController {
-		throw 'Method not implemented';
-		return this;
-	}
-	public clearDeformableSegmentIndices(): deformableSVGController {
-		throw 'Method not implemented';
-		return this;
-	}
-	public getDeformableSegmentIndices(): Set<number> {
-		return this.deformableSegmentIndices;
 	}
 }
