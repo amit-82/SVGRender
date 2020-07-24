@@ -11,50 +11,66 @@ const {
 
 const svgRoot = document.getElementById('svg');
 
-const pathElem = createSVGElement('path', svgRoot);
-const path = new PathController(pathElem)
-	.moveTo(50, 50)
-	.quadTo(75, 0, 100, 50)
-	.lineTo(100, 100)
-	.cubicTo(75, 10, 75, 10, 50, 150)
-	.closePath()
-	.updateElement();
-
-const lineElem = createSVGElement('line', svgRoot);
-new LineController(lineElem).moveTo(10, 10).lineTo(20, 30).updateElement();
-
+// LINE from 0,0
 const lineElem2 = createSVGElement('line', svgRoot);
-new LineController(lineElem2).lineTo(10, 60).updateElement();
+new LineController(lineElem2).lineTo(40, 100).updateElement();
 
-const polyline = createSVGElement('polyline', svgRoot);
-new PolylineController(polyline)
-	.moveTo(30, 5)
-	.lineTo(40, 35)
-	.lineTo(35, 35)
-	.lineTo(80, 80)
-	.lineTo(35, 80)
-	.updateElement();
+// LINE with moveTo
+const lineElem = createSVGElement('line', svgRoot);
+new LineController(lineElem).moveTo(50, 20).lineTo(70, 200).updateElement();
 
-const polygon = createSVGElement('polygon', svgRoot);
-new PolygonController(polygon)
-	.moveTo(150, 10)
-	.lineTo(200, 40)
-	.lineTo(250, 10)
-	.lineTo(200, 100)
-	.updateElement();
-
+// CIRCLE
 const circle = createSVGElement('circle', svgRoot);
-new CircleController(circle).moveTo(20, 180).setRadius(15).updateElement();
+new CircleController(circle).moveTo(150, 100).setRadius(50).updateElement();
 
+// ELLIPSE
 const ellipse = createSVGElement('ellipse', svgRoot);
-new EllipseController(ellipse).moveTo(50, 180).setRadius(30, 15).updateElement();
+new EllipseController(ellipse).moveTo(250, 100).setRadius(40, 80).updateElement();
 
+// RECTANGLE
 const rect = createSVGElement('rect', svgRoot);
-new RectController(rect).moveTo(250, 160).setDimensions(50, 30).updateElement();
+new RectController(rect).moveTo(310, 25).setDimensions(100, 150).updateElement();
 
+// RECTANGLE with rounded corners
 const rect2 = createSVGElement('rect', svgRoot);
 new RectController(rect2)
-	.moveTo(325, 140)
-	.setDimensions(50, 50)
-	.setCornerRadius(10, 20)
+	.moveTo(430, 25)
+	.setDimensions(100, 150)
+	.setCornerRadius(30, 30)
+	.updateElement();
+
+// POLYLINE
+let shapeX = 10;
+let shapeY = 250;
+const polyline = createSVGElement('polyline', svgRoot);
+new PolylineController(polyline)
+	.moveTo(shapeX, shapeY)
+	.lineTo(shapeX + 50, shapeY)
+	.lineTo(shapeX + 125, shapeY + 150)
+	.lineTo(shapeX, shapeY + 175)
+	.lineTo(shapeX + 125, shapeY + 225)
+	.updateElement();
+
+// POLYGON
+shapeX = 150;
+shapeY = 250;
+const polygon = createSVGElement('polygon', svgRoot);
+new PolygonController(polygon)
+	.moveTo(shapeX, shapeY)
+	.lineTo(shapeX + 150, shapeY + 50)
+	.lineTo(shapeX + 100, shapeY + 150)
+	.lineTo(shapeX + 125, shapeY + 175)
+	.lineTo(shapeX + 50, shapeY + 175)
+	.updateElement();
+
+// PATH
+shapeX = 350;
+shapeY = 250;
+const pathElem = createSVGElement('path', svgRoot);
+new PathController(pathElem)
+	.moveTo(shapeX, shapeY)
+	.quadTo(shapeX + 175, shapeY + 0, shapeX + 200, shapeY + 50)
+	.lineTo(shapeX + 200, shapeY + 250)
+	.cubicTo(shapeX + 75, shapeY + 10, shapeX + 75, shapeY + 10, shapeX + 50, shapeY + 250)
+	.closePath()
 	.updateElement();

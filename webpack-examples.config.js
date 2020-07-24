@@ -2,9 +2,10 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const entries = ['shapes', 'polygon_anim'];
+const exampleSrc = './examples/src/';
 
 const entry = entries.reduce((acc, filename) => {
-	acc[filename] = `./examples/src/${filename}.js`;
+	acc[filename] = `${exampleSrc}${filename}.js`;
 	return acc;
 }, {});
 
@@ -12,7 +13,7 @@ const htmlPlugins = entries.map(
 	filename =>
 		new HtmlWebpackPlugin({
 			inject: true,
-			template: './example/src/_template.html',
+			template: `${exampleSrc}_template.html`,
 			chunks: [filename],
 			filename: `${filename}.html`,
 		})
