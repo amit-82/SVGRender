@@ -9,10 +9,10 @@ import {
 export default class DeformGeoMiddleware implements RenderMiddleware, deformableSVGController {
 	public active: boolean = true;
 	private _controller: hasSegmentsDescriptor | undefined;
-	private deformableSegmentIndices: Set<number>;
+	private _deformableSegmentIndices: Set<number>;
 
 	constructor() {
-		this.deformableSegmentIndices = new Set<number>();
+		this._deformableSegmentIndices = new Set();
 	}
 
 	setController(controller: hasSegmentsDescriptor): SVGControllerMiddleware {
@@ -23,19 +23,33 @@ export default class DeformGeoMiddleware implements RenderMiddleware, deformable
 		throw new Error('Method not implemented.');
 	}
 
-	public addDeformableSegmentIndices(indices: number[]): deformableSVGController {
-		throw 'Method not implemented';
-		return this;
+	public setDeformableSegmentIndices(indices: number | number[]): deformableSVGController {
+		this.clearDeformableSegmentIndices();
+		return this.addDeformableSegmentIndices(indices);
 	}
-	public removeDeformableSegmentIndices(indices: number[]): deformableSVGController {
-		throw 'Method not implemented';
-		return this;
+	public addDeformableSegmentIndices(indices: number | number[]): deformableSVGController {
+		Array.isArray(indices)
+			? indices.forEach(index => this._deformableSegmentIndices.add(index))
+			: this._deformableSegmentIndices.add(indices);
+
+		return (this as unknown) as deformableSVGController;
+	}
+	public removeDeformableSegmentIndices(indices: number | number[]): deformableSVGController {
+		Array.isArray(indices)
+			? indices.forEach(index => this._deformableSegmentIndices.delete(index))
+			: this._deformableSegmentIndices.delete(indices);
+
+		return (this as unknown) as deformableSVGController;
 	}
 	public clearDeformableSegmentIndices(): deformableSVGController {
-		throw 'Method not implemented';
-		return this;
+		this._deformableSegmentIndices.clear();
+		return (this as unknown) as deformableSVGController;
 	}
-	public getDeformableSegmentIndices(): Set<number> {
-		return this.deformableSegmentIndices;
+
+	public get deformableSegmentIndices(): Set<number> {
+		return this._deformableSegmentIndices;
+	}
+	public get controller() {
+		return this._controller;
 	}
 }

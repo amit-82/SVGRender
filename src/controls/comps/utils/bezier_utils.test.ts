@@ -1,5 +1,10 @@
-import { coordLengthCalculators, CoordLengthCalculator, getBezierSegments } from './coords_utils';
-import { CoordType, CubicBezierCoord } from '../interfaces';
+import {
+	coordLengthCalculators,
+	CoordLengthCalculator,
+	getBezierSegments,
+	getPointsOfCoord,
+} from './bezier_utils';
+import { Coord, CoordType, CubicBezierCoord, QuadraticBezierCoord } from '../interfaces';
 import { bezierControlPointOffsetForQuarterCircle } from '../../../helpers/shape_utils';
 
 describe('Test getBezierSegments function', () => {
@@ -89,3 +94,57 @@ describe('Test coordLengthCalculator cubic bezier function', () => {
 });
 
 // TODO: TEST QUAD BEZIER
+
+describe('Test getPointsOfCoord function', () => {
+	test('should get Scalar coord points', () => {
+		const coord: Coord = {
+			type: CoordType.Scalar,
+			x: 5,
+		};
+		expect(getPointsOfCoord(coord)).toEqual([5]);
+	});
+
+	test('should get Linear coord points', () => {
+		const coord: Coord = {
+			type: CoordType.Linear,
+			x: 10,
+			y: 20,
+		};
+		expect(getPointsOfCoord(coord)).toEqual([10, 20]);
+	});
+
+	test('should get Quadratic Bezier coord points', () => {
+		const coord: QuadraticBezierCoord = {
+			type: CoordType.BezierQuadratic,
+			x: 20,
+			y: 10,
+			ctrlX: 30,
+			ctrlY: 40,
+		};
+		expect(getPointsOfCoord(coord)).toEqual([20, 10, 30, 40]);
+	});
+
+	test('should get Cubic Bezier coord points', () => {
+		const coord: CubicBezierCoord = {
+			type: CoordType.BezierCubic,
+			x: 100,
+			y: 50,
+			ctrlX: 25,
+			ctrlY: 12,
+			ctrlX2: 6,
+			ctrlY2: 3,
+		};
+		expect(getPointsOfCoord(coord)).toEqual([100, 50, 25, 12, 6, 3]);
+	});
+
+	test('should throw an error for Mirror Bezier', () => {
+		const coord: Coord = {
+			type: CoordType.BezierMirror,
+			x: 0,
+		};
+
+		expect(() => getPointsOfCoord(coord)).toThrow(
+			'break BezierMirror to coords not implemented'
+		);
+	});
+});

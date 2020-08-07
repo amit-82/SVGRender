@@ -21,6 +21,7 @@ export interface Coord {
 }
 
 export interface QuadraticBezierCoord extends Coord {
+	y: number;
 	ctrlX: number;
 	ctrlY: number;
 	mirrorX?: number;
@@ -28,6 +29,7 @@ export interface QuadraticBezierCoord extends Coord {
 }
 
 export interface CubicBezierCoord extends QuadraticBezierCoord {
+	y: number;
 	ctrlX2: number;
 	ctrlY2: number;
 }
@@ -43,10 +45,10 @@ export interface hasSegmentsDescriptor extends SVGGeometryController {
 
 // deform capabilities
 export interface deformableSVGController {
-	addDeformableSegmentIndices(indices: number[]): deformableSVGController;
-	removeDeformableSegmentIndices(indices: number[]): deformableSVGController;
+	addDeformableSegmentIndices(indices: number | number[]): deformableSVGController;
+	removeDeformableSegmentIndices(indices: number | number[]): deformableSVGController;
 	clearDeformableSegmentIndices(): deformableSVGController;
-	getDeformableSegmentIndices(): Set<number>;
+	readonly deformableSegmentIndices: Set<number>;
 }
 
 export interface canBeIntersectedByLine extends deformableSVGController {

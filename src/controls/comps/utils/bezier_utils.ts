@@ -1,6 +1,6 @@
 import { createProxy } from 'src/helpers/object_utils';
 import { getDistance } from 'src/helpers/shape_utils';
-import { Coord, CubicBezierCoord, Point } from '../interfaces';
+import { Coord, CubicBezierCoord, Point, CoordType, QuadraticBezierCoord } from '../interfaces';
 
 /**
  * @description return the X or Y value of an interpolated point on a bezier curve
@@ -103,3 +103,41 @@ export const coordLengthCalculators = createProxy<CoordLengthCalculator>(
 		throw `CoordType ${coord.type} is not implmented`;
 	}
 );
+
+const arr1: number[] = new Array(1);
+const arr2: number[] = new Array(2);
+const arr4: number[] = new Array(4);
+const arr6: number[] = new Array(6);
+type CoordTyped = { [key in CoordType]: (coord: Coord) => number[] };
+const getPointsCoordHandlerMap: CoordTyped = {
+	[CoordType.Scalar]: (coord: Coord) => {
+		arr1[0] = coord.x;
+		return arr1;
+	},
+	[CoordType.Linear]: (coord: Coord) => {
+		arr2[0] = coord.x;
+		arr2[1] = coord.y!;
+		return arr2;
+	},
+	[CoordType.BezierQuadratic]: (coord: Coord) => {
+		arr4[0] = (coord as QuadraticBezierCoord).x;
+		arr4[1] = (coord as QuadraticBezierCoord).y;
+		arr4[2] = (coord as QuadraticBezierCoord).ctrlX;
+		arr4[3] = (coord as QuadraticBezierCoord).ctrlY;
+		return arr4;
+	},
+	[CoordType.BezierCubic]: (coord: Coord) => {
+		arr6[0] = (coord as CubicBezierCoord).x;
+		arr6[1] = (coord as CubicBezierCoord).y;
+		arr6[2] = (coord as CubicBezierCoord).ctrlX;
+		arr6[3] = (coord as CubicBezierCoord).ctrlY;
+		arr6[4] = (coord as CubicBezierCoord).ctrlX2;
+		arr6[5] = (coord as CubicBezierCoord).ctrlY2;
+		return arr6;
+	},
+	[CoordType.BezierMirror]: () => {
+		throw 'break BezierMirror to coords not implemented';
+	},
+};
+export const getPointsOfCoord = (coord: Coord): number[] =>
+	getPointsCoordHandlerMap[coord.type](coord);

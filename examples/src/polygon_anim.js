@@ -1,13 +1,4 @@
-const {
-	PathController,
-	createSVGElement,
-	LineController,
-	PolylineController,
-	PolygonController,
-	CircleController,
-	EllipseController,
-	RectController,
-} = require('../../dist/bundle');
+const { createSVGElement, PolygonController } = require('../../dist/bundle');
 
 const svgRoot = document.getElementById('svg');
 
