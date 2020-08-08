@@ -28,7 +28,7 @@ function getPointXorYOnBezier(
 	);
 }
 
-export function getBezierSegments(c1: Coord, c2: Coord, segmentsCount = 50): Point[] {
+export function getBezierCubicSegments(c1: Coord, c2: Coord, segmentsCount = 50): Point[] {
 	const sectionDelta = 1 / (segmentsCount - 1);
 	const coordsAlongCurve: Point[] = [];
 	for (let i = 0; i < segmentsCount; i++) {
@@ -52,8 +52,42 @@ export function getBezierSegments(c1: Coord, c2: Coord, segmentsCount = 50): Poi
 	return coordsAlongCurve;
 }
 
-function getBezierLength(c1: Coord, c2: Coord, segmentsCount = 50): number {
-	const pointsAlongCurve: Point[] = getBezierSegments(c1, c2, segmentsCount);
+export function getBezierQuadraticSegments(
+	c1: Coord,
+	c2: QuadraticBezierCoord,
+	segmentsCount = 50,
+	pxTolerance = 2
+): Point[] {
+	const { x: Ax, y: Ay } = c1;
+	const { ctrlX: Bx, ctrlY: By, x: Cx, y: Cy } = c2;
+	let deltaBAx: number = Bx - Ax;
+	let deltaCBx: number = Cx - Bx;
+	let deltaBAy: number = By - Ay!;
+	let deltaCBy: number = Cy - By;
+	let ax, ay;
+	let lastX = -10000;
+	let lastY = -10000;
+	let pts: Point[] = [{ x: Ax, y: Ay! }];
+	for (let i = 1; i < segmentsCount - 1; i++) {
+		let t = i / segmentsCount;
+		ax = Ax + deltaBAx * t;
+		ay = Ay! + deltaBAy * t;
+		let x = ax + (Bx + deltaCBx * t - ax) * t;
+		let y = ay + (By + deltaCBy * t - ay) * t;
+		let dx = x - lastX;
+		let dy = y - lastY;
+		if (dx * dx + dy * dy > pxTolerance) {
+			pts.push({ x: x, y: y });
+			lastX = x;
+			lastY = y;
+		}
+	}
+	pts.push({ x: Cx, y: Cy });
+	return pts;
+}
+
+function getBezierCubicLength(c1: Coord, c2: Coord, segmentsCount = 50): number {
+	const pointsAlongCurve: Point[] = getBezierCubicSegments(c1, c2, segmentsCount);
 	let lengthSum = 0;
 
 	for (let i = 1; i < pointsAlongCurve.length; i++) {
@@ -83,7 +117,7 @@ function bezierMirror(c1: Coord, c2: Coord, c3?:Coord, segmentsCount = 50):numbe
 	}
 
 	// no pre-previous coord or pre-previous not of continues type
-	return getBezierLength(c1, c2, segmentsCount);
+	return getBezierCubicLength(c1, c2, segmentsCount);
 }
 */
 export type CoordLengthCalculator = (
@@ -96,7 +130,7 @@ export const coordLengthCalculators = createProxy<CoordLengthCalculator>(
 	{
 		LINEAR: (c1: Coord, c2: Coord) => getDistance(c1.x, c1.y || 0, c2.x, c2.y || 0),
 		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) =>
-		BEZIER_CUBIC: getBezierLength,
+		BEZIER_CUBIC: getBezierCubicLength,
 		//QUADRATIC:
 	},
 	(prevCoord: Coord, coord: Coord) => {

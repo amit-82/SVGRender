@@ -1,15 +1,62 @@
 import {
 	coordLengthCalculators,
 	CoordLengthCalculator,
-	getBezierSegments,
+	getBezierCubicSegments,
+	getBezierQuadraticSegments,
 	getPointsOfCoord,
 } from './bezier_utils';
 import { Coord, CoordType, CubicBezierCoord, QuadraticBezierCoord } from '../interfaces';
 import { bezierControlPointOffsetForQuarterCircle } from '../../../helpers/shape_utils';
 
-describe('Test getBezierSegments function', () => {
+describe('Test getBezierQuadraticSegments function', () => {
+	const segmentsCount = 10;
+	const segments = getBezierQuadraticSegments(
+		{ type: CoordType.Linear, x: 0, y: 0 },
+		{
+			type: CoordType.BezierQuadratic,
+			ctrlX: 0,
+			ctrlY: 50,
+			x: 0,
+			y: 100,
+		} as QuadraticBezierCoord,
+		segmentsCount
+	);
+	test("should return segments of 'stright line' quadratic bezier with correct count", () => {
+		expect(segments).toHaveLength(segmentsCount);
+	});
+	test("first, last and center points should be correct for 'stright line' stright line", () => {
+		expect(segments[0]).toEqual({ x: 0, y: 0 });
+		expect(segments[segmentsCount - 1]).toEqual({ x: 0, y: 100 });
+		expect(segments[Math.floor(segmentsCount / 2)]).toEqual({ x: 0, y: 50 });
+	});
+
+	const segmentsCount2 = 20;
+	const segments2 = getBezierQuadraticSegments(
+		{ type: CoordType.Linear, x: 20, y: 50 },
+		{
+			type: CoordType.BezierQuadratic,
+			ctrlX: 100,
+			ctrlY: 80,
+			x: 75,
+			y: 110,
+		} as QuadraticBezierCoord,
+		segmentsCount2
+	);
+	test('should return segments of quadratic bezier with correct count', () => {
+		expect(segments2).toHaveLength(segmentsCount2);
+	});
+	test('first, last and center points should be correct', () => {
+		expect(segments2[0]).toEqual({ x: 20, y: 50 });
+		expect(segments2[segmentsCount2 - 1]).toEqual({ x: 75, y: 110 });
+		expect(segments2[Math.floor(segmentsCount2 / 2)]).toEqual({ x: 73.75, y: 80 });
+	});
+});
+
+// TODO: create and test getBezierQuadraticLength
+
+describe('Test getBezierCubicSegments function', () => {
 	const segmentsCount = 11;
-	const segments = getBezierSegments(
+	const segments = getBezierCubicSegments(
 		{ type: CoordType.Linear, x: 0, y: 0 },
 		{
 			type: CoordType.BezierCubic,
@@ -22,7 +69,7 @@ describe('Test getBezierSegments function', () => {
 		} as CubicBezierCoord,
 		segmentsCount
 	);
-	test('should return segments of bezier with correct count', () => {
+	test('should return segments of cubic bezier with correct count', () => {
 		expect(segments).toHaveLength(segmentsCount);
 	});
 	test('first, last and center points should be correct', () => {
