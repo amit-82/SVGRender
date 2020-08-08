@@ -88,7 +88,7 @@ export default class SegmentsDescriptor {
 			// if we are in first coord, it is because firstCoordIsMoveTo is true and prev coord is 0,0
 			if (coordIndex > 0) {
 				const prevCoord: Coord = coords[coordIndex - 1];
-				const segmentLength: number = lengthCalculator(coord, prevCoord);
+				const segmentLength: number = lengthCalculator(prevCoord, coord);
 				this._segmentLengths.push(segmentLength);
 				this._totalLength += segmentLength;
 			}

@@ -58,7 +58,7 @@ describe('Test SegmentDescriptor', () => {
 	const segDesc: SegmentsDescriptor = new SegmentsDescriptor('path');
 
 	test.each([
-		[pathWithCubicBezier, { x: 133, y: 175 }, 10],
+		[pathWithCubicBezier, { x: 133, y: 175 }, 764],
 		[simpleLine, { x: 5, y: 0 }, 10],
 		[simpleLine2, { x: 100, y: 100 }, 300],
 		[rect, { x: 100, y: 60 }, 400],
@@ -67,8 +67,6 @@ describe('Test SegmentDescriptor', () => {
 		segDesc.calculate(coords);
 		expect(segDesc.center!.x).toBeCloseTo(center.x, 0.1);
 		expect(segDesc.center!.y).toBeCloseTo(center.y, 0.1);
-
-		// TODO: length of path with cubic bazier return NAN?!
-		//expect(segDesc.totalLength).toEqual(length);
+		expect(segDesc.totalLength).toBeCloseTo(length, 0.1);
 	});
 });
