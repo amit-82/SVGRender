@@ -4,6 +4,7 @@ import {
 	getBezierCubicSegments,
 	getBezierQuadraticSegments,
 	getPointsOfCoord,
+	getQuadraticBezierLength,
 } from './bezier_utils';
 import { Coord, CoordType, CubicBezierCoord, QuadraticBezierCoord } from '../interfaces';
 import { bezierControlPointOffsetForQuarterCircle } from '../../../helpers/shape_utils';
@@ -53,6 +54,29 @@ describe('Test getBezierQuadraticSegments function', () => {
 });
 
 // TODO: create and test getBezierQuadraticLength
+describe('Test getQuadraticBezierLength function', () => {
+	const tests = [
+		[
+			5,
+			{ x: 5, y: 20 } as Coord,
+			{ ctrlX: 7, ctrlY: 20, x: 10, y: 20 } as QuadraticBezierCoord,
+		],
+		[
+			112.28,
+			{ x: 0, y: 0 } as Coord,
+			{ ctrlX: 15, ctrlY: 50, x: 50, y: 100 } as QuadraticBezierCoord,
+		],
+	];
+	test.each(tests)(
+		'should have length %j when start at %j and quadratic curve to %j',
+		(length, c1, c2) => {
+			expect(getQuadraticBezierLength(c1 as Coord, c2 as QuadraticBezierCoord)).toBeCloseTo(
+				length as number,
+				1
+			);
+		}
+	);
+});
 
 describe('Test getBezierCubicSegments function', () => {
 	const segmentsCount = 11;

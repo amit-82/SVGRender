@@ -86,7 +86,31 @@ export function getBezierQuadraticSegments(
 	return pts;
 }
 
-function getBezierCubicLength(c1: Coord, c2: Coord, segmentsCount = 50): number {
+export function getQuadraticBezierLength(coord1: Coord, coord2: QuadraticBezierCoord) {
+	const { x: x1, y: y1 } = coord1;
+	const { ctrlX: x2, ctrlY: y2, x: x3, y: y3 } = coord2;
+	let a: number;
+	let b: number;
+	let c: number;
+	let u: number;
+	const v1x = x2 * 2;
+	const v1y = y2 * 2;
+	const d = x1 - v1x + x3;
+	const d1 = y1! - v1y + y3;
+	const e = v1x - 2 * x1;
+	const e1 = v1y - 2 * y1!;
+	let c1 = (a = 4 * (d * d + d1 * d1));
+	c1 += b = 4 * (d * e + d1 * e1);
+	c1 += c = e * e + e1 * e1;
+	c1 = 2 * Math.sqrt(c1);
+	const a1 = 2 * a * (u = Math.sqrt(a));
+	const u1 = b / u;
+	a = 4 * c * a - b * b;
+	c = 2 * Math.sqrt(c);
+	return (a1 * c1 + u * b * (c1 - c) + a * Math.log((2 * u + u1 + c1) / (u1 + c))) / (4 * a1);
+}
+
+export function getBezierCubicLength(c1: Coord, c2: Coord, segmentsCount = 50): number {
 	const pointsAlongCurve: Point[] = getBezierCubicSegments(c1, c2, segmentsCount);
 	let lengthSum = 0;
 
