@@ -12,4 +12,9 @@ export default class CircleController extends SVGGeometryController {
 		this.getCoordsRef()[1] = { type: CoordType.Scalar, x: radius };
 		return this;
 	}
+
+	public moveTo(x: number, y: number) {
+		this.getCoordsRef()[0] = { x, y, type: CoordType.Linear };
+		return this;
+	}
 }

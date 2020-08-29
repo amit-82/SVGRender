@@ -99,4 +99,8 @@ export default abstract class SVGGeometryController {
 		this.appendCoord(coord, true);
 		return this;
 	}
+
+	public getElement() {
+		return this.element;
+	}
 }
