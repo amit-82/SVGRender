@@ -52,6 +52,10 @@ export default class SegmentsDescriptor {
 		return this._center;
 	}
 
+	public get simpilfied() {
+		return this._simplfied;
+	}
+
 	/**
 	 * Should be called only be the coupled SVGElementController
 	 * @param coords
