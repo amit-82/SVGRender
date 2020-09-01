@@ -1,5 +1,5 @@
-import { createProxy } from "./helpers/object_utils";
-import { identityFn } from "./helpers/function_utils";
+import { createProxy } from './helpers/object_utils';
+import { identityFn } from './helpers/function_utils';
 
 /* istanbul ignore next */
 const getParentFunctionByType = createProxy<Function>(
@@ -10,56 +10,56 @@ const getParentFunctionByType = createProxy<Function>(
 );
 
 export default function createSVGElement(
-	type: "svg",
+	type: 'svg',
 	svgParent?: optionalSVGOrString,
 	id?: optionalString,
 	classNames?: optionalString
 ): SVGElement;
 
 export default function createSVGElement(
-	type: "circle",
+	type: 'circle',
 	svgParent?: optionalSVGOrString,
 	id?: optionalString,
 	classNames?: optionalString
 ): SVGCircleElement;
 
 export default function createSVGElement(
-	type: "ellipse",
+	type: 'ellipse',
 	svgParent?: optionalSVGOrString,
 	id?: optionalString,
 	classNames?: optionalString
 ): SVGEllipseElement;
 
 export default function createSVGElement(
-	type: "line",
+	type: 'line',
 	svgParent?: optionalSVGOrString,
 	id?: optionalString,
 	classNames?: optionalString
 ): SVGLineElement;
 
 export default function createSVGElement(
-	type: "path",
+	type: 'path',
 	svgParent?: optionalSVGOrString,
 	id?: optionalString,
 	classNames?: optionalString
 ): SVGPathElement;
 
 export default function createSVGElement(
-	type: "polygon",
+	type: 'polygon',
 	svgParent?: optionalSVGOrString,
 	id?: optionalString,
 	classNames?: optionalString
 ): SVGPolygonElement;
 
 export default function createSVGElement(
-	type: "polyline",
+	type: 'polyline',
 	svgParent?: optionalSVGOrString,
 	id?: optionalString,
 	classNames?: optionalString
 ): SVGPolylineElement;
 
 export default function createSVGElement(
-	type: "rect",
+	type: 'rect',
 	svgParent?: optionalSVGOrString,
 	id?: optionalString,
 	classNames?: optionalString
@@ -71,12 +71,11 @@ export default function createSVGElement(
 	id?: optionalString,
 	classNames?: optionalString
 ): SVGElement {
-	const elem = document.createElementNS("http://www.w3.org/2000/svg", type);
+	const elem = document.createElementNS('http://www.w3.org/2000/svg', type);
 
 	id && (elem.id = id);
-	classNames && elem.setAttribute("class", classNames);
-	svgParent &&
-		getParentFunctionByType[typeof svgParent](svgParent).appendChild(elem);
+	classNames && elem.setAttribute('class', classNames);
+	svgParent && getParentFunctionByType[typeof svgParent](svgParent).appendChild(elem);
 
 	return elem;
 }

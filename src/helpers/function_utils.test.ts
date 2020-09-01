@@ -1,9 +1,9 @@
-import { identityFn, emptyFn } from "./function_utils";
+import { identityFn, emptyFn } from './function_utils';
 
-test("Test identityFn", () => {
+test('Test identityFn', () => {
 	expect(identityFn(5)).toBe(5);
 });
 
-test("Test EmptyFn", () => {
+test('Test EmptyFn', () => {
 	expect(emptyFn()).toBeUndefined();
 });

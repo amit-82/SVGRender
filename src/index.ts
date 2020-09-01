@@ -1,4 +1,4 @@
-import createSVGElement from "./createSVGElement";
+import createSVGElement from './createSVGElement';
 import {
 	LineController,
 	PathController,
@@ -7,7 +7,7 @@ import {
 	CircleController,
 	EllipseController,
 	RectController,
-} from "./controls";
+} from './controls';
 
 export {
 	createSVGElement,

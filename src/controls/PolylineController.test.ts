@@ -1,8 +1,8 @@
-import PolylineController from "./PolylineController";
-import { CoordType } from "./comps/interfaces";
+import PolylineController from './PolylineController';
+import { CoordType } from './comps/interfaces';
 
-describe("Test Polyline", () => {
-	test("Test moveTo followed by lineTo", () => {
+describe('Test Polyline', () => {
+	test('Test moveTo followed by lineTo', () => {
 		const polyLine = new PolylineController();
 		polyLine.moveTo(50, 10).lineTo(60, 90);
 		expect(polyLine.getCoords()).toEqual([
@@ -11,7 +11,7 @@ describe("Test Polyline", () => {
 		]);
 	});
 
-	test("Test lineTo without preceding moveTo", () => {
+	test('Test lineTo without preceding moveTo', () => {
 		const polyLine = new PolylineController();
 		polyLine.lineTo(60, 90);
 		expect(polyLine.getCoords()).toEqual([

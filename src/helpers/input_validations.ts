@@ -1,4 +1,4 @@
-import { createProxy } from "./object_utils";
+import { createProxy } from './object_utils';
 
 const assignedTests = createProxy<Function>(
 	{

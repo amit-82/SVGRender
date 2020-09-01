@@ -1,16 +1,13 @@
-import { createProxy } from "src/helpers/object_utils";
-import { valueAssigned } from "src/helpers/input_validations";
-import { Coord, CoordType } from "../interfaces";
+import { createProxy } from 'src/helpers/object_utils';
+import { valueAssigned } from 'src/helpers/input_validations';
+import { Coord, CoordType } from '../interfaces';
 
-export abstract class CoordinatesParser {
+export abstract class CoordsToElemAttrs {
 	public abstract validateCoordinates(coords: Coord[]): boolean;
-	public abstract createElementAttrs(
-		coords: Coord[],
-		instructions?: stringOrNumber[]
-	): any;
+	public abstract createElementAttrs(coords: Coord[], instructions?: stringOrNumber[]): any;
 }
 
-class StrictOrderProps extends CoordinatesParser {
+class StrictOrderProps extends CoordsToElemAttrs {
 	private orderedProps: string[];
 
 	constructor(orderedProps: string[]) {
@@ -26,8 +23,7 @@ class StrictOrderProps extends CoordinatesParser {
 
 		// validate when last coord should not have seconds value ('y' member should be undefined)
 		return (
-			coords.length === Math.ceil(coordsCount) &&
-			!valueAssigned(coords[coords.length - 1].y)
+			coords.length === Math.ceil(coordsCount) && !valueAssigned(coords[coords.length - 1].y)
 		);
 	}
 
@@ -37,10 +33,7 @@ class StrictOrderProps extends CoordinatesParser {
 		for (let i = 0; i < coords.length; i++) {
 			const coord = coords[i];
 			attrs[this.orderedProps[propIndex]] = coord.x;
-			if (
-				coord.type !== CoordType.Scalar &&
-				propIndex + 1 < this.orderedProps.length
-			) {
+			if (coord.type !== CoordType.Scalar && propIndex + 1 < this.orderedProps.length) {
 				attrs[this.orderedProps[++propIndex]] = coord.y;
 			}
 			++propIndex;
@@ -49,7 +42,7 @@ class StrictOrderProps extends CoordinatesParser {
 	}
 }
 
-class UnlimitedPoints extends CoordinatesParser {
+class UnlimitedPoints extends CoordsToElemAttrs {
 	constructor() {
 		super();
 	}
@@ -68,29 +61,26 @@ class UnlimitedPoints extends CoordinatesParser {
 	}
 }
 
-class PathCoordiantesParser extends CoordinatesParser {
+class PathCoordiantesParser extends CoordsToElemAttrs {
 	constructor() {
 		super();
 	}
 	public validateCoordinates(): boolean {
 		return true;
 	}
-	public createElementAttrs(
-		_: Coord[],
-		instructions: stringOrNumber[] = []
-	): any {
-		return { d: instructions.join(" ") };
+	public createElementAttrs(_: Coord[], instructions: stringOrNumber[] = []): any {
+		return { d: instructions.join(' ') };
 	}
 }
 
 const unlimitedPoints = new UnlimitedPoints();
 
-export const CoordinatesParsers = createProxy<CoordinatesParser>({
-	circle: new StrictOrderProps(["cx", "cy", "r"]),
-	ellipse: new StrictOrderProps(["cx", "cy", "rx", "ry"]),
-	line: new StrictOrderProps(["x1", "y1", "x2", "y2"]),
+export const CoordsToElemAttrsMap = createProxy<CoordsToElemAttrs>({
+	circle: new StrictOrderProps(['cx', 'cy', 'r']),
+	ellipse: new StrictOrderProps(['cx', 'cy', 'rx', 'ry']),
+	line: new StrictOrderProps(['x1', 'y1', 'x2', 'y2']),
 	path: new PathCoordiantesParser(),
 	polygon: unlimitedPoints,
 	polyline: unlimitedPoints,
-	rect: new StrictOrderProps(["x", "y", "width", "height", "rx", "ry"]),
+	rect: new StrictOrderProps(['x', 'y', 'width', 'height', 'rx', 'ry']),
 });

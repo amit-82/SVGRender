@@ -1,9 +1,9 @@
-import SVGElementController from "./comps/SVGElementController";
-import { CoordType } from "./comps/interfaces";
+import SVGGeometryController from './SVGGeometryController';
+import { CoordType } from './comps/interfaces';
 
-export default class EllipseController extends SVGElementController {
+export default class EllipseController extends SVGGeometryController {
 	/* istanbul ignore next */
-	constructor(element?: SVGElement, type: SVGElementTypes = "ellipse") {
+	constructor(element?: SVGElement, type: SVGElementTypes = 'ellipse') {
 		super(element, type);
 	}
 

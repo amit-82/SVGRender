@@ -1,25 +1,24 @@
-import { Coord, CoordType } from './interfaces';
-import { CoordinatesParser, CoordinatesParsers } from './coordinates/CoordinatesParser';
-import SegmentsDescriptor from './descriptors/SegmentsDescriptor';
+import { Coord, CoordType } from './comps/interfaces';
+import { CoordsToElemAttrs, CoordsToElemAttrsMap } from './comps/coordinates/CoordsToElemAttrs';
+import { RenderMiddleware } from './comps/middelwares/render-middlewares/interfaces';
 
 let idCounter = 0;
 
-export default abstract class SVGElementController {
+export default abstract class SVGGeometryController {
 	private _id: number;
 	private _type: SVGElementTypes;
-	private _segmentsDescriptor: SegmentsDescriptor;
 
 	protected element: SVGElement | undefined;
 	private _coords: Coord[] = [];
 
-	private _coordinatesParser: CoordinatesParser;
+	private _coordinatesParser: CoordsToElemAttrs;
+	public renderMiddleware: RenderMiddleware[] = [];
 
 	constructor(element?: SVGElement, type: SVGElementTypes = 'svg') {
 		this._id = ++idCounter;
 		this._type = type;
 		this.element = element;
-		this._coordinatesParser = CoordinatesParsers[type];
-		this._segmentsDescriptor = new SegmentsDescriptor();
+		this._coordinatesParser = CoordsToElemAttrsMap[type];
 	}
 
 	get id() {
@@ -35,7 +34,17 @@ export default abstract class SVGElementController {
 	}
 
 	public getAttributesForElement() {
-		return this._coordinatesParser.createElementAttrs(this._coords);
+		const reduceRenderMiddlewareCoordsUpdate = (
+			acc: Coord[],
+			middleware: RenderMiddleware
+		): Coord[] => {
+			return middleware.active ? middleware.updateCoords(acc) : acc;
+		};
+
+		const coords: Coord[] = this.renderMiddleware.reduce(reduceRenderMiddlewareCoordsUpdate, [
+			...this._coords,
+		]);
+		return this._coordinatesParser.createElementAttrs(coords);
 	}
 
 	public updateElement() {
@@ -45,14 +54,8 @@ export default abstract class SVGElementController {
 				this.element!.setAttribute(key, value as string);
 			});
 		}
-	}
 
-	protected get segmentLengths() {
-		return this._segmentsDescriptor.segmentLengths;
-	}
-
-	protected get totalLength() {
-		return this._segmentsDescriptor.totalLength;
+		return this;
 	}
 
 	public getCoords(): Coord[] {
@@ -66,8 +69,8 @@ export default abstract class SVGElementController {
 	/**
 	 * @description must be called after manipulation (or a series of manipulation) of the shape that may effect size
 	 */
-	protected calculate(): void {
-		this._segmentsDescriptor.calculate(this._coords);
+	public calculate() {
+		return this;
 	}
 
 	protected appendCoord(coord: Coord, isMoveTo: boolean = false) {
@@ -79,6 +82,14 @@ export default abstract class SVGElementController {
 		this._coordinatesParser.validateCoordinates(this._coords);
 	}
 
+	public clear(updateElement = false) {
+		this._coords.length = 0;
+		if (updateElement) {
+			this.updateElement();
+		}
+		return this;
+	}
+
 	protected validateOrInsertFirstCoordZeroZero() {
 		this._coords.length === 0 && this._coords.push({ type: CoordType.Linear, x: 0, y: 0 });
 	}
@@ -87,5 +98,9 @@ export default abstract class SVGElementController {
 		const coord: Coord = { type: CoordType.Linear, x, y };
 		this.appendCoord(coord, true);
 		return this;
+	}
+
+	public getElement() {
+		return this.element;
 	}
 }

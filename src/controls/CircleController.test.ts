@@ -1,13 +1,13 @@
-import CircleController from "./CircleController";
-import { CoordType } from "./comps/interfaces";
+import CircleController from './CircleController';
+import { CoordType } from './comps/interfaces';
 
-describe("Test CircleController", () => {
+describe('Test CircleController', () => {
 	let circle: CircleController;
 	beforeEach(() => {
 		circle = new CircleController();
 	});
 
-	test("should render circle without moveTo at 0,0", () => {
+	test('should render circle without moveTo at 0,0', () => {
 		circle.setRadius(10);
 		expect(circle.getCoords()).toEqual([
 			{ type: CoordType.Linear, x: 0, y: 0 },
@@ -15,7 +15,7 @@ describe("Test CircleController", () => {
 		]);
 	});
 
-	test("should render circle moveTo at 20,30", () => {
+	test('should render circle moveTo at 20,30', () => {
 		circle.moveTo(20, 30);
 		circle.setRadius(15);
 		expect(circle.getCoords()).toEqual([
