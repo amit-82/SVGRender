@@ -1,4 +1,4 @@
-import { CircleController, PolylineController } from 'src/controls/index';
+import { CircleController, PathController, PolylineController } from 'src/controls/index';
 import createSVGElement from '../../src/createSVGElement';
 
 const svg: SVGElement = (document.getElementById('svg') as unknown) as SVGElement;
@@ -22,7 +22,19 @@ const mouseTracker = new CircleController(createSVGElement('circle', svg)).setRa
 mouseTracker.getElement()?.style.setProperty('fill', '#f00');
 
 svg.addEventListener('mousemove', e => {
-	console.log('!', e);
 	mouseTracker.moveTo(e.offsetX, e.offsetY);
+	console.log('intersection: ', polyline.getBorderIntersection({ x: e.offsetX, y: e.offsetY }));
 	mouseTracker.updateElement();
 });
+/*
+const e2 = createSVGElement('path', svg);
+const path = new PathController(e2);
+path.moveTo(200, 50).lineTo(300, 50).cubicTo(400, 50, 450, 100, 500, 150).lineTo(300, 150);
+path.updateElement();
+const e2c = new CircleController(createSVGElement('circle', svg));
+
+path.calculate();
+e2c.setRadius(2)
+	.moveTo(path.segmentsDescriptor.center!.x, path.segmentsDescriptor.center!.y)
+	.updateElement();
+*/

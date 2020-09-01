@@ -17,11 +17,20 @@ const shouldIgnoreFirstMoveToCoord = (type: SVGElementTypes, coords: Coord[]): b
 */
 const coord0: Coord = { x: 0, y: 0, type: CoordType.Linear };
 
+export interface Simplfied {
+	// array of x, y, x, y
+	coords?: number[];
+}
+
 export default class SegmentsDescriptor {
 	private _svgElemType: SVGElementTypes;
 	private _segmentLengths: number[] = [];
 	private _totalLength: number = 0;
 	private _center: Point | undefined;
+
+	private _simplfied: Simplfied = {
+		//private _simplfiedCoords?: number[];
+	};
 
 	constructor(elementType: SVGElementTypes) {
 		this._svgElemType = elementType;
@@ -52,6 +61,9 @@ export default class SegmentsDescriptor {
 		this._segmentLengths.length = 0;
 		// reset data
 		this._totalLength = 0;
+
+		// reset simplfiedCoords;
+		this._simplfied.coords = [];
 
 		let xSum = 0;
 		let ySum = 0;
@@ -88,22 +100,28 @@ export default class SegmentsDescriptor {
 			// if we are in first coord, it is because firstCoordIsMoveTo is true and prev coord is 0,0
 			if (coordIndex > 0) {
 				const prevCoord: Coord = coords[coordIndex - 1];
-				const segmentLength: number = lengthCalculator(prevCoord, coord);
+				const segmentLength: number = lengthCalculator(
+					prevCoord,
+					coord,
+					this._simplfied.coords
+				);
 				this._segmentLengths.push(segmentLength);
 				this._totalLength += segmentLength;
 			}
 		}
 
-		// calculate totalLength of shape and fill segment length
-		coords.forEach((coord, index) => {});
+		console.log('NEW PNTS', this._simplfied.coords);
 
 		// calculate center point
-
-		//const divideBy = lastCoordEqualFirst ? coords.length - 1 : coords.length;
-
 		this._center = {
 			x: xSum / divideBy,
 			y: ySum / divideBy,
 		};
+	}
+
+	public getBorderIntersection(coords: Coord[], p1: Point, shapeAnchor?: Point): Point | false {
+		shapeAnchor = shapeAnchor || this._center;
+
+		return false;
 	}
 }

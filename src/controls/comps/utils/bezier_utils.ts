@@ -110,11 +110,22 @@ export function getQuadraticBezierLength(coord1: Coord, coord2: QuadraticBezierC
 	return (a1 * c1 + u * b * (c1 - c) + a * Math.log((2 * u + u1 + c1) / (u1 + c))) / (4 * a1);
 }
 
-export function getBezierCubicLength(c1: Coord, c2: Coord, segmentsCount = 50): number {
+export function getBezierCubicLength(
+	c1: Coord,
+	c2: Coord,
+	segmentsCount = 50,
+	arrayForNewCoords?: number[]
+): number {
 	const pointsAlongCurve: Point[] = getBezierCubicSegments(c1, c2, segmentsCount);
 	let lengthSum = 0;
 
 	for (let i = 1; i < pointsAlongCurve.length; i++) {
+		if (arrayForNewCoords) {
+			arrayForNewCoords.push(pointsAlongCurve[i - 1].x);
+			arrayForNewCoords.push(pointsAlongCurve[i - 1].y);
+			arrayForNewCoords.push(pointsAlongCurve[i].x);
+			arrayForNewCoords.push(pointsAlongCurve[i].y);
+		}
 		lengthSum += getDistance(
 			pointsAlongCurve[i - 1].x,
 			pointsAlongCurve[i - 1].y,
@@ -147,14 +158,22 @@ function bezierMirror(c1: Coord, c2: Coord, c3?:Coord, segmentsCount = 50):numbe
 export type CoordLengthCalculator = (
 	coord: Coord,
 	previousCoord: Coord,
-	beforePreviousCoord?: Coord
+	//beforePreviousCoord?: Coord,
+	newCoords?: number[]
 ) => number | never;
 
 export const coordLengthCalculators = createProxy<CoordLengthCalculator>(
 	{
-		LINEAR: (c1: Coord, c2: Coord) => getDistance(c1.x, c1.y || 0, c2.x, c2.y || 0),
+		LINEAR: (c1: Coord, c2: Coord, newCoords?: number[]) => {
+			if (newCoords) {
+				newCoords.push(c2.x);
+				newCoords.push(c2.y!);
+			}
+			return getDistance(c1.x, c1.y || 0, c2.x, c2.y || 0);
+		},
 		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) =>
-		BEZIER_CUBIC: getBezierCubicLength,
+		BEZIER_CUBIC: (c1: Coord, c2: Coord, newCoords?: number[]) =>
+			getBezierCubicLength(c1, c2, 50, newCoords),
 		//QUADRATIC:
 	},
 	(prevCoord: Coord, coord: Coord) => {

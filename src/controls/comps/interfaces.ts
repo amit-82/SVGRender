@@ -41,6 +41,7 @@ export interface lineToAble {
 
 export interface hasSegmentsDescriptor extends SVGGeometryController {
 	readonly segmentsDescriptor: SegmentsDescriptor;
+	getBorderIntersection: (p1: Point, shapeAnchor?: Point | undefined) => false | Point;
 }
 
 // deform capabilities

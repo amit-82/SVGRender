@@ -1,8 +1,9 @@
 import SVGGeometryController from './SVGGeometryController';
-import { Coord, CoordType, lineToAble, hasSegmentsDescriptor } from './comps/interfaces';
+import { Coord, CoordType, lineToAble, hasSegmentsDescriptor, Point } from './comps/interfaces';
 import SegmentsDescriptor from './comps/descriptors/SegmentsDescriptor';
 
-export default class LineContoller extends SVGGeometryController
+export default class LineContoller
+	extends SVGGeometryController
 	implements lineToAble, hasSegmentsDescriptor {
 	private _segmentsDescriptor: SegmentsDescriptor;
 
@@ -32,5 +33,9 @@ export default class LineContoller extends SVGGeometryController
 	public calculate() {
 		this._segmentsDescriptor.calculate(this.getCoordsRef());
 		return super.calculate();
+	}
+
+	public getBorderIntersection(p1: Point, shapeAnchor?: Point) {
+		return this._segmentsDescriptor.getBorderIntersection(this.getCoordsRef(), p1);
 	}
 }
