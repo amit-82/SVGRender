@@ -28,7 +28,10 @@ mouseTracker.getElement()?.style.setProperty('fill', '#f00');
 
 const e2 = createSVGElement('path', svg);
 const path = new PathController(e2);
-path.moveTo(200, 50).lineTo(300, 50).cubicTo(400, 50, 450, 100, 500, 150).lineTo(300, 150);
+path.moveTo(200, 50)
+	.lineTo(300, 50)
+	.cubicTo(400, 50, 450, 100, 500, 150)
+	.cubicTo(450, 350, 250, -75, 300, 150); //.lineTo(300, 150);
 path.updateElement();
 path.calculate();
 

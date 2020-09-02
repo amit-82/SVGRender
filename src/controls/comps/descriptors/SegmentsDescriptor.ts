@@ -67,7 +67,7 @@ export default class SegmentsDescriptor {
 		this._totalLength = 0;
 
 		// reset simplfiedCoords;
-		this._simplfied.coords = [];
+		this._simplfied.coords = coords.length === 0 ? [] : [coords[0].x, coords[0].y!];
 
 		let xSum = 0;
 		let ySum = 0;
