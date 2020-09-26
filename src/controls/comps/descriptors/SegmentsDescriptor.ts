@@ -18,22 +18,28 @@ const shouldIgnoreFirstMoveToCoord = (type: SVGElementTypes, coords: Coord[]): b
 const coord0: Coord = { x: 0, y: 0, type: CoordType.Linear };
 
 export interface Simplfied {
-	// array of x, y, x, y
+	// array of x, y, x, y...
 	coords?: number[];
 }
 
 export default class SegmentsDescriptor {
 	private _svgElemType: SVGElementTypes;
 	private _segmentLengths: number[] = [];
+	private _segmentAccumulatedLengths: number[] = [];
+
+	// the count of simplified coords original coord has
+	private _segmentToSimplifiedRange: number[] = [];
 	private _totalLength: number = 0;
 	private _center: Point | undefined;
 
-	private _simplfied: Simplfied = {
-		//private _simplfiedCoords?: number[];
-	};
+	private _simplfied: Simplfied = {};
 
 	constructor(elementType: SVGElementTypes) {
 		this._svgElemType = elementType;
+	}
+
+	public get calculated(): boolean {
+		return !!this._center;
 	}
 
 	public get svgElemType() {
@@ -42,6 +48,14 @@ export default class SegmentsDescriptor {
 
 	public get segmentLengths() {
 		return this._segmentLengths;
+	}
+
+	public get segmentAccumulatedLengths() {
+		return this._segmentAccumulatedLengths;
+	}
+
+	public get segmentToSimplifiedRange() {
+		return this._segmentToSimplifiedRange;
 	}
 
 	public get totalLength() {
@@ -65,6 +79,7 @@ export default class SegmentsDescriptor {
 		this._segmentLengths.length = 0;
 		// reset data
 		this._totalLength = 0;
+		this._segmentAccumulatedLengths.length = 0;
 
 		// reset simplfiedCoords;
 		this._simplfied.coords = coords.length === 0 ? [] : [coords[0].x, coords[0].y!];
@@ -79,6 +94,8 @@ export default class SegmentsDescriptor {
 			coords[0].y === coords[coords.length - 1].y;
 
 		let divideBy = 0;
+
+		//debugger;
 
 		for (let coordIndex = 0; coordIndex < coords.length; coordIndex++) {
 			const coord = coords[coordIndex];
@@ -104,17 +121,25 @@ export default class SegmentsDescriptor {
 			// if we are in first coord, it is because firstCoordIsMoveTo is true and prev coord is 0,0
 			if (coordIndex > 0) {
 				const prevCoord: Coord = coords[coordIndex - 1];
+				const previousSimplifiedCoordsLength = this._simplfied.coords.length;
 				const segmentLength: number = lengthCalculator(
 					prevCoord,
 					coord,
 					this._simplfied.coords
 				);
+				this._segmentToSimplifiedRange.push(
+					this._simplfied.coords.length - previousSimplifiedCoordsLength
+				);
 				this._segmentLengths.push(segmentLength);
+				this._segmentAccumulatedLengths.push(
+					(this._segmentAccumulatedLengths[this._segmentAccumulatedLengths.length - 1] ||
+						0) + segmentLength
+				);
 				this._totalLength += segmentLength;
 			}
 		}
 
-		console.log('NEW PNTS', this._simplfied.coords);
+		//console.log('NEW PNTS', this._simplfied.coords);
 
 		// calculate center point
 		this._center = {

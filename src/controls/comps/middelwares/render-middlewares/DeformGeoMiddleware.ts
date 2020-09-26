@@ -8,7 +8,12 @@ import {
 
 export default class DeformGeoMiddleware implements RenderMiddleware, deformableSVGController {
 	public active: boolean = true;
+
 	private _controller: hasSegmentsDescriptor | undefined;
+
+	/**
+	 * The indices to deform
+	 */
 	private _deformableSegmentIndices: Set<number>;
 
 	constructor() {
@@ -19,14 +24,23 @@ export default class DeformGeoMiddleware implements RenderMiddleware, deformable
 		this._controller = controller;
 		return this;
 	}
-	updateCoords(corrds: Coord[]): Coord[] {
+	updateCoords(cords: Coord[]): Coord[] {
 		throw new Error('Method not implemented.');
 	}
 
+	/**
+	 *
+	 * @param indices Clear all existing segment index(s) to be deformed
+	 */
 	public setDeformableSegmentIndices(indices: number | number[]): deformableSVGController {
 		this.clearDeformableSegmentIndices();
 		return this.addDeformableSegmentIndices(indices);
 	}
+
+	/**
+	 * Add segment index(s) to be deformed
+	 * @param indices
+	 */
 	public addDeformableSegmentIndices(indices: number | number[]): deformableSVGController {
 		Array.isArray(indices)
 			? indices.forEach(index => this._deformableSegmentIndices.add(index))
@@ -34,6 +48,11 @@ export default class DeformGeoMiddleware implements RenderMiddleware, deformable
 
 		return (this as unknown) as deformableSVGController;
 	}
+
+	/**
+	 * Remove specific segment index(s) set to be deformed
+	 * @param indices
+	 */
 	public removeDeformableSegmentIndices(indices: number | number[]): deformableSVGController {
 		Array.isArray(indices)
 			? indices.forEach(index => this._deformableSegmentIndices.delete(index))
@@ -41,6 +60,10 @@ export default class DeformGeoMiddleware implements RenderMiddleware, deformable
 
 		return (this as unknown) as deformableSVGController;
 	}
+
+	/**
+	 * Clear all segment index(s) set to be deformed
+	 */
 	public clearDeformableSegmentIndices(): deformableSVGController {
 		this._deformableSegmentIndices.clear();
 		return (this as unknown) as deformableSVGController;

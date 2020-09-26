@@ -1,19 +1,19 @@
+import { getDistance } from 'src/helpers/shape_utils';
 import { Point } from '../interfaces';
 
-type FindIntersectionResult =
-	| false
-	| {
-			intersection: Point;
-			index: number;
-			p0x: number;
-			p0y: number;
-			p1x: number;
-			p1y: number;
-			p2x: number;
-			p2y: number;
-			p3x: number;
-			p3y: number;
-	  };
+export type FindIntersectionResult = {
+	intersection: Point;
+	segmentIndex: number;
+	distanceFromSegmentStart: number; // distance from intersection Point to the hitten shape's segment
+	p0x: number;
+	p0y: number;
+	p1x: number;
+	p1y: number;
+	p2x: number;
+	p2y: number;
+	p3x: number;
+	p3y: number;
+};
 
 export const findIntersection = (
 	p0x: number,
@@ -21,7 +21,7 @@ export const findIntersection = (
 	p1x: number,
 	p1y: number,
 	xys: number[]
-): FindIntersectionResult => {
+): FindIntersectionResult | false => {
 	let res: false | Point = false;
 	const total = xys.length - 2;
 	for (let i = 0; i < total; i += 2) {
@@ -29,7 +29,8 @@ export const findIntersection = (
 		if (res) {
 			return {
 				intersection: res as Point,
-				index: i,
+				segmentIndex: i,
+				distanceFromSegmentStart: getDistance(xys[i], xys[i + 1], res.x, res.y),
 				p0x,
 				p0y,
 				p1x,

@@ -186,6 +186,7 @@ const arr2: number[] = new Array(2);
 const arr4: number[] = new Array(4);
 const arr6: number[] = new Array(6);
 type CoordTyped = { [key in CoordType]: (coord: Coord) => number[] };
+
 const getPointsCoordHandlerMap: CoordTyped = {
 	[CoordType.Scalar]: (coord: Coord) => {
 		arr1[0] = coord.x;
