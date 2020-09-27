@@ -4,6 +4,8 @@ import createSVGElement from '../../src/createSVGElement';
 import {
 	getBorderIntersection,
 	GetBorderIntersectionResult,
+	getPointOnBorder,
+	getSegmentBySimpleCoordIndex,
 } from 'src/controls/comps/descriptors/SegmentsDescUtils';
 
 const svg: SVGElement = (document.getElementById('svg') as unknown) as SVGElement;
@@ -47,6 +49,12 @@ svg.addEventListener('mousemove', e => {
 
 		if (res) {
 			intersectionCirc.moveTo(res.intersection.x, res.intersection.y);
+			const segmentIndexData = getSegmentBySimpleCoordIndex(
+				path.segmentsDescriptor,
+				res.segmentIndex
+			);
+			console.log(segmentIndexData);
+
 			message(
 				`hit at segment ${res.segmentIndex}: {${res.intersection.x}, ${res.intersection.y}} segmentDistance: ${res.distanceFromSegmentStart}`
 			);
