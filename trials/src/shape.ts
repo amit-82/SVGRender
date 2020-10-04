@@ -23,19 +23,21 @@ const mouseTracker = createCircle('#f00');
 
 const e2 = createSVGElement('path', svg);
 const path = new PathController(e2);
+/*
 path.moveTo(200, 50)
 	.lineTo(300, 50)
 	.cubicTo(400, 50, 450, 100, 500, 150)
 	.cubicTo(450, 350, 250, -75, 300, 150); //.lineTo(300, 150);
+*/
+path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100);
 path.updateElement();
 path.calculate();
 
-console.log(path.segmentsDescriptor);
-
-//createCircle('#ff0', center!.x, center!.y);
 createCircle('#fff', path.segmentsDescriptor.center!.x, path.segmentsDescriptor.center!.y);
 
 const intersectionCirc = createCircle('#f99', 0, 0, 5);
+const circ1 = createCircle('#0f0');
+const circ2 = createCircle('#00f');
 
 const message = (msg: string) => (document.getElementById('msg')!.innerText = msg);
 
@@ -43,20 +45,55 @@ svg.addEventListener('mousemove', e => {
 	mouseTracker.moveTo(e.offsetX, e.offsetY);
 	mouseTracker.updateElement();
 
-	path.segmentsDescriptor.simpilfied.coords;
-	if (path.segmentsDescriptor.center && path.segmentsDescriptor.simpilfied.coords) {
-		const res = getBorderIntersection(path.segmentsDescriptor, e.offsetX, e.offsetY);
+	const segDesc = path.segmentsDescriptor;
 
-		if (res) {
-			intersectionCirc.moveTo(res.intersection.x, res.intersection.y);
-			const segmentIndexData = getSegmentBySimpleCoordIndex(
-				path.segmentsDescriptor,
-				res.segmentIndex
+	segDesc.simpilfied.coords;
+	if (segDesc.center && segDesc.simpilfied.coords) {
+		const borderIntersection = getBorderIntersection(segDesc, e.offsetX, e.offsetY);
+		//const borderIntersection = getBorderIntersection(segDesc, 508, 57);
+
+		if (borderIntersection) {
+			intersectionCirc.moveTo(
+				borderIntersection.intersection.x,
+				borderIntersection.intersection.y
 			);
-			console.log(segmentIndexData);
+
+			//debugger;
+			const segmentData = getSegmentBySimpleCoordIndex(
+				segDesc,
+				borderIntersection.segmentIndex
+			)!;
+
+			console.log(
+				segmentData.distanceFromShapeStart,
+				borderIntersection!.distanceFromSimpleCoordStart
+			);
+
+			window.xxx = segDesc;
+			/*
+			message(
+				`${borderIntersection.segmentIndex} ${segmentData.distanceFromShapeStart} ${segmentData.distanceFromSegmentStart}`
+			);
+*/
+			// distance from intersection point to shape's start
+			let totalDistance =
+				borderIntersection.distanceFromSimpleCoordStart +
+				segmentData.distanceFromShapeStart;
+
+			const offset = 10;
+
+			// TODO: looks like get point on border doesn't work good...
+			const offset1 = getPointOnBorder(segDesc, totalDistance - offset);
+			const offset2 = getPointOnBorder(segDesc, totalDistance + offset);
+
+			//console.log(offset1);
+			offset1 ? circ1.moveTo(offset1.x, offset1.y) : circ1.moveTo(0, 0);
+			offset2 ? circ2.moveTo(offset2.x, offset2.y) : circ2.moveTo(0, 0);
+			circ1.updateElement();
+			circ2.updateElement();
 
 			message(
-				`hit at segment ${res.segmentIndex}: {${res.intersection.x}, ${res.intersection.y}} segmentDistance: ${res.distanceFromSegmentStart}`
+				`hit at segment ${borderIntersection.segmentIndex}: {${borderIntersection.intersection.x}, ${borderIntersection.intersection.y}} distance: ${totalDistance}`
 			);
 		} else {
 			message('no hit');

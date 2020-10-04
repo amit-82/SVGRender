@@ -2,6 +2,7 @@ import SegmentsDescriptor from './SegmentsDescriptor';
 import { findIntersection, FindIntersectionResult } from '../utils/line_utils';
 import { emptyObj } from 'src/helpers/object_utils';
 import { getDistance } from 'src/helpers/shape_utils';
+import { Point } from '../interfaces';
 
 // ------------ GET POINT ON BORDER -------------
 export interface GetPointOnBorderOptions {
@@ -14,32 +15,39 @@ export interface GetPointOnBorderResults {
 }
 
 export const getPointOnBorder = (
-	descriptior: SegmentsDescriptor,
+	desc: SegmentsDescriptor,
 	distance: number,
 	opts: GetPointOnBorderOptions = emptyObj
 ): GetPointOnBorderResults | null => {
-	if (!descriptior.calculated) throw new Error('SegmentsDescriptor must run calculate');
+	if (!desc.calculated) throw new Error('segmentsDescriptor must run calculate');
 
-	distance = !opts.repeat
-		? distance
-		: (descriptior.totalLength + distance) % descriptior.totalLength;
+	// TODO: uncomment
+	//distance = !opts.repeat ? distance : (desc.totalLength + distance) % desc.totalLength;
 
 	let segmentIndex = -1;
+	let accLength: number;
 
-	// TODO: use samarter Binary search
-	for (let i = 0; i < descriptior.segmentLengths.length; i++) {
-		if (descriptior.segmentAccumulatedLengths[i] >= distance) {
+	// find segment that covers requested length
+	// TODO: use smarter Binary search (not sure needed)
+	for (let i = 0; i < desc.segmentLengths.length; i++) {
+		if (desc.segmentAccumulatedLengths[i] >= distance) {
+			accLength = desc.segmentAccumulatedLengths[i];
 			segmentIndex = i;
 			break;
 		}
 	}
 
-	if (segmentIndex === -1) return null;
+	if (segmentIndex === -1 || distance < 0 || distance > desc.totalLength) return null;
+
+	const prevAccLength = segmentIndex === 0 ? 0 : desc.segmentAccumulatedLengths[segmentIndex - 1];
 
 	// TODO: need to calculate fraction on segment
+	const fractionOnSegment = (distance - prevAccLength) / (accLength! - prevAccLength);
+	//console.log('fractionOnSegment', fractionOnSegment, distance, accLength!);
+
 	return {
-		x: descriptior.simpilfied.coords![segmentIndex],
-		y: descriptior.simpilfied.coords![segmentIndex + 1],
+		x: desc.coords[segmentIndex].x,
+		y: desc.coords[segmentIndex].y!,
 	};
 };
 
@@ -50,11 +58,20 @@ export interface GetSegmentBySimpleCoordIndexResult {
 	distanceFromSegmentStart: number;
 	distanceFromShapeStart: number;
 }
+
+/**
+ * Getting the segment by a simple coord index
+ * @param desc
+ * @param simpleCoordIndex must be even since even numbers are for x and odd for y
+ * @param point
+ */
 export const getSegmentBySimpleCoordIndex = (
 	desc: SegmentsDescriptor,
-	simpleCoordIndex: number
+	simpleCoordIndex: number,
+	point?: Point // TODO: GET SPECIFIC POINT TO CALCULATE OFFSET FROM SEGMENT START
 ): GetSegmentBySimpleCoordIndexResult | null => {
-	if (!desc.calculated) throw new Error('SegmentsDescriptor must run calculate');
+	if (!desc.calculated) throw new Error('segmentsDescriptor must run calculate');
+	if (simpleCoordIndex % 2) throw new Error('simpleCoordIndex must be odd number');
 
 	let segmentIndex: number = -1;
 	let acc: number = 0;
@@ -63,7 +80,8 @@ export const getSegmentBySimpleCoordIndex = (
 		acc += desc.segmentToSimplifiedRange[i];
 		if (acc > simpleCoordIndex) {
 			segmentIndex = i;
-			prevAcc = i > 0 ? desc.segmentToSimplifiedRange[i - 1] : 0;
+			//prevAcc = acc - (i > 0 ? desc.segmentToSimplifiedRange[i - 1] : 0);
+			prevAcc = acc - desc.segmentToSimplifiedRange[i];
 			break;
 		}
 	}
@@ -72,13 +90,41 @@ export const getSegmentBySimpleCoordIndex = (
 		return null;
 	}
 
-	const deltaPercentage = (simpleCoordIndex - prevAcc) / (acc - prevAcc);
-	const distanceFromSegmentStart = desc.segmentLengths[segmentIndex] * deltaPercentage;
+	const accPrevAccDistance = acc - prevAcc;
+	const deltaPercentage =
+		accPrevAccDistance > 0 ? (simpleCoordIndex - prevAcc) / (acc - prevAcc) : 0;
+
+	let distanceFromSimpleSegmentStart = 0;
+
+	// calculate distance inside the simplified segment (segment = from this coord to the next)
+	if (point !== undefined && segmentIndex < desc.simpilfied.coords!.length - 2) {
+		const x = desc.simpilfied.coords![segmentIndex];
+		const y = desc.simpilfied.coords![segmentIndex + 1];
+		const nextX = desc.simpilfied.coords![segmentIndex + 2];
+		const nextY = desc.simpilfied.coords![segmentIndex + 3];
+
+		/*
+		distanceFromSimpleSegmentStart = Math.max(
+			nextX === x ? -Infinity : (nextX - point.x) / (nextX - x),
+			nextY === y ? -Infinity : (nextY - point.y) / (nextY - y)
+		);
+
+		const xPerc = Math.abs(nextX - point.x - (nextX - x));
+		const yPerc = Math.abs(nextY - point.y - (nextY - y));
+
+		console.log('>> X ', xPerc, nextX, point.x, x);
+		console.log('>> Y ', yPerc, nextY, point.y, y);
+		insideSimpleSegmPercentage =
+			distanceFromSimpleSegmentStart === -Infinity ? 0 : distanceFromSimpleSegmentStart;
+
+		console.log('GOT POINT!', insideSimpleSegmPercentage, nextX, point.x, x, nextY, point.y, y);
+		*/
+	}
+
+	const distanceFromSegmentStart = desc.segmentLengths[segmentIndex] * deltaPercentage; // + distanceFromSimpleSegmentStart;
 	const distanceFromShapeStart =
 		(segmentIndex > 0 ? desc.segmentAccumulatedLengths[segmentIndex - 1] : 0) +
 		distanceFromSegmentStart;
-
-	//debugger;
 
 	return {
 		segmentIndex,
@@ -113,8 +159,8 @@ export const getBorderIntersection = (
 	coord1X: number,
 	coord1Y: number,
 	opts: GetBorderIntersectionOptions = emptyObj
-): GetBorderIntersectionResult | false => {
-	if (!descriptior.calculated) throw new Error('SegmentsDescriptor must run calculate');
+): GetBorderIntersectionResult | null => {
+	if (!descriptior.calculated) throw new Error('segmentsDescriptor must run calculate');
 
 	const anchorToCenterDistance = getDistance(
 		coord1X,
@@ -123,7 +169,7 @@ export const getBorderIntersection = (
 		descriptior.center!.y
 	);
 	if (opts.maxDistanceToCenter && opts.maxDistanceToCenter < anchorToCenterDistance) {
-		return false;
+		return null;
 	}
 
 	const inter = findIntersection(
@@ -134,7 +180,7 @@ export const getBorderIntersection = (
 		descriptior.simpilfied.coords!
 	);
 
-	if (!inter) return false;
+	if (!inter) return null;
 
 	const anchorToIntersectionDistance = getDistance(
 		coord1X,
@@ -146,7 +192,7 @@ export const getBorderIntersection = (
 		opts.maxDistanceToIntersection &&
 		opts.maxDistanceToIntersection < anchorToIntersectionDistance
 	) {
-		return false;
+		return null;
 	}
 
 	return {

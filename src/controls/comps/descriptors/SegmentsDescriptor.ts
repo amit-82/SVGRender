@@ -23,6 +23,7 @@ export interface Simplfied {
 }
 
 export default class SegmentsDescriptor {
+	private _coords: Coord[] = [];
 	private _svgElemType: SVGElementTypes;
 	private _segmentLengths: number[] = [];
 	private _segmentAccumulatedLengths: number[] = [];
@@ -40,6 +41,10 @@ export default class SegmentsDescriptor {
 
 	public get calculated(): boolean {
 		return !!this._center;
+	}
+
+	public get coords() {
+		return this._coords;
 	}
 
 	public get svgElemType() {
@@ -76,6 +81,7 @@ export default class SegmentsDescriptor {
 	 */
 	public calculate(coords: Coord[]): void {
 		// TODO: check if there are better options to empty array and leave reference
+		this._coords = coords;
 		this._segmentLengths.length = 0;
 		// reset data
 		this._totalLength = 0;
