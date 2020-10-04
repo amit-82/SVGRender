@@ -20,7 +20,7 @@ describe('Test getBorderIntersection function', () => {
 
 	it('should get intersection on first segment', () => {
 		const expectedResults: GetBorderIntersectionResult = {
-			segmentIndex: 0,
+			simpleCoordIndex: 0,
 			intersection: { x: 150, y: 50 },
 			anchorToCenterDistance: 50,
 			anchorToIntersectionDistance: 25,
@@ -81,7 +81,6 @@ describe('Test getSegmentBySimpleCoordIndex function', () => {
 			segmentIndex: 0,
 			distanceFromShapeStart: 0,
 			distanceFromSegmentStart: 0,
-			deltaPercentage: 0,
 		};
 		const result = getSegmentBySimpleCoordIndex(desc1, 0 * 2);
 		expect(result).toEqual(expectedResult);
@@ -96,7 +95,6 @@ describe('Test getSegmentBySimpleCoordIndex function', () => {
 			segmentIndex: 1,
 			distanceFromShapeStart: 100,
 			distanceFromSegmentStart: 0,
-			deltaPercentage: 0,
 		};
 		const result = getSegmentBySimpleCoordIndex(desc1, 1 * 2);
 		expect(result).toEqual(expectedResult);
@@ -107,22 +105,33 @@ describe('Test getSegmentBySimpleCoordIndex function', () => {
 			segmentIndex: 2,
 			distanceFromShapeStart: 150,
 			distanceFromSegmentStart: 0,
-			deltaPercentage: 0,
 		};
 		const result = getSegmentBySimpleCoordIndex(desc1, 2 * 2);
 		expect(result).toEqual(expectedResult);
 	});
-	/*
-	it('should return THIRD segment data with distance from segment start', () => {
+
+	it('should return THIRD segment data with optional point on path', () => {
 		path1.calculate();
 		const expectedResult: GetSegmentBySimpleCoordIndexResult = {
 			segmentIndex: 2,
-			distanceFromShapeStart: 150,
-			distanceFromSegmentStart: 50,
-			deltaPercentage: 0.5,
+			distanceFromShapeStart: 175,
+			distanceFromSegmentStart: 25,
 		};
-		const result = getSegmentBySimpleCoordIndex(desc1, 2 * 2, { x: 150, y: 100 });
+		const result = getSegmentBySimpleCoordIndex(desc1, 2 * 2, { x: 200, y: 75 });
 		expect(result).toEqual(expectedResult);
-    });
-    */
+	});
+
+	it('should return correct segment data when using quadratic bezier curve', () => {
+		const pathBez = new pathController()
+			.moveTo(200, 50)
+			.lineTo(300, 50)
+			.cubicTo(400, 50, 450, 100, 500, 150)
+			.cubicTo(450, 350, 250, -75, 300, 150)
+			.calculate();
+
+		const result = getSegmentBySimpleCoordIndex(pathBez.segmentsDescriptor, 2 * 100);
+		expect(result!.segmentIndex).toEqual(2);
+		expect(result!.distanceFromShapeStart).toBeCloseTo(334.67, 1);
+		expect(result!.distanceFromSegmentStart).toBeCloseTo(3.57, 1);
+	});
 });

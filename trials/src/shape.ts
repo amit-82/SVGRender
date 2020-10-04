@@ -50,7 +50,6 @@ svg.addEventListener('mousemove', e => {
 	segDesc.simpilfied.coords;
 	if (segDesc.center && segDesc.simpilfied.coords) {
 		const borderIntersection = getBorderIntersection(segDesc, e.offsetX, e.offsetY);
-		//const borderIntersection = getBorderIntersection(segDesc, 508, 57);
 
 		if (borderIntersection) {
 			intersectionCirc.moveTo(
@@ -61,12 +60,16 @@ svg.addEventListener('mousemove', e => {
 			//debugger;
 			const segmentData = getSegmentBySimpleCoordIndex(
 				segDesc,
-				borderIntersection.segmentIndex
+				borderIntersection.simpleCoordIndex,
+				borderIntersection.intersection
 			)!;
 
 			console.log(
-				segmentData.distanceFromShapeStart,
-				borderIntersection!.distanceFromSimpleCoordStart
+				segmentData.segmentIndex,
+				':',
+				segmentData.distanceFromShapeStart.toFixed(2),
+				'+',
+				borderIntersection!.distanceFromSimpleCoordStart.toFixed(2)
 			);
 
 			window.xxx = segDesc;
@@ -76,9 +79,7 @@ svg.addEventListener('mousemove', e => {
 			);
 */
 			// distance from intersection point to shape's start
-			let totalDistance =
-				borderIntersection.distanceFromSimpleCoordStart +
-				segmentData.distanceFromShapeStart;
+			let totalDistance = segmentData.distanceFromShapeStart;
 
 			const offset = 10;
 
@@ -93,7 +94,13 @@ svg.addEventListener('mousemove', e => {
 			circ2.updateElement();
 
 			message(
-				`hit at segment ${borderIntersection.segmentIndex}: {${borderIntersection.intersection.x}, ${borderIntersection.intersection.y}} distance: ${totalDistance}`
+				`hit at simpleCoordIndex ${
+					borderIntersection.simpleCoordIndex
+				}: {${borderIntersection.intersection.x.toFixed(
+					1
+				)}, ${borderIntersection.intersection.y.toFixed(
+					1
+				)}} distance: ${totalDistance.toFixed(2)}`
 			);
 		} else {
 			message('no hit');

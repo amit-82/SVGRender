@@ -54,7 +54,6 @@ export const getPointOnBorder = (
 // ------------ GET SEGMENT BY SIMPLE COORD INDEX ---------------
 export interface GetSegmentBySimpleCoordIndexResult {
 	segmentIndex: number;
-	deltaPercentage: number;
 	distanceFromSegmentStart: number;
 	distanceFromShapeStart: number;
 }
@@ -63,12 +62,12 @@ export interface GetSegmentBySimpleCoordIndexResult {
  * Getting the segment by a simple coord index
  * @param desc
  * @param simpleCoordIndex must be even since even numbers are for x and odd for y
- * @param point
+ * @param pointOnCoordToNextCoord
  */
 export const getSegmentBySimpleCoordIndex = (
 	desc: SegmentsDescriptor,
 	simpleCoordIndex: number,
-	point?: Point // TODO: GET SPECIFIC POINT TO CALCULATE OFFSET FROM SEGMENT START
+	pointOnCoordToNextCoord?: Point
 ): GetSegmentBySimpleCoordIndexResult | null => {
 	if (!desc.calculated) throw new Error('segmentsDescriptor must run calculate');
 	if (simpleCoordIndex % 2) throw new Error('simpleCoordIndex must be odd number');
@@ -91,44 +90,36 @@ export const getSegmentBySimpleCoordIndex = (
 	}
 
 	const accPrevAccDistance = acc - prevAcc;
-	const deltaPercentage =
+	const simpleCoordDeltaPercentageFromSegmentStart =
 		accPrevAccDistance > 0 ? (simpleCoordIndex - prevAcc) / (acc - prevAcc) : 0;
 
 	let distanceFromSimpleSegmentStart = 0;
 
-	// calculate distance inside the simplified segment (segment = from this coord to the next)
-	if (point !== undefined && segmentIndex < desc.simpilfied.coords!.length - 2) {
-		const x = desc.simpilfied.coords![segmentIndex];
-		const y = desc.simpilfied.coords![segmentIndex + 1];
-		const nextX = desc.simpilfied.coords![segmentIndex + 2];
-		const nextY = desc.simpilfied.coords![segmentIndex + 3];
-
-		/*
-		distanceFromSimpleSegmentStart = Math.max(
-			nextX === x ? -Infinity : (nextX - point.x) / (nextX - x),
-			nextY === y ? -Infinity : (nextY - point.y) / (nextY - y)
+	// calculate distance inside the simplified coord (coord = from this coord to the next)
+	if (pointOnCoordToNextCoord !== undefined) {
+		//} && segmentIndex < desc.simpilfied.coords!.length - 2) {
+		const x = desc.simpilfied.coords![simpleCoordIndex];
+		const y = desc.simpilfied.coords![simpleCoordIndex + 1];
+		distanceFromSimpleSegmentStart = getDistance(
+			pointOnCoordToNextCoord.x,
+			pointOnCoordToNextCoord.y,
+			x,
+			y
 		);
-
-		const xPerc = Math.abs(nextX - point.x - (nextX - x));
-		const yPerc = Math.abs(nextY - point.y - (nextY - y));
-
-		console.log('>> X ', xPerc, nextX, point.x, x);
-		console.log('>> Y ', yPerc, nextY, point.y, y);
-		insideSimpleSegmPercentage =
-			distanceFromSimpleSegmentStart === -Infinity ? 0 : distanceFromSimpleSegmentStart;
-
-		console.log('GOT POINT!', insideSimpleSegmPercentage, nextX, point.x, x, nextY, point.y, y);
-		*/
 	}
 
-	const distanceFromSegmentStart = desc.segmentLengths[segmentIndex] * deltaPercentage; // + distanceFromSimpleSegmentStart;
+	const distanceFromSimpleCoordToParentSegmentStart =
+		desc.segmentLengths[segmentIndex] * simpleCoordDeltaPercentageFromSegmentStart;
+
+	const distanceFromSegmentStart =
+		distanceFromSimpleSegmentStart + distanceFromSimpleCoordToParentSegmentStart;
+
 	const distanceFromShapeStart =
 		(segmentIndex > 0 ? desc.segmentAccumulatedLengths[segmentIndex - 1] : 0) +
 		distanceFromSegmentStart;
 
 	return {
 		segmentIndex,
-		deltaPercentage,
 		distanceFromSegmentStart,
 		distanceFromShapeStart,
 	};

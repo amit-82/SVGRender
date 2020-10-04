@@ -3,7 +3,7 @@ import { Point } from '../interfaces';
 
 export type FindIntersectionResult = {
 	intersection: Point;
-	segmentIndex: number;
+	simpleCoordIndex: number;
 	distanceFromSimpleCoordStart: number; // distance from intersection Point to the hitten shape's segment
 	p0x: number;
 	p0y: number;
@@ -29,7 +29,7 @@ export const findIntersection = (
 		if (res) {
 			return {
 				intersection: res as Point,
-				segmentIndex: i,
+				simpleCoordIndex: i,
 				distanceFromSimpleCoordStart: getDistance(xys[i], xys[i + 1], res.x, res.y),
 				p0x,
 				p0y,
