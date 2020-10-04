@@ -3,6 +3,8 @@ import {
 	GetBorderIntersectionResult,
 	getSegmentBySimpleCoordIndex,
 	GetSegmentBySimpleCoordIndexResult,
+	getPointOnBorder,
+	GetPointOnBorderResults,
 } from './SegmentsDescUtils';
 import pathController from '../../PathController';
 
@@ -133,5 +135,20 @@ describe('Test getSegmentBySimpleCoordIndex function', () => {
 		expect(result!.segmentIndex).toEqual(2);
 		expect(result!.distanceFromShapeStart).toBeCloseTo(334.67, 1);
 		expect(result!.distanceFromSegmentStart).toBeCloseTo(3.57, 1);
+	});
+});
+
+describe('Test getPointOnBorder function', () => {
+	const path1 = new pathController();
+	path1.moveTo(100, 50).lineTo(200, 50).lineTo(200, 100).lineTo(100, 100);
+	const desc1 = path1.segmentsDescriptor;
+
+	it('should throw exception since calculate() was not called', () => {
+		expect(() => getPointOnBorder(desc1, 50)).toThrowError(GATE_ERROR);
+	});
+
+	it('should get correct point on first segment', () => {
+		path1.calculate();
+		expect(getPointOnBorder(desc1, 50)).toEqual({ x: 150, y: 50 });
 	});
 });

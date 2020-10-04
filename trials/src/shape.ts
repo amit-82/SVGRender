@@ -23,13 +23,13 @@ const mouseTracker = createCircle('#f00');
 
 const e2 = createSVGElement('path', svg);
 const path = new PathController(e2);
-/*
+
 path.moveTo(200, 50)
 	.lineTo(300, 50)
 	.cubicTo(400, 50, 450, 100, 500, 150)
 	.cubicTo(450, 350, 250, -75, 300, 150); //.lineTo(300, 150);
-*/
-path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100);
+
+//path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100);
 path.updateElement();
 path.calculate();
 
@@ -81,7 +81,7 @@ svg.addEventListener('mousemove', e => {
 			// distance from intersection point to shape's start
 			let totalDistance = segmentData.distanceFromShapeStart;
 
-			const offset = 10;
+			const offset = 40;
 
 			// TODO: looks like get point on border doesn't work good...
 			const offset1 = getPointOnBorder(segDesc, totalDistance - offset);

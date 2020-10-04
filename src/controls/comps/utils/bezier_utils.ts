@@ -10,7 +10,7 @@ import { Coord, CubicBezierCoord, Point, CoordType, QuadraticBezierCoord } from 
  * @param endCtrl the X or Y value of the end point
  * @param end the X or Y value of the end point
  */
-function getPointXorYOnBezier(
+export function getPointXorYOnBezier(
 	t: number,
 	start: number,
 	startCtrl: number,

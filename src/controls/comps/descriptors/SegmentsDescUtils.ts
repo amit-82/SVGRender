@@ -1,18 +1,16 @@
 import SegmentsDescriptor from './SegmentsDescriptor';
+import { getPointXorYOnBezier } from 'src/controls/comps/utils/bezier_utils';
 import { findIntersection, FindIntersectionResult } from '../utils/line_utils';
 import { emptyObj } from 'src/helpers/object_utils';
 import { getDistance } from 'src/helpers/shape_utils';
-import { Point } from '../interfaces';
+import { Coord, CoordType, CubicBezierCoord, Point } from '../interfaces';
 
 // ------------ GET POINT ON BORDER -------------
 export interface GetPointOnBorderOptions {
 	repeat?: boolean; // whether can go to the start if passed the end or back from the end if over the start
 }
 
-export interface GetPointOnBorderResults {
-	x: number;
-	y: number;
-}
+export interface GetPointOnBorderResults extends Point {}
 
 export const getPointOnBorder = (
 	desc: SegmentsDescriptor,
@@ -27,8 +25,9 @@ export const getPointOnBorder = (
 	let segmentIndex = -1;
 	let accLength: number;
 
-	// find segment that covers requested length
-	// TODO: use smarter Binary search (not sure needed)
+	// identify the segment that holds the end of the requested distance
+	// TODO: performence options 1: use smarter Binary search (not sure needed, how many segments do we expect?)
+	// TODO: performance options 2: use cached simple coords accumulated lengths (doesn't exists yet)
 	for (let i = 0; i < desc.segmentLengths.length; i++) {
 		if (desc.segmentAccumulatedLengths[i] >= distance) {
 			accLength = desc.segmentAccumulatedLengths[i];
@@ -41,13 +40,30 @@ export const getPointOnBorder = (
 
 	const prevAccLength = segmentIndex === 0 ? 0 : desc.segmentAccumulatedLengths[segmentIndex - 1];
 
-	// TODO: need to calculate fraction on segment
-	const fractionOnSegment = (distance - prevAccLength) / (accLength! - prevAccLength);
-	//console.log('fractionOnSegment', fractionOnSegment, distance, accLength!);
+	// calculate how much in the identified segment the distance goes in to (0 to 1 range)
+	const percentageOfSegment = (distance - prevAccLength) / (accLength! - prevAccLength);
+
+	// +1 because first coord is a moveTo and not really a part of the shape (shapes without moveTo get moveTo 0,0 as first coord)
+	let segment: Coord = desc.coords[segmentIndex + 1];
+	let prevSeg: Coord = desc.coords[segmentIndex];
+
+	// TODO: -------------- move to bezier_utils and map for every coord type --------------
+	let x: number;
+	let y: number;
+
+	if (segment.type === CoordType.BezierCubic) {
+		const sq = segment as CubicBezierCoord;
+		x = getPointXorYOnBezier(percentageOfSegment, prevSeg.x, sq.ctrlX, sq.ctrlX2, segment.x);
+		y = getPointXorYOnBezier(percentageOfSegment, prevSeg.y!, sq.ctrlY, sq.ctrlY2, segment.y!);
+	} else {
+		x = (segment.x - prevSeg.x) * percentageOfSegment + prevSeg.x;
+		y = (segment.y! - prevSeg.y!) * percentageOfSegment + prevSeg.y!;
+	}
+	// end move to bezier_utils and map for every coord type --------------
 
 	return {
-		x: desc.coords[segmentIndex].x,
-		y: desc.coords[segmentIndex].y!,
+		x,
+		y,
 	};
 };
 
