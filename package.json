@@ -1,6 +1,6 @@
 {
 	"name": "svg-render",
-	"version": "0.0.1",
+	"version": "0.0.5",
 	"description": "small library for drawing svg path",
 	"license": "MIT",
 	"main": "src/index.js",
