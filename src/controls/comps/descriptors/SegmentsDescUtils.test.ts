@@ -139,7 +139,7 @@ describe('Test getSegmentBySimpleCoordIndex function', () => {
 
 describe('Test getPointOnBorder function', () => {
 	const path1 = new pathController();
-	path1.moveTo(100, 50).lineTo(200, 50).lineTo(200, 100).lineTo(100, 100);
+	path1.moveTo(100, 50).lineTo(200, 50).lineTo(200, 100).lineTo(100, 100).lineTo(100, 50);
 	const desc1 = path1.segmentsDescriptor;
 
 	it('should throw exception since calculate() was not called', () => {
@@ -149,5 +149,13 @@ describe('Test getPointOnBorder function', () => {
 	it('should get correct point on first segment', () => {
 		path1.calculate();
 		expect(getPointOnBorder(desc1, 50)).toEqual({ x: 150, y: 50 });
+	});
+
+	it("should get correct point when option's 'repeat' is TRUE and going over the path's full length", () => {
+		expect(getPointOnBorder(desc1, 301, { repeat: true })).toEqual({ x: 101, y: 50 });
+	});
+
+	it("should return null when option's 'repeat' is FALSE (default) and going over the path's full length", () => {
+		expect(getPointOnBorder(desc1, 301)).toBeNull();
 	});
 });

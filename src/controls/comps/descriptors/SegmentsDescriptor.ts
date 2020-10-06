@@ -32,6 +32,7 @@ export default class SegmentsDescriptor {
 	private _segmentToSimplifiedRange: number[] = [];
 	private _totalLength: number = 0;
 	private _center: Point | undefined;
+	private _lastCoordEndsAtFirst: boolean = false;
 
 	private _simplfied: Simplfied = {};
 
@@ -75,6 +76,10 @@ export default class SegmentsDescriptor {
 		return this._simplfied;
 	}
 
+	public get lastCoordEndsAtFirst() {
+		return this._lastCoordEndsAtFirst;
+	}
+
 	/**
 	 * Should be called only be the coupled SVGElementController
 	 * @param coords
@@ -94,7 +99,7 @@ export default class SegmentsDescriptor {
 		let ySum = 0;
 
 		// is closed shape with last coord is actially the first
-		const lastCoordEqualFirst =
+		this._lastCoordEndsAtFirst =
 			coords.length > 1 &&
 			coords[0].x === coords[coords.length - 1].x &&
 			coords[0].y === coords[coords.length - 1].y;
@@ -108,9 +113,8 @@ export default class SegmentsDescriptor {
 
 			const lengthCalculator = coordLengthCalculators[coord.type.toString()];
 
-			//TODO: maybe split sum and totalLength to two seperated functions inside this function scope (?)
 			const isLastCoordInClosedShape: boolean =
-				lastCoordEqualFirst && coordIndex === coords.length - 1;
+				this._lastCoordEndsAtFirst && coordIndex === coords.length - 1;
 
 			const points = getPointsOfCoord(coord);
 			for (let i = 0; i < points.length; i += 2) {

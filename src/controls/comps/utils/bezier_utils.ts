@@ -162,6 +162,7 @@ export type PointOnCoordCalculator = (
 	previousCoord: Coord
 ) => { x: number; y: number } | never;
 
+// TODO: need unit tests
 export const pointOnCoordCalculators = createProxy<PointOnCoordCalculator>(
 	{
 		LINEAR: (coord: Coord, percentageOfSegment: number, previousCoord: Coord) => ({
@@ -187,8 +188,8 @@ export const pointOnCoordCalculators = createProxy<PointOnCoordCalculator>(
 				),
 			};
 		},
-		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) =>
-		//QUADRATIC:
+		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) => // TODO: NEED IMPLEMENTATION
+		//QUADRATIC: (c1: Coord, c2: Coord, c3: Coord) => // TODO: NEED IMPLEMENTATION
 	},
 	(coord: Coord) => {
 		throw `CoordType ${coord.type} is not implmented in pointOnCoordCalculators`;
@@ -212,8 +213,8 @@ export const coordLengthCalculators = createProxy<CoordLengthCalculator>(
 		},
 		BEZIER_CUBIC: (c1: Coord, c2: Coord, newCoords?: number[]) =>
 			getBezierCubicLength(c1, c2, 50, newCoords),
-		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) =>
-		//QUADRATIC:
+		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) => // TODO: NEED IMPLEMENTATION
+		//QUADRATIC: (c1: Coord, c2: Coord, c3: Coord) => // TODO: NEED IMPLEMENTATION
 	},
 	(prevCoord: Coord, coord: Coord) => {
 		throw `CoordType ${coord.type} is not implmented in coordLengthCalculators`;

@@ -23,7 +23,7 @@ export const getPointOnBorder = (
 	if (!desc.calculated) throw new Error('segmentsDescriptor must run calculate');
 
 	// TODO: uncomment
-	//distance = !opts.repeat ? distance : (desc.totalLength + distance) % desc.totalLength;
+	distance = !opts.repeat ? distance : (desc.totalLength + distance) % desc.totalLength;
 
 	let segmentIndex = -1;
 	let accLength: number;

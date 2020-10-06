@@ -7,7 +7,7 @@ import {
 	CircleController,
 	EllipseController,
 	RectController,
-} from './controls';
+} from './controls/index';
 
 export {
 	createSVGElement,
