@@ -23,13 +23,17 @@ const mouseTracker = createCircle('#f00');
 
 const e2 = createSVGElement('path', svg);
 const path = new PathController(e2);
-
+// open bezier
+/*
 path.moveTo(200, 50)
 	.lineTo(300, 50)
 	.cubicTo(400, 50, 450, 100, 500, 150)
 	.cubicTo(450, 350, 250, -75, 300, 150); //.lineTo(300, 150);
-
+	*/
+// not closed rect
 //path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100);
+// closed rect
+path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100).lineTo(200, 50);
 path.updateElement();
 path.calculate();
 
@@ -72,8 +76,8 @@ svg.addEventListener('mousemove', e => {
 				borderIntersection!.distanceFromSimpleCoordStart.toFixed(2)
 			);
 
-			window.xxx = segDesc;
 			/*
+			window.xxx = segDesc;
 			message(
 				`${borderIntersection.segmentIndex} ${segmentData.distanceFromShapeStart} ${segmentData.distanceFromSegmentStart}`
 			);

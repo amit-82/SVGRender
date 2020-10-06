@@ -1,5 +1,8 @@
 import SegmentsDescriptor from './SegmentsDescriptor';
-import { getPointXorYOnBezier } from 'src/controls/comps/utils/bezier_utils';
+import {
+	getPointXorYOnBezier,
+	pointOnCoordCalculators,
+} from 'src/controls/comps/utils/bezier_utils';
 import { findIntersection, FindIntersectionResult } from '../utils/line_utils';
 import { emptyObj } from 'src/helpers/object_utils';
 import { getDistance } from 'src/helpers/shape_utils';
@@ -47,24 +50,7 @@ export const getPointOnBorder = (
 	let segment: Coord = desc.coords[segmentIndex + 1];
 	let prevSeg: Coord = desc.coords[segmentIndex];
 
-	// TODO: -------------- move to bezier_utils and map for every coord type --------------
-	let x: number;
-	let y: number;
-
-	if (segment.type === CoordType.BezierCubic) {
-		const sq = segment as CubicBezierCoord;
-		x = getPointXorYOnBezier(percentageOfSegment, prevSeg.x, sq.ctrlX, sq.ctrlX2, segment.x);
-		y = getPointXorYOnBezier(percentageOfSegment, prevSeg.y!, sq.ctrlY, sq.ctrlY2, segment.y!);
-	} else {
-		x = (segment.x - prevSeg.x) * percentageOfSegment + prevSeg.x;
-		y = (segment.y! - prevSeg.y!) * percentageOfSegment + prevSeg.y!;
-	}
-	// end move to bezier_utils and map for every coord type --------------
-
-	return {
-		x,
-		y,
-	};
+	return pointOnCoordCalculators[segment.type](segment, percentageOfSegment, prevSeg);
 };
 
 // ------------ GET SEGMENT BY SIMPLE COORD INDEX ---------------

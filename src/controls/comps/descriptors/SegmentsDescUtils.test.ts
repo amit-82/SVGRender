@@ -4,7 +4,6 @@ import {
 	getSegmentBySimpleCoordIndex,
 	GetSegmentBySimpleCoordIndexResult,
 	getPointOnBorder,
-	GetPointOnBorderResults,
 } from './SegmentsDescUtils';
 import pathController from '../../PathController';
 

@@ -155,10 +155,49 @@ function bezierMirror(c1: Coord, c2: Coord, c3?:Coord, segmentsCount = 50):numbe
 	return getBezierCubicLength(c1, c2, segmentsCount);
 }
 */
+
+export type PointOnCoordCalculator = (
+	coord: Coord,
+	percentageOfSegment: number,
+	previousCoord: Coord
+) => { x: number; y: number } | never;
+
+export const pointOnCoordCalculators = createProxy<PointOnCoordCalculator>(
+	{
+		LINEAR: (coord: Coord, percentageOfSegment: number, previousCoord: Coord) => ({
+			x: (coord.x - previousCoord.x) * percentageOfSegment + previousCoord.x,
+			y: (coord.y! - previousCoord.y!) * percentageOfSegment + previousCoord.y!,
+		}),
+		BEZIER_CUBIC: (coord: Coord, percentageOfSegment: number, previousCoord: Coord) => {
+			const sq = coord as CubicBezierCoord;
+			return {
+				x: getPointXorYOnBezier(
+					percentageOfSegment,
+					previousCoord.x,
+					sq.ctrlX,
+					sq.ctrlX2,
+					sq.x
+				),
+				y: getPointXorYOnBezier(
+					percentageOfSegment,
+					previousCoord.y!,
+					sq.ctrlY,
+					sq.ctrlY2,
+					sq.y!
+				),
+			};
+		},
+		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) =>
+		//QUADRATIC:
+	},
+	(coord: Coord) => {
+		throw `CoordType ${coord.type} is not implmented in pointOnCoordCalculators`;
+	}
+);
+
 export type CoordLengthCalculator = (
 	coord: Coord,
 	previousCoord: Coord,
-	//beforePreviousCoord?: Coord,
 	newCoords?: number[]
 ) => number | never;
 
@@ -171,13 +210,13 @@ export const coordLengthCalculators = createProxy<CoordLengthCalculator>(
 			}
 			return getDistance(c1.x, c1.y || 0, c2.x, c2.y || 0);
 		},
-		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) =>
 		BEZIER_CUBIC: (c1: Coord, c2: Coord, newCoords?: number[]) =>
 			getBezierCubicLength(c1, c2, 50, newCoords),
+		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) =>
 		//QUADRATIC:
 	},
 	(prevCoord: Coord, coord: Coord) => {
-		throw `CoordType ${coord.type} is not implmented`;
+		throw `CoordType ${coord.type} is not implmented in coordLengthCalculators`;
 	}
 );
 
