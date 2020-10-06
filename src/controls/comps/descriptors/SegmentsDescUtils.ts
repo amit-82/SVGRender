@@ -30,7 +30,7 @@ export const getPointOnBorder = (
 
 	// identify the segment that holds the end of the requested distance
 	// TODO: performence options 1: use smarter Binary search (not sure needed, how many segments do we expect?)
-	// TODO: performance options 2: use cached simple coords accumulated lengths (doesn't exists yet)
+	// TODO: performance options 2 (probably better): use cached simple coords accumulated lengths (doesn't exists yet)
 	for (let i = 0; i < desc.segmentLengths.length; i++) {
 		if (desc.segmentAccumulatedLengths[i] >= distance) {
 			accLength = desc.segmentAccumulatedLengths[i];

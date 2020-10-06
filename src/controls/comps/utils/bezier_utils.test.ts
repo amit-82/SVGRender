@@ -5,6 +5,8 @@ import {
 	getBezierQuadraticSegments,
 	getPointsOfCoord,
 	getQuadraticBezierLength,
+	pointOnCoordCalculators,
+	PointOnCoordCalculator,
 } from './bezier_utils';
 import { Coord, CoordType, CubicBezierCoord, QuadraticBezierCoord } from '../interfaces';
 import { bezierControlPointOffsetForQuarterCircle } from '../../../helpers/shape_utils';
@@ -216,6 +218,65 @@ describe('Test getPointsOfCoord function', () => {
 
 		expect(() => getPointsOfCoord(coord)).toThrow(
 			'break BezierMirror to coords not implemented'
+		);
+	});
+});
+
+describe('Test pointOnCoordCalculators map', () => {
+	const prevCoord: Coord = {
+		type: CoordType.Linear,
+		x: 0,
+		y: 0,
+	};
+	let f: PointOnCoordCalculator;
+	it('should get center point of coord of type Linear', () => {
+		const coord: Coord = {
+			type: CoordType.Linear,
+			x: 100,
+			y: 50,
+		};
+		let f = pointOnCoordCalculators[coord.type];
+		expect(f(coord, 0.5, prevCoord)).toEqual({ x: 50, y: 25 });
+	});
+	it('should get center point of coord of type CubicBezier', () => {
+		const coord: CubicBezierCoord = {
+			type: CoordType.BezierCubic,
+			x: 100,
+			y: 50,
+			ctrlX: 75,
+			ctrlY: 25,
+			ctrlX2: 125,
+			ctrlY2: 25,
+		};
+		let f = pointOnCoordCalculators[coord.type];
+		expect(f(coord, 0.5, prevCoord)).toEqual({ x: 87.5, y: 25 });
+	});
+
+	it('should throw "not implemented" for QUADRATIC', () => {
+		const coord: QuadraticBezierCoord = {
+			type: CoordType.BezierQuadratic,
+			x: 100,
+			y: 50,
+			ctrlX: 75,
+			ctrlY: 25,
+		};
+		let f = pointOnCoordCalculators[coord.type];
+		expect(() => f(coord, 0.5, prevCoord)).toThrow(
+			`CoordType ${coord.type} is not implmented in pointOnCoordCalculators`
+		);
+	});
+
+	it('should throw "not implemented" for BezierMirror', () => {
+		const coord: QuadraticBezierCoord = {
+			type: CoordType.BezierMirror,
+			x: 100,
+			y: 50,
+			ctrlX: 75,
+			ctrlY: 25,
+		};
+		let f = pointOnCoordCalculators[coord.type];
+		expect(() => f(coord, 0.5, prevCoord)).toThrow(
+			`CoordType ${coord.type} is not implmented in pointOnCoordCalculators`
 		);
 	});
 });
