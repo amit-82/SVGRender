@@ -10,7 +10,7 @@ import { Coord, CubicBezierCoord, Point, CoordType, QuadraticBezierCoord } from 
  * @param endCtrl the X or Y value of the end point
  * @param end the X or Y value of the end point
  */
-function getPointXorYOnBezier(
+export function getPointXorYOnBezier(
 	t: number,
 	start: number,
 	startCtrl: number,
@@ -155,10 +155,50 @@ function bezierMirror(c1: Coord, c2: Coord, c3?:Coord, segmentsCount = 50):numbe
 	return getBezierCubicLength(c1, c2, segmentsCount);
 }
 */
+
+export type PointOnCoordCalculator = (
+	coord: Coord,
+	percentageOfSegment: number,
+	previousCoord: Coord
+) => { x: number; y: number } | never;
+
+// TODO: need unit tests
+export const pointOnCoordCalculators = createProxy<PointOnCoordCalculator>(
+	{
+		LINEAR: (coord: Coord, percentageOfSegment: number, previousCoord: Coord) => ({
+			x: (coord.x - previousCoord.x) * percentageOfSegment + previousCoord.x,
+			y: (coord.y! - previousCoord.y!) * percentageOfSegment + previousCoord.y!,
+		}),
+		BEZIER_CUBIC: (coord: Coord, percentageOfSegment: number, previousCoord: Coord) => {
+			const sq = coord as CubicBezierCoord;
+			return {
+				x: getPointXorYOnBezier(
+					percentageOfSegment,
+					previousCoord.x,
+					sq.ctrlX,
+					sq.ctrlX2,
+					sq.x
+				),
+				y: getPointXorYOnBezier(
+					percentageOfSegment,
+					previousCoord.y!,
+					sq.ctrlY,
+					sq.ctrlY2,
+					sq.y!
+				),
+			};
+		},
+		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) => // TODO: NEED IMPLEMENTATION
+		//QUADRATIC: (c1: Coord, c2: Coord, c3: Coord) => // TODO: NEED IMPLEMENTATION
+	},
+	(coord: Coord) => {
+		throw `CoordType ${coord.type} is not implmented in pointOnCoordCalculators`;
+	}
+);
+
 export type CoordLengthCalculator = (
 	coord: Coord,
 	previousCoord: Coord,
-	//beforePreviousCoord?: Coord,
 	newCoords?: number[]
 ) => number | never;
 
@@ -171,13 +211,13 @@ export const coordLengthCalculators = createProxy<CoordLengthCalculator>(
 			}
 			return getDistance(c1.x, c1.y || 0, c2.x, c2.y || 0);
 		},
-		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) =>
 		BEZIER_CUBIC: (c1: Coord, c2: Coord, newCoords?: number[]) =>
 			getBezierCubicLength(c1, c2, 50, newCoords),
-		//QUADRATIC:
+		//BEZIER_MIRROR: (c1: Coord, c2: Coord, c3: Coord) => // TODO: NEED IMPLEMENTATION
+		//QUADRATIC: (c1: Coord, c2: Coord, c3: Coord) => // TODO: NEED IMPLEMENTATION
 	},
 	(prevCoord: Coord, coord: Coord) => {
-		throw `CoordType ${coord.type} is not implmented`;
+		throw `CoordType ${coord.type} is not implmented in coordLengthCalculators`;
 	}
 );
 
@@ -186,6 +226,7 @@ const arr2: number[] = new Array(2);
 const arr4: number[] = new Array(4);
 const arr6: number[] = new Array(6);
 type CoordTyped = { [key in CoordType]: (coord: Coord) => number[] };
+
 const getPointsCoordHandlerMap: CoordTyped = {
 	[CoordType.Scalar]: (coord: Coord) => {
 		arr1[0] = coord.x;

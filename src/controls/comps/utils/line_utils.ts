@@ -1,4 +1,49 @@
+import { getDistance } from 'src/helpers/shape_utils';
 import { Point } from '../interfaces';
+
+export type FindIntersectionResult = {
+	intersection: Point;
+	simpleCoordIndex: number;
+	distanceFromSimpleCoordStart: number; // distance from intersection Point to the hitten shape's segment
+	p0x: number;
+	p0y: number;
+	p1x: number;
+	p1y: number;
+	p2x: number;
+	p2y: number;
+	p3x: number;
+	p3y: number;
+};
+
+export const findIntersection = (
+	p0x: number,
+	p0y: number,
+	p1x: number,
+	p1y: number,
+	xys: number[]
+): FindIntersectionResult | false => {
+	let res: false | Point = false;
+	const total = xys.length - 2;
+	for (let i = 0; i < total; i += 2) {
+		res = getIntersection(p0x, p0y, p1x, p1y, xys[i], xys[i + 1], xys[i + 2], xys[i + 3]);
+		if (res) {
+			return {
+				intersection: res as Point,
+				simpleCoordIndex: i,
+				distanceFromSimpleCoordStart: getDistance(xys[i], xys[i + 1], res.x, res.y),
+				p0x,
+				p0y,
+				p1x,
+				p1y,
+				p2x: xys[i],
+				p2y: xys[i + 1],
+				p3x: xys[i + 2],
+				p3y: xys[i + 3],
+			};
+		}
+	}
+	return false;
+};
 
 export const getIntersection = (
 	p0x: number,

@@ -1,5 +1,6 @@
 const path = require('path');
 const RemovePlugin = require('remove-files-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
 	mode: 'development',
@@ -36,5 +37,6 @@ module.exports = {
 				// parameters for "before watch compilation" stage.
 			},
 		}),
+		new ForkTsCheckerWebpackPlugin(),
 	],
 };

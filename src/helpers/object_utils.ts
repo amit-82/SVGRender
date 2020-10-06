@@ -8,4 +8,6 @@ function createProxy<T>(target: object, def?: T): { [key: string]: T } {
 	return new Proxy(target, handler);
 }
 
+export const emptyObj = Object.freeze({});
+
 export { createProxy };

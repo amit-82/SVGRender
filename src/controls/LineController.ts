@@ -16,6 +16,11 @@ export default class LineContoller
 		return this._segmentsDescriptor;
 	}
 
+	/**
+	 * Draws a stright line from latest point to target x, y
+	 * @param x
+	 * @param y
+	 */
 	public lineTo(x: number, y: number) {
 		const coord: Coord = { type: CoordType.Linear, x, y };
 		this.appendCoord(coord);
@@ -30,12 +35,15 @@ export default class LineContoller
 		return this._segmentsDescriptor.totalLength;
 	}
 
+	/**
+	 * Calculate geometry data like total outline length, segments length, center point, reduce shape to simple stright lines (important to paths)
+	 */
 	public calculate() {
 		this._segmentsDescriptor.calculate(this.getCoordsRef());
 		return super.calculate();
 	}
 
 	public getBorderIntersection(p1: Point, shapeAnchor?: Point) {
-		return this._segmentsDescriptor.getBorderIntersection(this.getCoordsRef(), p1);
+		return this._segmentsDescriptor.getBorderIntersection(this.getCoordsRef(), p1, shapeAnchor);
 	}
 }
