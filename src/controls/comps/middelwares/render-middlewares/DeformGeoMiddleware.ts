@@ -5,7 +5,6 @@ import {
 	hasSegmentsDescriptor,
 	Coord,
 } from 'src/controls/comps/interfaces';
-import SegmentsDescriptor from '../../descriptors/SegmentsDescriptor';
 
 export default abstract class DeformGeoMiddleware
 	implements RenderMiddleware, deformableSVGController {
@@ -22,11 +21,16 @@ export default abstract class DeformGeoMiddleware
 		this._deformableSegmentIndices = new Set();
 	}
 
-	setController(controller: hasSegmentsDescriptor): SVGControllerMiddleware {
+	public setController(controller: hasSegmentsDescriptor): SVGControllerMiddleware {
 		this._controller = controller;
 		return this;
 	}
-	public abstract updateCoords(cords: Coord[], segDesc: SegmentsDescriptor): Coord[];
+
+	public unsetController() {
+		this._controller = undefined;
+	}
+
+	public abstract updateCoords(cords: Coord[]): Coord[];
 
 	/**
 	 *

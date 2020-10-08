@@ -1,6 +1,5 @@
 import { Coord, CoordType } from './comps/interfaces';
 import { CoordsToElemAttrs, CoordsToElemAttrsMap } from './comps/coordinates/CoordsToElemAttrs';
-import { RenderMiddleware } from './comps/middelwares/render-middlewares/interfaces';
 
 let idCounter = 0;
 
@@ -12,7 +11,6 @@ export default abstract class SVGGeometryController {
 	private _coords: Coord[] = [];
 
 	private _coordinatesParser: CoordsToElemAttrs;
-	public renderMiddlewares: RenderMiddleware[] = [];
 
 	constructor(element?: SVGElement, type: SVGElementTypes = 'svg') {
 		this._id = ++idCounter;
