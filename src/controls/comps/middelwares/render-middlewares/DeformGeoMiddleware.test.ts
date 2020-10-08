@@ -1,8 +1,14 @@
 import DeformGeoMiddleware from './DeformGeoMiddleware';
 import PolylineController from '../../../PolylineController';
 
+class DeformConcrete extends DeformGeoMiddleware {
+	public updateCoords(cords: any[]): any[] {
+		return cords;
+	}
+}
+
 describe('Test DeformGeoMiddleware', () => {
-	const dgm: DeformGeoMiddleware = new DeformGeoMiddleware();
+	const dgm: DeformGeoMiddleware = new DeformConcrete();
 	const controller: PolylineController = new PolylineController();
 
 	test('should setController', () => {
