@@ -148,11 +148,21 @@ describe('Test getPointOnBorder function', () => {
 
 	it('should get correct point on first segment', () => {
 		path1.calculate();
-		expect(getPointOnBorder(desc1, 50)).toEqual({ x: 150, y: 50 });
+		expect(getPointOnBorder(desc1, 50)).toEqual({
+			x: 150,
+			y: 50,
+			segmentIndex: 1,
+			percentageOfSegment: 0.5,
+		});
 	});
 
 	it("should get correct point when option's 'repeat' is TRUE and going over the path's full length", () => {
-		expect(getPointOnBorder(desc1, 301, { repeat: true })).toEqual({ x: 101, y: 50 });
+		expect(getPointOnBorder(desc1, 301, { repeat: true })).toEqual({
+			x: 101,
+			y: 50,
+			segmentIndex: 1,
+			percentageOfSegment: 0.01,
+		});
 	});
 
 	it("should return null when option's 'repeat' is FALSE (default) and going over the path's full length", () => {

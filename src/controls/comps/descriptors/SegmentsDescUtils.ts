@@ -13,7 +13,10 @@ export interface GetPointOnBorderOptions {
 	repeat?: boolean; // whether can go to the start if passed the end or back from the end if over the start
 }
 
-export interface GetPointOnBorderResults extends Point {}
+export interface GetPointOnBorderResults extends Point {
+	segmentIndex: number;
+	percentageOfSegment: number;
+}
 
 export const getPointOnBorder = (
 	desc: SegmentsDescriptor,
@@ -50,7 +53,12 @@ export const getPointOnBorder = (
 	let segment: Coord = desc.coords[segmentIndex + 1];
 	let prevSeg: Coord = desc.coords[segmentIndex];
 
-	return pointOnCoordCalculators[segment.type](segment, percentageOfSegment, prevSeg);
+	const p = pointOnCoordCalculators[segment.type](segment, percentageOfSegment, prevSeg);
+	return {
+		...p,
+		percentageOfSegment,
+		segmentIndex: segmentIndex + 1,
+	};
 };
 
 // ------------ GET SEGMENT BY SIMPLE COORD INDEX ---------------
