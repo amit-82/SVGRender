@@ -1,6 +1,7 @@
 import SVGGeometryController from './SVGGeometryController';
 import { Coord, CoordType, lineToAble, hasSegmentsDescriptor, Point } from './comps/interfaces';
 import SegmentsDescriptor from './comps/descriptors/SegmentsDescriptor';
+import { RenderMiddleware } from './comps/middelwares/render-middlewares/interfaces';
 
 export default class LineContoller
 	extends SVGGeometryController
@@ -41,6 +42,20 @@ export default class LineContoller
 	public calculate() {
 		this._segmentsDescriptor.calculate(this.getCoordsRef());
 		return super.calculate();
+	}
+
+	public getAttributesForElement() {
+		const reduceRenderMiddlewareCoordsUpdate = (
+			acc: Coord[],
+			middleware: RenderMiddleware
+		): Coord[] => {
+			return middleware.active ? middleware.updateCoords(acc, this.segmentsDescriptor) : acc;
+		};
+
+		const coords: Coord[] = this.renderMiddlewares.reduce(reduceRenderMiddlewareCoordsUpdate, [
+			...this.getCoordsRef(),
+		]);
+		return this.coordinatesParser.createElementAttrs(coords);
 	}
 
 	public getBorderIntersection(p1: Point, shapeAnchor?: Point) {

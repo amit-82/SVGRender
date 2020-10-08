@@ -12,7 +12,7 @@ export default abstract class SVGGeometryController {
 	private _coords: Coord[] = [];
 
 	private _coordinatesParser: CoordsToElemAttrs;
-	public renderMiddleware: RenderMiddleware[] = [];
+	public renderMiddlewares: RenderMiddleware[] = [];
 
 	constructor(element?: SVGElement, type: SVGElementTypes = 'svg') {
 		this._id = ++idCounter;
@@ -34,17 +34,7 @@ export default abstract class SVGGeometryController {
 	}
 
 	public getAttributesForElement() {
-		const reduceRenderMiddlewareCoordsUpdate = (
-			acc: Coord[],
-			middleware: RenderMiddleware
-		): Coord[] => {
-			return middleware.active ? middleware.updateCoords(acc) : acc;
-		};
-
-		const coords: Coord[] = this.renderMiddleware.reduce(reduceRenderMiddlewareCoordsUpdate, [
-			...this._coords,
-		]);
-		return this._coordinatesParser.createElementAttrs(coords);
+		return this._coordinatesParser.createElementAttrs(this._coords);
 	}
 
 	public updateElement() {

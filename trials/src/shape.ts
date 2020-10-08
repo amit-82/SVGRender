@@ -1,5 +1,4 @@
-import { CircleController, PathController } from 'src/controls/index';
-import createSVGElement from '../../src/createSVGElement';
+import { CircleController, PathController, createSVGElement } from 'src/index';
 import {
 	getBorderIntersection,
 	getPointOnBorder,

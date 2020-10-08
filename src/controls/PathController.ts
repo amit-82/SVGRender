@@ -20,6 +20,9 @@ export default class PathController extends PolylineController {
 	}
 
 	public getAttributesForElement() {
+		if (this.renderMiddlewares.length) {
+			return super.getAttributesForElement();
+		}
 		return this.coordinatesParser.createElementAttrs(this.getCoordsRef(), this._instructions);
 	}
 
