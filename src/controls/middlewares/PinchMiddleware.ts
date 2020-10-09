@@ -1,7 +1,9 @@
+import { emptyObj } from 'src/helpers/object_utils';
 import {
 	getBorderIntersection,
 	GetBorderIntersectionOptions,
 	getPointOnBorder,
+	GetPointOnBorderResults,
 	getSegmentBySimpleCoordIndex,
 } from '../comps/descriptors/SegmentsDescUtils';
 import { Coord } from '../comps/interfaces';
@@ -74,7 +76,29 @@ class PinchMiddleware extends DeformGeoMiddleware {
 
 	public updateCoords(cords: Coord[]): Coord[] {
 		if (this.mPinch) {
-			this.getPinchArea();
+			const { borderP1: p1, borderP2: p2 } =
+				this.getPinchArea() ||
+				(emptyObj as {
+					borderP1: GetPointOnBorderResults;
+					borderP2: GetPointOnBorderResults;
+				});
+			if (!p1 || !p2) {
+				// no pinch
+				console.log('no pinch');
+				return cords;
+			}
+
+			// split segment(s)
+			if (p1.segmentIndex === p2.segmentIndex) {
+				console.log('SAME SEGMENT');
+				// breaking the same segment twice
+			} else if (p1.segmentIndex > p2.segmentIndex) {
+				// breaking occure over the shapes end and back to the start
+				console.log('breaking over edge');
+			} else {
+				// normal
+				console.log('more than one segment');
+			}
 		}
 		return cords;
 	}
@@ -96,7 +120,7 @@ class PinchMiddleware extends DeformGeoMiddleware {
 		);
 
 		if (!borderIntersection) {
-			return;
+			return null;
 		}
 
 		const offset = this.pinchBaseWidthCalculator(
@@ -104,7 +128,7 @@ class PinchMiddleware extends DeformGeoMiddleware {
 			borderIntersection.anchorToIntersectionDistance
 		);
 		if (offset === 0) {
-			return;
+			return null;
 		}
 
 		const segDesc = this.controller!.segmentsDescriptor;
@@ -117,14 +141,21 @@ class PinchMiddleware extends DeformGeoMiddleware {
 		// distance from intersection point to shape's start
 		let totalDistance = segmentData!.distanceFromShapeStart;
 
-		const offset1Results = getPointOnBorder(segDesc, totalDistance - offset / 2, {
+		const borderP1 = getPointOnBorder(segDesc, totalDistance - offset / 2, {
 			repeat: segDesc.lastCoordEndsAtFirst,
 		});
-		const offset2Results = getPointOnBorder(segDesc, totalDistance + offset / 2, {
+		const borderP2 = getPointOnBorder(segDesc, totalDistance + offset / 2, {
 			repeat: segDesc.lastCoordEndsAtFirst,
 		});
 
-		//console.log(offset1);
+		if (!borderP1 || !borderP2) {
+			throw 'failed to get all points on shape. this is not suppose to happen.';
+		}
+
+		return {
+			borderP1,
+			borderP2,
+		};
 	}
 }
 

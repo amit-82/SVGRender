@@ -1,12 +1,9 @@
 import SegmentsDescriptor from './SegmentsDescriptor';
-import {
-	getPointXorYOnBezier,
-	pointOnCoordCalculators,
-} from 'src/controls/comps/utils/bezier_utils';
+import { pointOnCoordCalculators } from 'src/controls/comps/utils/bezier_utils';
 import { findIntersection, FindIntersectionResult } from '../utils/line_utils';
 import { emptyObj } from 'src/helpers/object_utils';
 import { getDistance } from 'src/helpers/shape_utils';
-import { Coord, CoordType, CubicBezierCoord, Point } from '../interfaces';
+import { Coord, Point } from '../interfaces';
 
 // ------------ GET POINT ON BORDER -------------
 export interface GetPointOnBorderOptions {
@@ -21,14 +18,21 @@ export interface GetPointOnBorderResults extends Point {
 	percentageOfSegment: number;
 }
 
+const getPointOnBorderOptsDef: GetPointOnBorderOptions = {
+	repeat: false,
+	constrainToStart: true,
+	constrainToEnd: true,
+};
+
 export const getPointOnBorder = (
 	desc: SegmentsDescriptor,
 	distance: number,
-	opts: GetPointOnBorderOptions = { constrainToStart: true, constrainToEnd: true }
+	opts: GetPointOnBorderOptions = emptyObj
 ): GetPointOnBorderResults | null => {
 	if (!desc.calculated) throw new Error('segmentsDescriptor must run calculate');
 
-	distance = !opts.repeat ? distance : (desc.totalLength + distance) % desc.totalLength;
+	opts = { ...getPointOnBorderOptsDef, ...opts };
+	distance = opts.repeat ? (desc.totalLength + distance) % desc.totalLength : distance;
 	distance = !opts.constrainToStart ? distance : Math.max(0, distance);
 	distance = !opts.constrainToEnd ? distance : Math.min(desc.totalLength, distance);
 
