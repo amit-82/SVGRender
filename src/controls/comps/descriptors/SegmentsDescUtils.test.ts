@@ -151,6 +151,7 @@ describe('Test getPointOnBorder function', () => {
 		expect(getPointOnBorder(desc1, 50)).toEqual({
 			x: 150,
 			y: 50,
+			distance: 50,
 			segmentIndex: 1,
 			percentageOfSegment: 0.5,
 		});
@@ -160,12 +161,37 @@ describe('Test getPointOnBorder function', () => {
 		expect(getPointOnBorder(desc1, 301, { repeat: true })).toEqual({
 			x: 101,
 			y: 50,
+			distance: 1,
 			segmentIndex: 1,
 			percentageOfSegment: 0.01,
 		});
 	});
 
-	it("should return null when option's 'repeat' is FALSE (default) and going over the path's full length", () => {
-		expect(getPointOnBorder(desc1, 301)).toBeNull();
+	it('should return start of shape when distance is under 0', () => {
+		expect(getPointOnBorder(desc1, -1)).toEqual({
+			x: 100,
+			y: 50,
+			distance: 0,
+			segmentIndex: 1,
+			percentageOfSegment: 0,
+		});
+	});
+
+	it('should return end of shape when distance is over shape border length', () => {
+		expect(getPointOnBorder(desc1, 301)).toEqual({
+			x: 100,
+			y: 50,
+			distance: 300,
+			segmentIndex: 4,
+			percentageOfSegment: 1,
+		});
+	});
+
+	it("should return null when option's 'repeat' and 'constrainToStart' is FALSE (default) and going over the path's full length", () => {
+		expect(getPointOnBorder(desc1, -1, { constrainToStart: false })).toBeNull();
+	});
+
+	it("should return null when option's 'repeat' and 'constrainToEnd' is FALSE (default) and going over the path's full length", () => {
+		expect(getPointOnBorder(desc1, 301, { constrainToEnd: false })).toBeNull();
 	});
 });

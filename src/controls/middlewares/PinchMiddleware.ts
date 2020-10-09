@@ -117,10 +117,10 @@ class PinchMiddleware extends DeformGeoMiddleware {
 		// distance from intersection point to shape's start
 		let totalDistance = segmentData!.distanceFromShapeStart;
 
-		const offset1 = getPointOnBorder(segDesc, totalDistance - offset / 2, {
+		const offset1Results = getPointOnBorder(segDesc, totalDistance - offset / 2, {
 			repeat: segDesc.lastCoordEndsAtFirst,
 		});
-		const offset2 = getPointOnBorder(segDesc, totalDistance + offset / 2, {
+		const offset2Results = getPointOnBorder(segDesc, totalDistance + offset / 2, {
 			repeat: segDesc.lastCoordEndsAtFirst,
 		});
 

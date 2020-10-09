@@ -11,9 +11,12 @@ import { Coord, CoordType, CubicBezierCoord, Point } from '../interfaces';
 // ------------ GET POINT ON BORDER -------------
 export interface GetPointOnBorderOptions {
 	repeat?: boolean; // whether can go to the start if passed the end or back from the end if over the start
+	constrainToStart?: boolean; // distance min 0 (won't affect if repeat is true)
+	constrainToEnd?: boolean; // distance max total border length (won't affect if repeat is true)
 }
 
 export interface GetPointOnBorderResults extends Point {
+	distance: number;
 	segmentIndex: number;
 	percentageOfSegment: number;
 }
@@ -21,12 +24,13 @@ export interface GetPointOnBorderResults extends Point {
 export const getPointOnBorder = (
 	desc: SegmentsDescriptor,
 	distance: number,
-	opts: GetPointOnBorderOptions = emptyObj
+	opts: GetPointOnBorderOptions = { constrainToStart: true, constrainToEnd: true }
 ): GetPointOnBorderResults | null => {
 	if (!desc.calculated) throw new Error('segmentsDescriptor must run calculate');
 
-	// TODO: uncomment
 	distance = !opts.repeat ? distance : (desc.totalLength + distance) % desc.totalLength;
+	distance = !opts.constrainToStart ? distance : Math.max(0, distance);
+	distance = !opts.constrainToEnd ? distance : Math.min(desc.totalLength, distance);
 
 	let segmentIndex = -1;
 	let accLength: number;
@@ -42,6 +46,7 @@ export const getPointOnBorder = (
 		}
 	}
 
+	// distance is not in the limits of the shape's border's length
 	if (segmentIndex === -1 || distance < 0 || distance > desc.totalLength) return null;
 
 	const prevAccLength = segmentIndex === 0 ? 0 : desc.segmentAccumulatedLengths[segmentIndex - 1];
@@ -56,6 +61,7 @@ export const getPointOnBorder = (
 	const p = pointOnCoordCalculators[segment.type](segment, percentageOfSegment, prevSeg);
 	return {
 		...p,
+		distance,
 		percentageOfSegment,
 		segmentIndex: segmentIndex + 1,
 	};
