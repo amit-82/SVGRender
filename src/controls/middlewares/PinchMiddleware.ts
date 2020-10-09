@@ -85,7 +85,6 @@ class PinchMiddleware extends DeformGeoMiddleware {
 				});
 			if (!p1 || !p2) {
 				// no pinch
-				console.log('no pinch');
 				return coords;
 			}
 
@@ -116,6 +115,10 @@ class PinchMiddleware extends DeformGeoMiddleware {
 			const coordEnd = coords[coordEndIndex];
 			const coordEndPrev = coords[coordEndIndex - 1];
 			const coordStartBreaker: CoordBreaker = coordBreakersMap[coordStart.type];
+			const coordEndBreaker: CoordBreaker = coordBreakersMap[coordEnd.type];
+
+			const mouseCoord: Coord = { type: CoordType.Linear, x: this.mx, y: this.my };
+
 			if (segmentsRange.length === 1) {
 				// break start and ends in same segment
 				const coordParts = coordStartBreaker(
@@ -125,25 +128,38 @@ class PinchMiddleware extends DeformGeoMiddleware {
 				);
 
 				// insert
-				coordParts.splice(1, 0, { type: CoordType.Linear, x: this.mx, y: this.my });
+				coordParts.splice(1, 0, mouseCoord);
 				coords.splice(segmentsRange[0], 1, ...coordParts);
 			} else {
 				// break start in one segment and ends in another - might have more segments in between
-				const coordEndBreaker: CoordBreaker = coordBreakersMap[coordEnd.type];
-				const startCoord = coordStartBreaker(
+
+				const startCoords = coordStartBreaker(
 					coordStart,
 					[p1.percentageOfSegment],
 					coordStartPrev
-				)[0];
+				);
 				const endCoords = coordEndBreaker(coordEnd, [p2.percentageOfSegment], coordEndPrev);
-				coords[coordStartIndex] = startCoord;
-				coords.splice(coordEndIndex, 1, ...endCoords);
 
-				coords.splice(coordStartIndex + 1, 0, {
-					type: CoordType.Linear,
-					x: this.mx,
-					y: this.my,
-				});
+				// replace start
+				coords[coordStartIndex] = startCoords[0];
+				if (coordStartIndex > coordEndIndex) {
+					console.log([...coords]);
+					// jumps over shape's end and back to the start and more
+					// end coord is closer to the start of the shape & start coord is closer to the end of the shape
+					coords[0] = mouseCoord;
+					console.log(coordStartIndex, startCoords, [...coords]);
+					coords.push(mouseCoord);
+
+					// after end was set, can change start (this will change number of coords and end segment index will be irrelevant)
+					coords.splice(coordEndIndex, 1, ...endCoords);
+					//coords.splice(coordStartIndex, 1, startCoords[0]);
+
+					// TODO: remove all cords after coordEndIndex
+				} else {
+					coords.splice(coordEndIndex, 1, ...endCoords);
+
+					coords.splice(coordStartIndex + 1, 0, mouseCoord);
+				}
 			}
 
 			// TODO: FIX OVER END OF SHAPE BUG

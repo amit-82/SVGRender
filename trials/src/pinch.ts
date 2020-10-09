@@ -15,7 +15,17 @@ const createCircle = (color: string, x = 0, y = 0, radius = 2) => {
 
 const path = new PolylineController(createSVGElement('polyline', svg));
 //path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100).lineTo(200, 50);
-path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100).lineTo(200, 50);
+//path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100).lineTo(200, 50);
+path.moveTo(300, 100)
+	.lineTo(350, 150)
+	.lineTo(400, 150)
+	.lineTo(375, 200)
+	.lineTo(385, 300)
+	.lineTo(200, 200)
+	.lineTo(300, 150)
+	.lineTo(200, 125)
+	.lineTo(300, 100);
+
 //const path = new PathController(createSVGElement('path', svg));
 // open bezier
 /*
