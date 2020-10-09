@@ -1,5 +1,6 @@
+import { read } from 'fs';
 import { getDistance } from 'src/helpers/shape_utils';
-import { Point } from '../interfaces';
+import { Coord, CoordType, Point } from '../interfaces';
 
 export type FindIntersectionResult = {
 	intersection: Point;
@@ -82,4 +83,22 @@ export const getIntersection = (
 		}
 	}
 	return false;
+};
+
+/************** BREAKING COORDS *******************/
+const defaultPrevCoord: Coord = { type: CoordType.Linear, x: 0, y: 0 };
+export const breakLinear = (
+	coord: Coord,
+	breakPointPercentage: number[],
+	prevCoord: Coord = defaultPrevCoord
+): Coord[] => {
+	const res = breakPointPercentage.sort().map(perc => {
+		return {
+			type: CoordType.Linear,
+			x: (coord.x - prevCoord.x) * perc + prevCoord.x,
+			y: (coord.y! - prevCoord.y!) * perc + prevCoord.y!,
+		} as Coord;
+	});
+	res.push(coord);
+	return res;
 };
