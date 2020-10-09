@@ -55,12 +55,9 @@ describe('Test breakLinear function', () => {
 			x: 20,
 			y: 10,
 		};
-
 		const c = { type: CoordType.Linear, x: prevCoord.x + 120, y: prevCoord.y + 60 };
 
-		const r = breakLinear(c, [0.25, 0.5], prevCoord);
-
-		expect(r).toEqual([
+		expect(breakLinear(c, [0.25, 0.5], prevCoord)).toEqual([
 			{ type: CoordType.Linear, x: 30 + prevCoord.x, y: 15 + prevCoord.y },
 			{ type: CoordType.Linear, x: 60 + prevCoord.x, y: 30 + prevCoord.y },
 			c,

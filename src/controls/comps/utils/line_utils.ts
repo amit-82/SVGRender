@@ -1,4 +1,5 @@
 import { read } from 'fs';
+import { createProxy } from 'src/helpers/object_utils';
 import { getDistance } from 'src/helpers/shape_utils';
 import { Coord, CoordType, Point } from '../interfaces';
 
@@ -86,19 +87,38 @@ export const getIntersection = (
 };
 
 /************** BREAKING COORDS *******************/
+export type CoordBreaker = (
+	coord: Coord,
+	breakPointPercentage: number[],
+	prevCoord?: Coord
+) => Coord[];
+
 const defaultPrevCoord: Coord = { type: CoordType.Linear, x: 0, y: 0 };
-export const breakLinear = (
+export const breakLinear: CoordBreaker = (
 	coord: Coord,
 	breakPointPercentage: number[],
 	prevCoord: Coord = defaultPrevCoord
 ): Coord[] => {
-	const res = breakPointPercentage.sort().map(perc => {
-		return {
-			type: CoordType.Linear,
-			x: (coord.x - prevCoord.x) * perc + prevCoord.x,
-			y: (coord.y! - prevCoord.y!) * perc + prevCoord.y!,
-		} as Coord;
-	});
+	const res = breakPointPercentage.sort().map(
+		perc =>
+			({
+				type: CoordType.Linear,
+				x: Math.round((coord.x - prevCoord.x) * perc + prevCoord.x),
+				y: Math.round((coord.y! - prevCoord.y!) * perc + prevCoord.y!),
+			} as Coord)
+	);
 	res.push(coord);
 	return res;
 };
+
+export const coordBreakersMap = createProxy(
+	{
+		LINEAR: breakLinear,
+		//BEZIER_CUBIC: () => {},
+		//BEZIER_MIRROR: () => {},
+		//QUADRATIC: () => {},
+	},
+	(coord: Coord) => {
+		throw `no handle for coord of type ${coord.type}`;
+	}
+);

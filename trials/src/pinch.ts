@@ -1,15 +1,4 @@
-import {
-	CircleController,
-	PathController,
-	createSVGElement,
-	LineController,
-	PolylineController,
-} from 'src/index';
-import {
-	getBorderIntersection,
-	getPointOnBorder,
-	getSegmentBySimpleCoordIndex,
-} from 'src/controls/comps/descriptors/SegmentsDescUtils';
+import { CircleController, createSVGElement, PolylineController } from 'src/index';
 import PinchMiddleware from 'src/controls/middlewares/PinchMiddleware';
 
 const message = (msg: string) => (document.getElementById('msg')!.innerText = msg);
@@ -25,7 +14,8 @@ const createCircle = (color: string, x = 0, y = 0, radius = 2) => {
 };
 
 const path = new PolylineController(createSVGElement('polyline', svg));
-path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100);
+//path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100).lineTo(200, 50);
+path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100).lineTo(200, 50);
 //const path = new PathController(createSVGElement('path', svg));
 // open bezier
 /*
@@ -52,6 +42,7 @@ path.calculate();
 createCircle('#fff', path.segmentsDescriptor.center!.x, path.segmentsDescriptor.center!.y);
 
 const mw = new PinchMiddleware();
+mw.pinchBaseWidthCalculator = 30;
 path.addRenderMiddleware(mw);
 mw.attachListeners();
 svg.addEventListener('mousemove', () => {
