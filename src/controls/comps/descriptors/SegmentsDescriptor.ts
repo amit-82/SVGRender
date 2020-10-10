@@ -1,21 +1,6 @@
 import { Coord, CoordType, Point } from '../interfaces';
 import { coordLengthCalculators, getPointsOfCoord } from '../utils/bezier_utils';
 import { valueAssigned } from 'src/helpers/input_validations';
-/*
-const shouldIgnoreFirstMoveToCoord = (type: SVGElementTypes, coords: Coord[]): boolean => {
-	if (type === 'line') return false;
-	if (coords.length === 1) return false;
-
-	if (['polyline', 'polygon', 'path'].includes(type)) {
-		const { x: x1, y: y1 } = coords[0];
-		const { x: x2, y: y2 } = coords[coords.length - 1];
-		return x1 === x2 && y1 === y2;
-	}
-
-	return true;
-};
-*/
-const coord0: Coord = { x: 0, y: 0, type: CoordType.Linear };
 
 export interface Simplfied {
 	// array of x, y, x, y...
@@ -85,7 +70,6 @@ export default class SegmentsDescriptor {
 	 * @param coords
 	 */
 	public calculate(coords: Coord[]): void {
-		// TODO: check if there are better options to empty array and leave reference
 		this._coords = coords;
 		this._segmentLengths.length = 0;
 		// reset data
@@ -105,8 +89,6 @@ export default class SegmentsDescriptor {
 			coords[0].y === coords[coords.length - 1].y;
 
 		let divideBy = 0;
-
-		//debugger;
 
 		for (let coordIndex = 0; coordIndex < coords.length; coordIndex++) {
 			const coord = coords[coordIndex];
@@ -148,8 +130,6 @@ export default class SegmentsDescriptor {
 				this._totalLength += segmentLength;
 			}
 		}
-
-		//console.log('NEW PNTS', this._simplfied.coords);
 
 		// calculate center point
 		this._center = {

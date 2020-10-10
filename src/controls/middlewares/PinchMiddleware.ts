@@ -1,9 +1,7 @@
-import { emptyObj } from 'src/helpers/object_utils';
 import {
 	getBorderIntersection,
 	GetBorderIntersectionOptions,
 	getPointOnBorder,
-	GetPointOnBorderResults,
 	getSegmentBySimpleCoordIndex,
 } from '../comps/descriptors/SegmentsDescUtils';
 import { Coord, CoordType } from '../comps/interfaces';
@@ -14,6 +12,8 @@ export type PinchBaseWidthCalculator = (
 	distanceFromBorder: number,
 	distanceFromCenter: number
 ) => number;
+
+const NO_PINCH = { borderP1: null, borderP2: null };
 
 class PinchMiddleware extends DeformGeoMiddleware {
 	// mouse details
@@ -77,16 +77,9 @@ class PinchMiddleware extends DeformGeoMiddleware {
 
 	public updateCoords(coords: Coord[]): Coord[] {
 		if (this.mPinch) {
-			const { borderP1: p1, borderP2: p2 } =
-				this.getPinchArea() ||
-				(emptyObj as {
-					borderP1: GetPointOnBorderResults;
-					borderP2: GetPointOnBorderResults;
-				});
-			if (!p1 || !p2) {
-				// no pinch
-				return coords;
-			}
+			const { borderP1: p1, borderP2: p2 } = this.getPinchArea();
+
+			if (!p1 || !p2) return coords;
 
 			// split segment(s)
 			const segmentsRange: number[] = [p1.segmentIndex];
@@ -144,16 +137,39 @@ class PinchMiddleware extends DeformGeoMiddleware {
 				coords[coordStartIndex] = startCoords[0];
 				if (coordStartIndex > coordEndIndex) {
 					// jumps over shape's end and back to the start and more
+
+					// remove all cords after startCoord
+					coords.length = coordStartIndex;
+					// push first startCoord
+					coords.push(startCoords[0]);
+					// push mouse
+					coords.push(mouseCoord);
+					// remove all cord bebore and including endCoord
+					coords.splice(0, coordEndIndex);
+					// unshift first endCoord
+					coords.unshift(endCoords[0]);
+					// unshift mouse
+					coords.unshift(mouseCoord);
+
+					/*
 					// end coord is closer to the start of the shape & start coord is closer to the end of the shape
 					coords[0] = mouseCoord;
+					// remove all cords after coordStartIndex
+					//coords.length = coordStartIndex + 1;
 					coords.push(mouseCoord);
-					// TODO: remove all cords after coordStartIndex
 
 					// after end was set, can change start (this will change number of coords and end segment index will be irrelevant)
 					coords.splice(coordEndIndex, 1, ...endCoords);
 					//coords.splice(coordStartIndex, 1, startCoords[0]);
+					*/
 				} else {
+					// break start index at lower index than break end index (not going over shape's end)
+
 					coords.splice(coordEndIndex, 1, ...endCoords);
+					if (coordEndIndex - coordStartIndex > 1) {
+						// remove coords between break start and end
+						coords.splice(coordStartIndex + 1, coordEndIndex - coordStartIndex - 1);
+					}
 
 					coords.splice(coordStartIndex + 1, 0, mouseCoord);
 				}
@@ -177,7 +193,7 @@ class PinchMiddleware extends DeformGeoMiddleware {
 		);
 
 		if (!borderIntersection) {
-			return null;
+			return NO_PINCH;
 		}
 
 		const offset =
@@ -188,7 +204,7 @@ class PinchMiddleware extends DeformGeoMiddleware {
 						borderIntersection.anchorToCenterDistance
 				  );
 		if (offset === 0) {
-			return null;
+			return NO_PINCH;
 		}
 
 		const segDesc = this.controller!.segmentsDescriptor;

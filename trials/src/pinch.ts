@@ -16,15 +16,15 @@ const createCircle = (color: string, x = 0, y = 0, radius = 2) => {
 const path = new PolylineController(createSVGElement('polyline', svg));
 //path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100).lineTo(200, 50);
 //path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100).lineTo(200, 50);
-path.moveTo(300, 100)
-	.lineTo(350, 150)
-	.lineTo(400, 150)
-	.lineTo(375, 200)
-	.lineTo(385, 300)
-	.lineTo(200, 200)
-	.lineTo(300, 150)
-	.lineTo(200, 125)
-	.lineTo(300, 100);
+path.moveTo(300, 200)
+	.lineTo(350, 250)
+	.lineTo(400, 250)
+	.lineTo(375, 300)
+	.lineTo(385, 400)
+	.lineTo(200, 300)
+	.lineTo(300, 250)
+	.lineTo(200, 225)
+	.lineTo(300, 200);
 
 //const path = new PathController(createSVGElement('path', svg));
 // open bezier
@@ -65,7 +65,7 @@ const pf = (nearBaseWidth: number, farBaseWidth: number, maxDistance: number) =>
 
 const mw = new PinchMiddleware();
 mw.options.stopOnFirstIntersection = false;
-mw.pinchBaseWidthCalculator = pf(20, 300, 250);
+mw.pinchBaseWidthCalculator = pf(20, 750, 300);
 path.addRenderMiddleware(mw);
 mw.attachListeners();
 svg.addEventListener('mousemove', () => {
