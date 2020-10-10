@@ -1,19 +1,28 @@
 import SegmentsDescriptor from './SegmentsDescriptor';
-import {
-	getPointXorYOnBezier,
-	pointOnCoordCalculators,
-} from 'src/controls/comps/utils/bezier_utils';
+import { pointOnCoordCalculators } from 'src/controls/comps/utils/bezier_utils';
 import { findIntersection, FindIntersectionResult } from '../utils/line_utils';
 import { emptyObj } from 'src/helpers/object_utils';
 import { getDistance } from 'src/helpers/shape_utils';
-import { Coord, CoordType, CubicBezierCoord, Point } from '../interfaces';
+import { Coord, Point } from '../interfaces';
 
 // ------------ GET POINT ON BORDER -------------
 export interface GetPointOnBorderOptions {
 	repeat?: boolean; // whether can go to the start if passed the end or back from the end if over the start
+	constrainToStart?: boolean; // distance min 0 (won't affect if repeat is true)
+	constrainToEnd?: boolean; // distance max total border length (won't affect if repeat is true)
 }
 
-export interface GetPointOnBorderResults extends Point {}
+export interface GetPointOnBorderResults extends Point {
+	distance: number;
+	segmentIndex: number;
+	percentageOfSegment: number;
+}
+
+const getPointOnBorderOptsDef: GetPointOnBorderOptions = {
+	repeat: false,
+	constrainToStart: true,
+	constrainToEnd: true,
+};
 
 export const getPointOnBorder = (
 	desc: SegmentsDescriptor,
@@ -22,15 +31,17 @@ export const getPointOnBorder = (
 ): GetPointOnBorderResults | null => {
 	if (!desc.calculated) throw new Error('segmentsDescriptor must run calculate');
 
-	// TODO: uncomment
-	distance = !opts.repeat ? distance : (desc.totalLength + distance) % desc.totalLength;
+	opts = { ...getPointOnBorderOptsDef, ...opts };
+	distance = opts.repeat ? (desc.totalLength + distance) % desc.totalLength : distance;
+	distance = !opts.constrainToStart ? distance : Math.max(0, distance);
+	distance = !opts.constrainToEnd ? distance : Math.min(desc.totalLength, distance);
 
 	let segmentIndex = -1;
 	let accLength: number;
 
 	// identify the segment that holds the end of the requested distance
 	// TODO: performence options 1: use smarter Binary search (not sure needed, how many segments do we expect?)
-	// TODO: performance options 2: use cached simple coords accumulated lengths (doesn't exists yet)
+	// TODO: performance options 2 (probably better): use cached simple coords accumulated lengths (doesn't exists yet)
 	for (let i = 0; i < desc.segmentLengths.length; i++) {
 		if (desc.segmentAccumulatedLengths[i] >= distance) {
 			accLength = desc.segmentAccumulatedLengths[i];
@@ -39,6 +50,7 @@ export const getPointOnBorder = (
 		}
 	}
 
+	// distance is not in the limits of the shape's border's length
 	if (segmentIndex === -1 || distance < 0 || distance > desc.totalLength) return null;
 
 	const prevAccLength = segmentIndex === 0 ? 0 : desc.segmentAccumulatedLengths[segmentIndex - 1];
@@ -50,7 +62,13 @@ export const getPointOnBorder = (
 	let segment: Coord = desc.coords[segmentIndex + 1];
 	let prevSeg: Coord = desc.coords[segmentIndex];
 
-	return pointOnCoordCalculators[segment.type](segment, percentageOfSegment, prevSeg);
+	const p = pointOnCoordCalculators[segment.type](segment, percentageOfSegment, prevSeg);
+	return {
+		...p,
+		distance,
+		percentageOfSegment,
+		segmentIndex: segmentIndex + 1,
+	};
 };
 
 // ------------ GET SEGMENT BY SIMPLE COORD INDEX ---------------
@@ -133,12 +151,17 @@ export interface GetBorderIntersectionOptions {
 	coord2Y?: number;
 	maxDistanceToCenter?: number;
 	maxDistanceToIntersection?: number;
+	stopOnFirstIntersection?: boolean;
 }
 
 export interface GetBorderIntersectionResult extends FindIntersectionResult {
 	anchorToIntersectionDistance: number;
 	anchorToCenterDistance: number;
 }
+
+const getBorderIntersectionDefOpts: GetBorderIntersectionOptions = {
+	stopOnFirstIntersection: true,
+};
 
 /**
  * Returns data about intersection point of shapes border and a line. false if no intersection.
@@ -155,6 +178,8 @@ export const getBorderIntersection = (
 ): GetBorderIntersectionResult | null => {
 	if (!descriptior.calculated) throw new Error('segmentsDescriptor must run calculate');
 
+	opts = { ...getBorderIntersectionDefOpts, ...opts };
+
 	const anchorToCenterDistance = getDistance(
 		coord1X,
 		coord1Y,
@@ -170,7 +195,8 @@ export const getBorderIntersection = (
 		coord1Y,
 		opts.coord2X ?? descriptior.center!.x,
 		opts.coord2Y ?? descriptior.center!.y,
-		descriptior.simpilfied.coords!
+		descriptior.simpilfied.coords!,
+		opts.stopOnFirstIntersection
 	);
 
 	if (!inter) return null;

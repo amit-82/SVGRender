@@ -163,6 +163,9 @@ export type PointOnCoordCalculator = (
 ) => { x: number; y: number } | never;
 
 // TODO: need unit tests
+/**
+ * map of functions used to find a point on line (Coord) by percentage from start to end of the line (0 = start, 1 = end)
+ */
 export const pointOnCoordCalculators = createProxy<PointOnCoordCalculator>(
 	{
 		LINEAR: (coord: Coord, percentageOfSegment: number, previousCoord: Coord) => ({

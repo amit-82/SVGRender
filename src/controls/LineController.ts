@@ -1,11 +1,13 @@
 import SVGGeometryController from './SVGGeometryController';
 import { Coord, CoordType, lineToAble, hasSegmentsDescriptor, Point } from './comps/interfaces';
 import SegmentsDescriptor from './comps/descriptors/SegmentsDescriptor';
+import { RenderMiddleware } from './comps/middelwares/render-middlewares/interfaces';
 
 export default class LineContoller
 	extends SVGGeometryController
 	implements lineToAble, hasSegmentsDescriptor {
 	private _segmentsDescriptor: SegmentsDescriptor;
+	private _renderMiddlewares: RenderMiddleware[] = [];
 
 	/* istanbul ignore next */
 	constructor(element?: SVGElement, type: SVGElementTypes = 'line') {
@@ -43,7 +45,38 @@ export default class LineContoller
 		return super.calculate();
 	}
 
+	public getAttributesForElement() {
+		const reduceRenderMiddlewareCoordsUpdate = (
+			acc: Coord[],
+			middleware: RenderMiddleware
+		): Coord[] => {
+			return middleware.active ? middleware.updateCoords(acc) : acc;
+		};
+
+		const coords: Coord[] = this._renderMiddlewares.reduce(reduceRenderMiddlewareCoordsUpdate, [
+			...this.getCoordsRef(),
+		]);
+		return this.coordinatesParser.createElementAttrs(coords);
+	}
+
 	public getBorderIntersection(p1: Point, shapeAnchor?: Point) {
 		return this._segmentsDescriptor.getBorderIntersection(this.getCoordsRef(), p1, shapeAnchor);
+	}
+
+	public addRenderMiddleware(middleware: RenderMiddleware) {
+		this._renderMiddlewares.push(middleware);
+		middleware.setController(this);
+	}
+
+	public removeRenderMiddleware(middleware: RenderMiddleware) {
+		middleware.unsetController();
+		const i = this._renderMiddlewares.indexOf(middleware);
+		if (i > -1) {
+			this._renderMiddlewares.splice(i, 1);
+		}
+	}
+
+	public get hasRednerMiddlewares() {
+		return this._renderMiddlewares.length > 0;
 	}
 }

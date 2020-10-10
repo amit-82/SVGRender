@@ -6,7 +6,8 @@ import {
 	Coord,
 } from 'src/controls/comps/interfaces';
 
-export default class DeformGeoMiddleware implements RenderMiddleware, deformableSVGController {
+export default abstract class DeformGeoMiddleware
+	implements RenderMiddleware, deformableSVGController {
 	public active: boolean = true;
 
 	private _controller: hasSegmentsDescriptor | undefined;
@@ -20,13 +21,16 @@ export default class DeformGeoMiddleware implements RenderMiddleware, deformable
 		this._deformableSegmentIndices = new Set();
 	}
 
-	setController(controller: hasSegmentsDescriptor): SVGControllerMiddleware {
+	public setController(controller: hasSegmentsDescriptor): SVGControllerMiddleware {
 		this._controller = controller;
 		return this;
 	}
-	updateCoords(cords: Coord[]): Coord[] {
-		throw new Error('Method not implemented.');
+
+	public unsetController() {
+		this._controller = undefined;
 	}
+
+	public abstract updateCoords(cords: Coord[]): Coord[];
 
 	/**
 	 *
