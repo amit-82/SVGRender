@@ -5,6 +5,8 @@ Library to manipulate SVG elements
 
 ### draw shapes:
 
+![various SVG shapes](previews/shapes.png)
+
 ## pinch middleware for manipulating shape
 
 ### pinch the shape:
