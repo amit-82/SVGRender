@@ -151,12 +151,17 @@ export interface GetBorderIntersectionOptions {
 	coord2Y?: number;
 	maxDistanceToCenter?: number;
 	maxDistanceToIntersection?: number;
+	stopOnFirstIntersection?: boolean;
 }
 
 export interface GetBorderIntersectionResult extends FindIntersectionResult {
 	anchorToIntersectionDistance: number;
 	anchorToCenterDistance: number;
 }
+
+const getBorderIntersectionDefOpts: GetBorderIntersectionOptions = {
+	stopOnFirstIntersection: true,
+};
 
 /**
  * Returns data about intersection point of shapes border and a line. false if no intersection.
@@ -173,6 +178,8 @@ export const getBorderIntersection = (
 ): GetBorderIntersectionResult | null => {
 	if (!descriptior.calculated) throw new Error('segmentsDescriptor must run calculate');
 
+	opts = { ...getBorderIntersectionDefOpts, ...opts };
+
 	const anchorToCenterDistance = getDistance(
 		coord1X,
 		coord1Y,
@@ -188,7 +195,8 @@ export const getBorderIntersection = (
 		coord1Y,
 		opts.coord2X ?? descriptior.center!.x,
 		opts.coord2Y ?? descriptior.center!.y,
-		descriptior.simpilfied.coords!
+		descriptior.simpilfied.coords!,
+		opts.stopOnFirstIntersection
 	);
 
 	if (!inter) return null;

@@ -23,7 +23,7 @@ class PinchMiddleware extends DeformGeoMiddleware {
 	private my: number = 0;
 	private mPinch: boolean = false;
 
-	public options: GetBorderIntersectionOptions | undefined = undefined;
+	public options: GetBorderIntersectionOptions = {};
 	public pinchBaseWidthCalculator: PinchBaseWidthCalculator | number = 50;
 
 	private onMouseEvent: (e: MouseEvent) => void | undefined;
@@ -149,20 +149,17 @@ class PinchMiddleware extends DeformGeoMiddleware {
 					coords[0] = mouseCoord;
 					console.log(coordStartIndex, startCoords, [...coords]);
 					coords.push(mouseCoord);
+					// TODO: remove all cords after coordStartIndex
 
 					// after end was set, can change start (this will change number of coords and end segment index will be irrelevant)
 					coords.splice(coordEndIndex, 1, ...endCoords);
 					//coords.splice(coordStartIndex, 1, startCoords[0]);
-
-					// TODO: remove all cords after coordEndIndex
 				} else {
 					coords.splice(coordEndIndex, 1, ...endCoords);
 
 					coords.splice(coordStartIndex + 1, 0, mouseCoord);
 				}
 			}
-
-			// TODO: FIX OVER END OF SHAPE BUG
 		}
 		return coords;
 	}
@@ -172,8 +169,6 @@ class PinchMiddleware extends DeformGeoMiddleware {
 		this.my = y;
 		this.mPinch = isPinching;
 	}
-
-	public setPinchThreshhold() {}
 
 	protected getPinchArea() {
 		const borderIntersection = getBorderIntersection(

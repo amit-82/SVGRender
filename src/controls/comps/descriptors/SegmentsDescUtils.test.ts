@@ -65,6 +65,8 @@ describe('Test getBorderIntersection function', () => {
 		const results = getBorderIntersection(desc1, 150, 25, { maxDistanceToIntersection: 26 });
 		expect(results).not.toBeNull();
 	});
+
+	// TODO: add test with option's stopOnFirstIntersection is false
 });
 
 describe('Test getSegmentBySimpleCoordIndex function', () => {

@@ -1,6 +1,5 @@
-import { read } from 'fs';
 import { createProxy } from 'src/helpers/object_utils';
-import { getDistance } from 'src/helpers/shape_utils';
+import { getDistance, getDistanceByPower2 } from 'src/helpers/shape_utils';
 import { Coord, CoordType, Point } from '../interfaces';
 
 export type FindIntersectionResult = {
@@ -22,29 +21,55 @@ export const findIntersection = (
 	p0y: number,
 	p1x: number,
 	p1y: number,
-	xys: number[]
+	xys: number[],
+	stopOnFirstIntersection: boolean = true
 ): FindIntersectionResult | false => {
 	let res: false | Point = false;
+	let resP2Distance = Infinity;
+	let index = -1;
+
 	const total = xys.length - 2;
 	for (let i = 0; i < total; i += 2) {
-		res = getIntersection(p0x, p0y, p1x, p1y, xys[i], xys[i + 1], xys[i + 2], xys[i + 3]);
-		if (res) {
-			return {
-				intersection: res as Point,
-				simpleCoordIndex: i,
-				distanceFromSimpleCoordStart: getDistance(xys[i], xys[i + 1], res.x, res.y),
-				p0x,
-				p0y,
-				p1x,
-				p1y,
-				p2x: xys[i],
-				p2y: xys[i + 1],
-				p3x: xys[i + 2],
-				p3y: xys[i + 3],
-			};
+		const tempRes = getIntersection(
+			p0x,
+			p0y,
+			p1x,
+			p1y,
+			xys[i],
+			xys[i + 1],
+			xys[i + 2],
+			xys[i + 3]
+		);
+		if (tempRes) {
+			const disPower2 = getDistanceByPower2(p0x, p0y, tempRes.x, tempRes.y);
+
+			if (disPower2 < resP2Distance) {
+				index = i;
+				res = tempRes;
+				resP2Distance = disPower2;
+				if (stopOnFirstIntersection) {
+					break;
+				}
+			}
 		}
 	}
-	return false;
+
+	if (res) {
+		return {
+			intersection: res as Point,
+			simpleCoordIndex: index,
+			distanceFromSimpleCoordStart: getDistance(xys[index], xys[index + 1], res.x, res.y),
+			p0x,
+			p0y,
+			p1x,
+			p1y,
+			p2x: xys[index],
+			p2y: xys[index + 1],
+			p3x: xys[index + 2],
+			p3y: xys[index + 3],
+		};
+	}
+	return res;
 };
 
 export const getIntersection = (

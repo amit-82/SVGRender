@@ -52,6 +52,7 @@ path.calculate();
 createCircle('#fff', path.segmentsDescriptor.center!.x, path.segmentsDescriptor.center!.y);
 
 const mw = new PinchMiddleware();
+mw.options.stopOnFirstIntersection = false;
 mw.pinchBaseWidthCalculator = 30;
 path.addRenderMiddleware(mw);
 mw.attachListeners();
