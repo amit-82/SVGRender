@@ -11,8 +11,8 @@ import DeformGeoMiddleware from '../comps/middelwares/render-middlewares/DeformG
 import { coordBreakersMap, CoordBreaker } from '../comps/utils/line_utils';
 
 export type PinchBaseWidthCalculator = (
-	distanceFromCenter: number,
-	distanceFromBorder: number
+	distanceFromBorder: number,
+	distanceFromCenter: number
 ) => number;
 
 class PinchMiddleware extends DeformGeoMiddleware {
@@ -143,11 +143,9 @@ class PinchMiddleware extends DeformGeoMiddleware {
 				// replace start
 				coords[coordStartIndex] = startCoords[0];
 				if (coordStartIndex > coordEndIndex) {
-					console.log([...coords]);
 					// jumps over shape's end and back to the start and more
 					// end coord is closer to the start of the shape & start coord is closer to the end of the shape
 					coords[0] = mouseCoord;
-					console.log(coordStartIndex, startCoords, [...coords]);
 					coords.push(mouseCoord);
 					// TODO: remove all cords after coordStartIndex
 
@@ -186,8 +184,8 @@ class PinchMiddleware extends DeformGeoMiddleware {
 			typeof this.pinchBaseWidthCalculator === 'number'
 				? this.pinchBaseWidthCalculator
 				: this.pinchBaseWidthCalculator(
-						borderIntersection.anchorToCenterDistance,
-						borderIntersection.anchorToIntersectionDistance
+						borderIntersection.anchorToIntersectionDistance,
+						borderIntersection.anchorToCenterDistance
 				  );
 		if (offset === 0) {
 			return null;

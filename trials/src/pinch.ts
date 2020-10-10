@@ -51,9 +51,21 @@ path.calculate();
 
 createCircle('#fff', path.segmentsDescriptor.center!.x, path.segmentsDescriptor.center!.y);
 
+const pf = (nearBaseWidth: number, farBaseWidth: number, maxDistance: number) => {
+	const widthRange = farBaseWidth - nearBaseWidth;
+
+	return (distanceFromBorder: number) => {
+		const fraction = distanceFromBorder / maxDistance;
+		return Math.min(
+			Math.max(widthRange * fraction + nearBaseWidth, nearBaseWidth),
+			farBaseWidth
+		);
+	};
+};
+
 const mw = new PinchMiddleware();
 mw.options.stopOnFirstIntersection = false;
-mw.pinchBaseWidthCalculator = 30;
+mw.pinchBaseWidthCalculator = pf(20, 300, 250);
 path.addRenderMiddleware(mw);
 mw.attachListeners();
 svg.addEventListener('mousemove', () => {
