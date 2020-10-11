@@ -1,6 +1,6 @@
 import { createProxy } from 'src/helpers/object_utils';
 import { getDistance, getDistanceByPower2 } from 'src/helpers/shape_utils';
-import { Coord, CoordType, Point } from '../interfaces';
+import { Coord, CoordType, CubicBezierCoord, Point } from '../interfaces';
 
 export type FindIntersectionResult = {
 	intersection: Point;
@@ -136,14 +136,134 @@ export const breakLinear: CoordBreaker = (
 	return res;
 };
 
+export const breakCubicBezier: CoordBreaker = (
+	coord: Coord,
+	breakPointPercentage: number[],
+	prevCoord: Coord = defaultPrevCoord
+) => {
+	breakPointPercentage = [...breakPointPercentage];
+	const t = breakPointPercentage.splice(0, 1)[0];
+	const c = coord as CubicBezierCoord;
+	const cs: number[] = splitCurveAt(
+		t,
+		prevCoord.x,
+		prevCoord.y!,
+		c.ctrlX,
+		c.ctrlY,
+		c.ctrlX2,
+		c.ctrlY2,
+		c.x,
+		c.y
+	);
+	const res: Coord[] = [
+		{
+			type: CoordType.BezierCubic,
+			ctrlX: cs[2],
+			ctrlY: cs[3],
+			ctrlX2: cs[4],
+			ctrlY2: cs[5],
+			x: cs[6],
+			y: cs[7],
+		} as CubicBezierCoord,
+	];
+	const secondPart: CubicBezierCoord = {
+		type: CoordType.BezierCubic,
+		ctrlX: cs[8],
+		ctrlY: cs[9],
+		ctrlX2: cs[10],
+		ctrlY2: cs[11],
+		x: cs[12],
+		y: cs[13],
+	};
+	if (breakPointPercentage.length === 0) {
+		// last break - also add the second part of the broken curve
+		res.push(secondPart);
+	} else {
+		// call self with updated 't' and with coord secondPart
+	}
+	return res;
+};
+
 export const coordBreakersMap = createProxy(
 	{
 		LINEAR: breakLinear,
-		//BEZIER_CUBIC: () => {},
-		//BEZIER_MIRROR: () => {},
+		BEZIER_CUBIC: () => {},
 		//QUADRATIC: () => {},
+		//BEZIER_MIRROR: () => {},
 	},
 	(coord: Coord) => {
 		throw `no handle for coord of type ${coord.type}`;
 	}
 );
+
+// With throw RangeError if not 0 < position < 1
+// x1, y1, x2, y2, x3, y3 for quadratic curves
+// x1, y1, x2, y2, x3, y3, x4, y4 for cubic curves
+// Returns an array of points representing 2 curves. The curves are the same type as the split curve
+export const splitCurveAt = (
+	position: number,
+	x1: number,
+	y1: number,
+	x2: number,
+	y2: number,
+	x3: number,
+	y3: number,
+	x4?: number,
+	y4?: number
+) => {
+	if (position <= 0 || position >= 1) {
+		throw RangeError('spliteCurveAt requires position > 0 && position < 1');
+	}
+
+	let retPoints: number[] = []; // array of coordinates
+	let i = 0;
+	let quad = false; // presume cubic bezier
+	let v1 = { x: x1, y: y1 };
+	let v2 = { x: x2, y: y2 };
+	let v4: Point;
+	if (typeof x4 === 'number' && typeof y4 === 'number') {
+		v4 = { x: x4, y: y4 };
+	} else {
+		quad = true; // this is a quadratic bezier
+		v4 = { x: x3, y: y3 };
+	}
+	let c = position;
+	retPoints[i++] = v1.x; // start point
+	retPoints[i++] = v1.y;
+	if (quad) {
+		// split quadratic bezier
+		retPoints[i++] = v1.x += (v2.x - v1.x) * c; // new control point for first curve
+		retPoints[i++] = v1.y += (v2.y - v1.y) * c;
+		v2.x += (v4.x - v2.x) * c;
+		v2.y += (v4.y - v2.y) * c;
+		retPoints[i++] = v1.x + (v2.x - v1.x) * c; // new end and start of first and second curves
+		retPoints[i++] = v1.y + (v2.y - v1.y) * c;
+		retPoints[i++] = v2.x; // new control point for second curve
+		retPoints[i++] = v2.y;
+		retPoints[i++] = v4.x; // new endpoint of second curve
+		retPoints[i++] = v4.y;
+		// return array with 2 curves
+		return retPoints;
+	}
+	let v3 = { x: x3, y: y3 };
+	retPoints[i++] = v1.x += (v2.x - v1.x) * c; // first curve first control point
+	retPoints[i++] = v1.y += (v2.y - v1.y) * c;
+	v2.x += (v3.x - v2.x) * c;
+	v2.y += (v3.y - v2.y) * c;
+	v3.x += (v4.x - v3.x) * c;
+	v3.y += (v4.y - v3.y) * c;
+	retPoints[i++] = v1.x += (v2.x - v1.x) * c; // first curve second control point
+	retPoints[i++] = v1.y += (v2.y - v1.y) * c;
+	v2.x += (v3.x - v2.x) * c;
+	v2.y += (v3.y - v2.y) * c;
+	retPoints[i++] = v1.x + (v2.x - v1.x) * c; // end and start point of first second curves
+	retPoints[i++] = v1.y + (v2.y - v1.y) * c;
+	retPoints[i++] = v2.x; // second curve first control point
+	retPoints[i++] = v2.y;
+	retPoints[i++] = v3.x; // second curve second control point
+	retPoints[i++] = v3.y;
+	retPoints[i++] = v4.x; // endpoint of second curve
+	retPoints[i++] = v4.y;
+	// return array with 2 curves
+	return retPoints;
+};

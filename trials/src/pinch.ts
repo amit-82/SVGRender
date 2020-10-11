@@ -65,7 +65,7 @@ const pf = (nearBaseWidth: number, farBaseWidth: number, maxDistance: number) =>
 
 const mw = new PinchMiddleware();
 mw.options.stopOnFirstIntersection = false;
-mw.pinchBaseWidthCalculator = pf(5, 750, 300);
+mw.pinchBaseWidthCalculator = 30; //pf(5, 750, 300);
 path.addRenderMiddleware(mw);
 mw.attachListeners();
 svg.addEventListener('mousemove', () => {
