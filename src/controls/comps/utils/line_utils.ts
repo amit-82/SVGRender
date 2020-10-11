@@ -115,14 +115,13 @@ export const getIntersection = (
 export type CoordBreaker = (
 	coord: Coord,
 	breakPointPercentage: number[],
-	prevCoord?: Coord
+	prevCoord: Coord
 ) => Coord[];
 
-const defaultPrevCoord: Coord = { type: CoordType.Linear, x: 0, y: 0 };
 export const breakLinear: CoordBreaker = (
 	coord: Coord,
 	breakPointPercentage: number[],
-	prevCoord: Coord = defaultPrevCoord
+	prevCoord: Coord
 ): Coord[] => {
 	const res = breakPointPercentage.sort().map(
 		perc =>
@@ -136,12 +135,14 @@ export const breakLinear: CoordBreaker = (
 	return res;
 };
 
+// TODO: need unit tests
 export const breakCubicBezier: CoordBreaker = (
 	coord: Coord,
 	breakPointPercentage: number[],
-	prevCoord: Coord = defaultPrevCoord
+	prevCoord: Coord,
+	firstBreak: boolean = true
 ) => {
-	breakPointPercentage = [...breakPointPercentage];
+	breakPointPercentage = firstBreak ? [...breakPointPercentage] : breakPointPercentage;
 	const t = breakPointPercentage.splice(0, 1)[0];
 	const c = coord as CubicBezierCoord;
 	const cs: number[] = splitCurveAt(
@@ -155,7 +156,7 @@ export const breakCubicBezier: CoordBreaker = (
 		c.x,
 		c.y
 	);
-	const res: Coord[] = [
+	const returnedCoord: Coord[] = [
 		{
 			type: CoordType.BezierCubic,
 			ctrlX: cs[2],
@@ -166,7 +167,7 @@ export const breakCubicBezier: CoordBreaker = (
 			y: cs[7],
 		} as CubicBezierCoord,
 	];
-	const secondPart: CubicBezierCoord = {
+	const secondNewCoord: CubicBezierCoord = {
 		type: CoordType.BezierCubic,
 		ctrlX: cs[8],
 		ctrlY: cs[9],
@@ -177,17 +178,22 @@ export const breakCubicBezier: CoordBreaker = (
 	};
 	if (breakPointPercentage.length === 0) {
 		// last break - also add the second part of the broken curve
-		res.push(secondPart);
+		returnedCoord.push(secondNewCoord);
 	} else {
 		// call self with updated 't' and with coord secondPart
+		const reminderT = 1 - t;
+		breakPointPercentage = breakPointPercentage.map(newT => (newT - t) / reminderT);
+		return returnedCoord.concat(
+			...breakCubicBezier(secondNewCoord, breakPointPercentage, returnedCoord[0])
+		);
 	}
-	return res;
+	return returnedCoord;
 };
 
 export const coordBreakersMap = createProxy(
 	{
 		LINEAR: breakLinear,
-		BEZIER_CUBIC: () => {},
+		BEZIER_CUBIC: breakCubicBezier,
 		//QUADRATIC: () => {},
 		//BEZIER_MIRROR: () => {},
 	},
