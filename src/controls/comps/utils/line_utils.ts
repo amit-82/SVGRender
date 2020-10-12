@@ -1,6 +1,6 @@
 import { createProxy } from 'src/helpers/object_utils';
 import { getDistance, getDistanceByPower2 } from 'src/helpers/shape_utils';
-import { Coord, CoordType, CubicBezierCoord, Point } from '../interfaces';
+import { Coord, CoordType, CubicBezierCoord, Point, QuadraticBezierCoord } from '../interfaces';
 
 export type FindIntersectionResult = {
 	intersection: Point;
@@ -135,7 +135,46 @@ export const breakLinear: CoordBreaker = (
 	return res;
 };
 
-// TODO: need unit tests
+export const breakQuadraticBezier: CoordBreaker = (
+	coord: Coord,
+	breakPointPercentage: number[],
+	prevCoord: Coord,
+	firstBreak: boolean = true
+) => {
+	breakPointPercentage = firstBreak ? [...breakPointPercentage] : breakPointPercentage;
+	const t = breakPointPercentage.splice(0, 1)[0];
+	const c = coord as QuadraticBezierCoord;
+	const cs: number[] = splitCurveAt(t, prevCoord.x, prevCoord.y!, c.ctrlX, c.ctrlY, c.x, c.y);
+	const returnedCoord: Coord[] = [
+		{
+			type: CoordType.BezierQuadratic,
+			ctrlX: cs[2],
+			ctrlY: cs[3],
+			x: cs[4],
+			y: cs[5],
+		} as QuadraticBezierCoord,
+	];
+	const secondNewCoord: QuadraticBezierCoord = {
+		type: CoordType.BezierQuadratic,
+		ctrlX: cs[6],
+		ctrlY: cs[7],
+		x: cs[8],
+		y: cs[9],
+	};
+	if (breakPointPercentage.length === 0) {
+		// last break - also add the second part of the broken curve
+		returnedCoord.push(secondNewCoord);
+	} else {
+		// call self with updated 't' and with coord secondPart
+		const reminderT = 1 - t;
+		breakPointPercentage = breakPointPercentage.map(newT => (newT - t) / reminderT);
+		return returnedCoord.concat(
+			...breakQuadraticBezier(secondNewCoord, breakPointPercentage, returnedCoord[0])
+		);
+	}
+	return returnedCoord;
+};
+
 export const breakCubicBezier: CoordBreaker = (
 	coord: Coord,
 	breakPointPercentage: number[],
