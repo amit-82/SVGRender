@@ -25,7 +25,7 @@ describe('Test PolygonController', () => {
 			.lineTo(10, 75)
 			.getCoords();
 		expect(coords).toEqual([
-			{ type: CoordType.Linear, x: 10, y: 30 },
+			{ type: CoordType.Linear, x: 10, y: 30, move: true },
 			{ type: CoordType.Linear, x: 25, y: 30 },
 			{ type: CoordType.Linear, x: 25, y: 50 },
 			{ type: CoordType.Linear, x: 10, y: 75 },

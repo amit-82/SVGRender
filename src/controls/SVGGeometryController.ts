@@ -83,7 +83,7 @@ export default abstract class SVGGeometryController {
 	}
 
 	public moveTo(x: number, y: number) {
-		const coord: Coord = { type: CoordType.Linear, x, y };
+		const coord: Coord = { type: CoordType.Linear, x, y, move: true };
 		this.appendCoord(coord, true);
 		return this;
 	}

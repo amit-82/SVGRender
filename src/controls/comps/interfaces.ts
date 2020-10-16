@@ -18,6 +18,7 @@ export interface Coord {
 	type: CoordType;
 	x: number;
 	y?: number;
+	move?: boolean;
 }
 
 export interface QuadraticBezierCoord extends Coord {

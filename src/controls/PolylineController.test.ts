@@ -6,7 +6,7 @@ describe('Test Polyline', () => {
 		const polyLine = new PolylineController();
 		polyLine.moveTo(50, 10).lineTo(60, 90);
 		expect(polyLine.getCoords()).toEqual([
-			{ type: CoordType.Linear, x: 50, y: 10 },
+			{ type: CoordType.Linear, x: 50, y: 10, move: true },
 			{ type: CoordType.Linear, x: 60, y: 90 },
 		]);
 	});

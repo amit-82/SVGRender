@@ -18,7 +18,7 @@ describe('Test RectController', () => {
 	test('Append coords from simple rect', () => {
 		const coords = rect.moveTo(50, 60).setDimensions(200, 50).getCoords();
 		expect(coords).toEqual([
-			{ type: CoordType.Linear, x: 50, y: 60 },
+			{ type: CoordType.Linear, x: 50, y: 60, move: true },
 			{ type: CoordType.Linear, x: 200, y: 50 },
 		]);
 	});
@@ -30,7 +30,7 @@ describe('Test RectController', () => {
 			.setCornerRadius(50, 25)
 			.getCoords();
 		expect(coords).toEqual([
-			{ type: CoordType.Linear, x: 50, y: 60 },
+			{ type: CoordType.Linear, x: 50, y: 60, move: true },
 			{ type: CoordType.Linear, x: 200, y: 50 },
 			{ type: CoordType.Linear, x: 50, y: 25 },
 		]);
@@ -39,7 +39,7 @@ describe('Test RectController', () => {
 	test('Append coords for rect with rounded corner with only x provided and y is by default identical to x', () => {
 		const coords = rect.moveTo(50, 60).setDimensions(200, 50).setCornerRadius(25).getCoords();
 		expect(coords).toEqual([
-			{ type: CoordType.Linear, x: 50, y: 60 },
+			{ type: CoordType.Linear, x: 50, y: 60, move: true },
 			{ type: CoordType.Linear, x: 200, y: 50 },
 			{ type: CoordType.Linear, x: 25, y: 25 },
 		]);
@@ -52,7 +52,7 @@ describe('Test RectController', () => {
 			.setCornerRadius(25, 0)
 			.getCoords();
 		expect(coords).toEqual([
-			{ type: CoordType.Linear, x: 50, y: 60 },
+			{ type: CoordType.Linear, x: 50, y: 60, move: true },
 			{ type: CoordType.Linear, x: 200, y: 50 },
 			{ type: CoordType.Linear, x: 25, y: 0 },
 		]);

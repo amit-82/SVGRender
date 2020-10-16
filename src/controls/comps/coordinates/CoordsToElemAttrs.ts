@@ -1,10 +1,10 @@
 import { createProxy } from 'src/helpers/object_utils';
 import { valueAssigned } from 'src/helpers/input_validations';
-import { Coord, CoordType } from '../interfaces';
+import { Coord, CoordType, CubicBezierCoord, QuadraticBezierCoord } from '../interfaces';
 
 export abstract class CoordsToElemAttrs {
 	public abstract validateCoordinates(coords: Coord[]): boolean;
-	public abstract createElementAttrs(coords: Coord[], instructions?: stringOrNumber[]): any;
+	public abstract createElementAttrs(coords: Coord[]): any;
 }
 
 class StrictOrderProps extends CoordsToElemAttrs {
@@ -61,6 +61,22 @@ class UnlimitedPoints extends CoordsToElemAttrs {
 	}
 }
 
+const unlimitedPoints = new UnlimitedPoints();
+
+// *********************** Path instructions ***********************
+const coordToPathInstructions = createProxy(
+	{
+		LINEAR: ({ x, y, move }: Coord) => `${move ? 'M' : 'L'}${x},${y}`,
+		BEZIER_QUADRATIC: ({ ctrlY, ctrlX, x, y }: QuadraticBezierCoord) =>
+			`Q${ctrlX},${ctrlY},${x},${y}`,
+		BEZIER_CUBIC: ({ ctrlY, ctrlX, ctrlX2, ctrlY2, x, y }: CubicBezierCoord) =>
+			`C${ctrlX},${ctrlY},${ctrlX2},${ctrlY2},${x},${y}`,
+	},
+	(coord: Coord) => {
+		throw `coordToPathInstructions can't handle coord of type ${coord.type}`;
+	}
+);
+
 class PathCoordiantesParser extends CoordsToElemAttrs {
 	constructor() {
 		super();
@@ -68,13 +84,28 @@ class PathCoordiantesParser extends CoordsToElemAttrs {
 	public validateCoordinates(): boolean {
 		return true;
 	}
-	public createElementAttrs(_: Coord[], instructions: stringOrNumber[] = []): any {
-		return { d: instructions.join(' ') };
+	public createElementAttrs(coords: Coord[]): any {
+		const first: Coord = coords[0];
+		return {
+			d: coords
+				.map((c, index) => {
+					if (
+						index === coords.length - 1 &&
+						c.type === CoordType.Linear &&
+						c.x === first.x &&
+						c.y === first.y
+					) {
+						// is close
+						return 'z';
+					}
+					return coordToPathInstructions[c.type](c);
+				})
+				.join(' '),
+		};
 	}
 }
 
-const unlimitedPoints = new UnlimitedPoints();
-
+// *********************** CoordsToElemAttrsMap ***********************
 export const CoordsToElemAttrsMap = createProxy<CoordsToElemAttrs>({
 	circle: new StrictOrderProps(['cx', 'cy', 'r']),
 	ellipse: new StrictOrderProps(['cx', 'cy', 'rx', 'ry']),
