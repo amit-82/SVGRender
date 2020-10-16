@@ -66,13 +66,14 @@ const unlimitedPoints = new UnlimitedPoints();
 // *********************** Path instructions ***********************
 const coordToPathInstructions = createProxy(
 	{
-		LINEAR: ({ x, y, move }: Coord) => `${move ? 'M' : 'L'}${x},${y}`,
-		BEZIER_QUADRATIC: ({ ctrlY, ctrlX, x, y }: QuadraticBezierCoord) =>
+		LINEAR: ({ x, y, move }: Coord, isFirst: boolean) =>
+			`${move || isFirst ? 'M' : 'L'}${x},${y}`,
+		BEZIER_QUADRATIC: ({ ctrlY, ctrlX, x, y }: QuadraticBezierCoord, _: boolean) =>
 			`Q${ctrlX},${ctrlY},${x},${y}`,
-		BEZIER_CUBIC: ({ ctrlY, ctrlX, ctrlX2, ctrlY2, x, y }: CubicBezierCoord) =>
+		BEZIER_CUBIC: ({ ctrlY, ctrlX, ctrlX2, ctrlY2, x, y }: CubicBezierCoord, _: boolean) =>
 			`C${ctrlX},${ctrlY},${ctrlX2},${ctrlY2},${x},${y}`,
 	},
-	(coord: Coord) => {
+	(coord: Coord, _: boolean) => {
 		throw `coordToPathInstructions can't handle coord of type ${coord.type}`;
 	}
 );
@@ -86,21 +87,27 @@ class PathCoordiantesParser extends CoordsToElemAttrs {
 	}
 	public createElementAttrs(coords: Coord[]): any {
 		const first: Coord = coords[0];
+
+		const d = coords
+			.map((c, index) => {
+				if (
+					index === coords.length - 1 &&
+					c.type === CoordType.Linear &&
+					first.type === CoordType.Linear &&
+					c.x === first.x &&
+					c.y === first.y
+				) {
+					// last coord is linear and equals to first coord (linear move to), it is closed is close
+					return 'z';
+				}
+
+				return coordToPathInstructions[c.type](c, index === 0);
+			})
+			.join(' ');
+		console.log(d);
+
 		return {
-			d: coords
-				.map((c, index) => {
-					if (
-						index === coords.length - 1 &&
-						c.type === CoordType.Linear &&
-						c.x === first.x &&
-						c.y === first.y
-					) {
-						// is close
-						return 'z';
-					}
-					return coordToPathInstructions[c.type](c);
-				})
-				.join(' '),
+			d,
 		};
 	}
 }
