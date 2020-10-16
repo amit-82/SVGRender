@@ -1,5 +1,6 @@
 import { createProxy } from 'src/helpers/object_utils';
 import { getDistance, getDistanceByPower2 } from 'src/helpers/shape_utils';
+import { config } from 'src/index';
 import { Coord, CoordType, CubicBezierCoord, Point, QuadraticBezierCoord } from '../interfaces';
 
 export type FindIntersectionResult = {
@@ -179,12 +180,13 @@ export const breakCubicBezier: CoordBreaker = (
 	coord: Coord,
 	breakPointPercentage: number[],
 	prevCoord: Coord,
-	firstBreak: boolean = true
+	firstBreak: boolean = true,
+	round: boolean = true
 ) => {
 	breakPointPercentage = firstBreak ? [...breakPointPercentage] : breakPointPercentage;
 	const t = breakPointPercentage.splice(0, 1)[0];
 	const c = coord as CubicBezierCoord;
-	const cs: number[] = splitCurveAt(
+	let cs: number[] = splitCurveAt(
 		t,
 		prevCoord.x,
 		prevCoord.y!,
@@ -195,6 +197,11 @@ export const breakCubicBezier: CoordBreaker = (
 		c.x,
 		c.y
 	);
+
+	if (round) {
+		cs = cs.map(Math.round);
+	}
+
 	const returnedCoord: Coord[] = [
 		{
 			type: CoordType.BezierCubic,
@@ -257,7 +264,10 @@ export const splitCurveAt = (
 	y4?: number
 ) => {
 	if (position <= 0 || position >= 1) {
-		throw RangeError('spliteCurveAt requires position > 0 && position < 1');
+		if (config.strictMode) {
+			throw RangeError(`spliteCurveAt requires: 0 < position < 1. got ${position}`);
+		}
+		position = Math.max(0.0001, Math.min(0.0009, position));
 	}
 
 	let retPoints: number[] = []; // array of coordinates

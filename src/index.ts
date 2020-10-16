@@ -19,3 +19,7 @@ export {
 	EllipseController,
 	RectController,
 };
+
+export const config = {
+	strictMode: true,
+};

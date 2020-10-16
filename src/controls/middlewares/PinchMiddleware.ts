@@ -114,6 +114,11 @@ class PinchMiddleware extends DeformGeoMiddleware {
 
 			const mouseCoord: Coord = { type: CoordType.Linear, x: this.mx, y: this.my };
 
+			const nextCoordIsLinear = coordEnd.type === CoordType.Linear;
+			console.log('nextCoordIsLinear', nextCoordIsLinear);
+
+			// TODO: if nextCoordIsLinear === false - need to append an additional coord
+
 			if (segmentsRange.length === 1) {
 				// break start and ends in same segment
 				const coordParts = coordStartBreaker(
@@ -152,21 +157,8 @@ class PinchMiddleware extends DeformGeoMiddleware {
 					coords.unshift(endCoords[0]);
 					// unshift mouse
 					coords.unshift(mouseCoord);
-
-					/*
-					// end coord is closer to the start of the shape & start coord is closer to the end of the shape
-					coords[0] = mouseCoord;
-					// remove all cords after coordStartIndex
-					//coords.length = coordStartIndex + 1;
-					coords.push(mouseCoord);
-
-					// after end was set, can change start (this will change number of coords and end segment index will be irrelevant)
-					coords.splice(coordEndIndex, 1, ...endCoords);
-					//coords.splice(coordStartIndex, 1, startCoords[0]);
-					*/
 				} else {
 					// break start index at lower index than break end index (not going over shape's end)
-
 					coords.splice(coordEndIndex, 1, ...endCoords);
 					if (coordEndIndex - coordStartIndex > 1) {
 						// remove coords between break start and end

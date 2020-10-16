@@ -1,5 +1,13 @@
-import { CircleController, createSVGElement, PathController, PolylineController } from 'src/index';
+import {
+	CircleController,
+	createSVGElement,
+	PathController,
+	PolylineController,
+	config,
+} from 'src/index';
 import PinchMiddleware from 'src/controls/middlewares/PinchMiddleware';
+
+config.strictMode = false;
 
 const message = (msg: string) => (document.getElementById('msg')!.innerText = msg);
 const svg: SVGElement = (document.getElementById('svg') as unknown) as SVGElement;
@@ -28,12 +36,17 @@ path.moveTo(300, 200)
 	.lineTo(300, 200);
 */
 // open bezier
-
+/*
 path.moveTo(200, 50)
-	.lineTo(300, 50)
-	.cubicTo(400, 50, 450, 100, 500, 150)
-	.cubicTo(450, 350, 250, -75, 300, 150);
-
+.lineTo(300, 50)
+.cubicTo(400, 50, 450, 100, 500, 150)
+.cubicTo(450, 350, 250, -75, 300, 150);
+*/
+//path.moveTo(200, 100).cubicTo(200, 200, 400, 200, 400, 100);
+path.moveTo(200, 300)
+	.cubicTo(200, 400, 400, 400, 400, 300)
+	.lineTo(400, 100)
+	.cubicTo(400, 50, 200, 50, 200, 300);
 // closed bezier
 /*
 path.moveTo(200, 50)
@@ -65,7 +78,7 @@ const pf = (nearBaseWidth: number, farBaseWidth: number, maxDistance: number) =>
 
 const mw = new PinchMiddleware();
 mw.options.stopOnFirstIntersection = false;
-mw.pinchBaseWidthCalculator = 30; //pf(5, 750, 300);
+mw.pinchBaseWidthCalculator = pf(5, 750, 300);
 path.addRenderMiddleware(mw);
 mw.attachListeners();
 svg.addEventListener('mousemove', () => {
