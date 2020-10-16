@@ -1,4 +1,4 @@
-import { CircleController, createSVGElement, PolylineController } from 'src/index';
+import { CircleController, createSVGElement, PathController, PolylineController } from 'src/index';
 import PinchMiddleware from 'src/controls/middlewares/PinchMiddleware';
 
 const message = (msg: string) => (document.getElementById('msg')!.innerText = msg);
@@ -13,9 +13,10 @@ const createCircle = (color: string, x = 0, y = 0, radius = 2) => {
 	return circle;
 };
 
-const path = new PolylineController(createSVGElement('polyline', svg));
+//const path = new PolylineController(createSVGElement('polyline', svg));
+const path = new PathController(createSVGElement('path', svg));
 //path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100).lineTo(200, 50);
-//path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100).lineTo(200, 50);
+/*
 path.moveTo(300, 200)
 	.lineTo(350, 250)
 	.lineTo(400, 250)
@@ -25,15 +26,14 @@ path.moveTo(300, 200)
 	.lineTo(300, 250)
 	.lineTo(200, 225)
 	.lineTo(300, 200);
-
-//const path = new PathController(createSVGElement('path', svg));
+*/
 // open bezier
-/*
+
 path.moveTo(200, 50)
 	.lineTo(300, 50)
 	.cubicTo(400, 50, 450, 100, 500, 150)
 	.cubicTo(450, 350, 250, -75, 300, 150);
-	*/
+
 // closed bezier
 /*
 path.moveTo(200, 50)

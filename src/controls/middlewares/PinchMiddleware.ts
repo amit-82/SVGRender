@@ -76,6 +76,8 @@ class PinchMiddleware extends DeformGeoMiddleware {
 	}
 
 	public updateCoords(coords: Coord[]): Coord[] {
+		// TODO: should inform when there was no change in mPinch since previous updateCoords call - so SVGElementController.updateElement can be skipped
+
 		if (this.mPinch) {
 			const { borderP1: p1, borderP2: p2 } = this.getPinchArea();
 
