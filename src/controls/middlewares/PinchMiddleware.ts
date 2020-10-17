@@ -7,6 +7,7 @@ import {
 import { Coord, CoordType } from '../comps/interfaces';
 import DeformGeoMiddleware from '../comps/middelwares/render-middlewares/DeformGeoMiddleware';
 import { coordBreakersMap, CoordBreaker } from '../comps/utils/line_utils';
+import { CoordsInfo, LinearPinch, PinchOutlineModifier } from './pinch_modifiers';
 
 export type PinchBaseWidthCalculator = (
 	distanceFromBorder: number,
@@ -27,6 +28,8 @@ class PinchMiddleware extends DeformGeoMiddleware {
 	public pinchBaseWidthCalculator: PinchBaseWidthCalculator | number = 50;
 
 	private onMouseEvent: (e: MouseEvent) => void | undefined;
+
+	public pinchOutlineModifier: PinchOutlineModifier = LinearPinch;
 
 	constructor() {
 		super();
@@ -103,70 +106,58 @@ class PinchMiddleware extends DeformGeoMiddleware {
 				}
 			}
 
-			const coordStartIndex = segmentsRange[0];
-			const coordEndIndex = segmentsRange[segmentsRange.length - 1];
-			const coordStart = coords[coordStartIndex];
-			const coordStartPrev = coords[coordStartIndex - 1];
-			const coordEnd = coords[coordEndIndex];
-			const coordEndPrev = coords[coordEndIndex - 1];
-			const coordStartBreaker: CoordBreaker = coordBreakersMap[coordStart.type];
-			const coordEndBreaker: CoordBreaker = coordBreakersMap[coordEnd.type];
+			const startCoordIndex = segmentsRange[0];
+			const endCoordIndex = segmentsRange[segmentsRange.length - 1];
+			const startCoord = coords[startCoordIndex];
+			const prevStartCoord = coords[startCoordIndex - 1];
+			const endCoord = coords[endCoordIndex];
+			const prevEndCoord = coords[endCoordIndex - 1];
+			const coordsInfo: CoordsInfo = {
+				startCoordIndex,
+				endCoordIndex,
+				startCoord,
+				prevStartCoord,
+				endCoord,
+				prevEndCoord,
+			};
+			const coordStartBreaker: CoordBreaker = coordBreakersMap[startCoord.type];
+			const coordEndBreaker: CoordBreaker = coordBreakersMap[endCoord.type];
 
 			const mouseCoord: Coord = { type: CoordType.Linear, x: this.mx, y: this.my };
-
-			const nextCoordIsLinear = coordEnd.type === CoordType.Linear;
-			console.log('nextCoordIsLinear', nextCoordIsLinear);
-
-			// TODO: if nextCoordIsLinear === false - need to append an additional coord
 
 			if (segmentsRange.length === 1) {
 				// break start and ends in same segment
 				const coordParts = coordStartBreaker(
-					coordStart,
+					startCoord,
 					[p1.percentageOfSegment, p2.percentageOfSegment],
-					coordStartPrev
+					prevStartCoord
 				);
 
 				// insert
-				coordParts.splice(1, 0, mouseCoord);
-				coords.splice(segmentsRange[0], 1, ...coordParts);
+				this.pinchOutlineModifier(
+					coords,
+					coordsInfo,
+					mouseCoord,
+					segmentsRange,
+					coordParts
+				);
 			} else {
 				// break start in one segment and ends in another - might have more segments in between
-
 				const startCoords = coordStartBreaker(
-					coordStart,
+					startCoord,
 					[p1.percentageOfSegment],
-					coordStartPrev
+					prevStartCoord
 				);
-				const endCoords = coordEndBreaker(coordEnd, [p2.percentageOfSegment], coordEndPrev);
+				const endCoords = coordEndBreaker(endCoord, [p2.percentageOfSegment], prevEndCoord);
 
-				// replace start
-				coords[coordStartIndex] = startCoords[0];
-				if (coordStartIndex > coordEndIndex) {
-					// jumps over shape's end and back to the start and more
-
-					// remove all cords after startCoord
-					coords.length = coordStartIndex;
-					// push first startCoord
-					coords.push(startCoords[0]);
-					// push mouse
-					coords.push(mouseCoord);
-					// remove all cord bebore and including endCoord
-					coords.splice(0, coordEndIndex);
-					// unshift first endCoord
-					coords.unshift(endCoords[0]);
-					// unshift mouse
-					coords.unshift(mouseCoord);
-				} else {
-					// break start index at lower index than break end index (not going over shape's end)
-					coords.splice(coordEndIndex, 1, ...endCoords);
-					if (coordEndIndex - coordStartIndex > 1) {
-						// remove coords between break start and end
-						coords.splice(coordStartIndex + 1, coordEndIndex - coordStartIndex - 1);
-					}
-
-					coords.splice(coordStartIndex + 1, 0, mouseCoord);
-				}
+				this.pinchOutlineModifier(
+					coords,
+					coordsInfo,
+					mouseCoord,
+					segmentsRange,
+					startCoords,
+					endCoords
+				);
 			}
 		}
 		return coords;

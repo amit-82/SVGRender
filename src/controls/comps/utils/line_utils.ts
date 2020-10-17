@@ -116,22 +116,27 @@ export const getIntersection = (
 export type CoordBreaker = (
 	coord: Coord,
 	breakPointPercentage: number[],
-	prevCoord: Coord
+	prevCoord: Coord,
+	firstBreak?: boolean,
+	round?: boolean
 ) => Coord[];
 
 export const breakLinear: CoordBreaker = (
 	coord: Coord,
 	breakPointPercentage: number[],
-	prevCoord: Coord
+	prevCoord: Coord,
+	firstBreak: boolean = true,
+	round: boolean = true
 ): Coord[] => {
-	const res = breakPointPercentage.sort().map(
-		perc =>
-			({
-				type: CoordType.Linear,
-				x: Math.round((coord.x - prevCoord.x) * perc + prevCoord.x),
-				y: Math.round((coord.y! - prevCoord.y!) * perc + prevCoord.y!),
-			} as Coord)
-	);
+	const res = breakPointPercentage.sort().map(perc => {
+		const x = (coord.x - prevCoord.x) * perc + prevCoord.x;
+		const y = (coord.y! - prevCoord.y!) * perc + prevCoord.y!;
+		return {
+			type: CoordType.Linear,
+			x: round ? Math.round(x) : x,
+			y: round ? Math.round(y) : y,
+		} as Coord;
+	});
 	res.push(coord);
 	return res;
 };
@@ -140,12 +145,18 @@ export const breakQuadraticBezier: CoordBreaker = (
 	coord: Coord,
 	breakPointPercentage: number[],
 	prevCoord: Coord,
-	firstBreak: boolean = true
+	firstBreak: boolean = true,
+	round: boolean = true
 ) => {
 	breakPointPercentage = firstBreak ? [...breakPointPercentage] : breakPointPercentage;
 	const t = breakPointPercentage.splice(0, 1)[0];
 	const c = coord as QuadraticBezierCoord;
-	const cs: number[] = splitCurveAt(t, prevCoord.x, prevCoord.y!, c.ctrlX, c.ctrlY, c.x, c.y);
+	let cs: number[] = splitCurveAt(t, prevCoord.x, prevCoord.y!, c.ctrlX, c.ctrlY, c.x, c.y);
+
+	if (round) {
+		cs = cs.map(Math.round);
+	}
+
 	const returnedCoord: Coord[] = [
 		{
 			type: CoordType.BezierQuadratic,

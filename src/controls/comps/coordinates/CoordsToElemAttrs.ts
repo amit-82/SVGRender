@@ -104,7 +104,6 @@ class PathCoordiantesParser extends CoordsToElemAttrs {
 				return coordToPathInstructions[c.type](c, index === 0);
 			})
 			.join(' ');
-		console.log(d);
 
 		return {
 			d,

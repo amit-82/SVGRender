@@ -77,7 +77,9 @@ describe('Test breakCubicBezier function', () => {
 		y: 300,
 	};
 
-	const coordParts1 = breakCubicBezier(c2, [0.75], c1) as CubicBezierCoord[];
+	const coordParts1 = breakCubicBezier(c2, [0.75], c1, true, false) as CubicBezierCoord[];
+	const coordParts1rounded = breakCubicBezier(c2, [0.75], c1) as CubicBezierCoord[];
+
 	it('should break the bezier to 2 Cubic bezier Coords', () => {
 		expect(coordParts1.length).toBe(2);
 		expect(coordParts1[0].type).toBe(CoordType.BezierCubic);
@@ -92,9 +94,11 @@ describe('Test breakCubicBezier function', () => {
 	it('should have correct start and end points', () => {
 		expect(coordParts1[0].ctrlX).toBeCloseTo(137.5, 0);
 		expect(coordParts1[0].ctrlY).toBeCloseTo(307.5, 0);
+		expect(coordParts1rounded[0].ctrlX).toBe(138);
+		expect(coordParts1rounded[0].ctrlY).toBe(308);
 	});
 
-	const coordParts2 = breakCubicBezier(c2, [0.5, 0.75], c1) as CubicBezierCoord[];
+	const coordParts2 = breakCubicBezier(c2, [0.5, 0.75], c1, true, false) as CubicBezierCoord[];
 	it('should break the bezier to 3 Cubic bezier Coords', () => {
 		expect(coordParts2.length).toBe(3);
 		expect(coordParts2[0].type).toBe(CoordType.BezierCubic);
@@ -114,7 +118,7 @@ describe('Test breakCubicBezier function', () => {
 		expect(coordParts2[0].ctrlY2).toBeCloseTo(330, 0);
 		expect(coordParts2[1].ctrlX).toBeCloseTo(218.75, 0);
 		expect(coordParts2[1].ctrlY).toBeCloseTo(346.875, 0);
-		expect(coordParts2[1].ctrlX2).toBeCloseTo(237.5, 0);
+		expect(coordParts2[1].ctrlX2).toBeCloseTo(237.75, 0);
 		expect(coordParts2[1].ctrlY2).toBeCloseTo(349, 0);
 	});
 });
@@ -131,7 +135,8 @@ describe('Test breakQuadraticBezier function', () => {
 		y: 300,
 	};
 
-	const coordParts1 = breakQuadraticBezier(c2, [0.75], c1) as QuadraticBezierCoord[];
+	const coordParts1 = breakQuadraticBezier(c2, [0.75], c1, true, false) as QuadraticBezierCoord[];
+	const coordParts1Round = breakQuadraticBezier(c2, [0.75], c1) as QuadraticBezierCoord[];
 	it('should break the bezier to 2 Cubic bezier Coords', () => {
 		expect(coordParts1.length).toBe(2);
 		expect(coordParts1[0].type).toBe(CoordType.BezierQuadratic);
@@ -146,9 +151,17 @@ describe('Test breakQuadraticBezier function', () => {
 	it('should have correct start and end points', () => {
 		expect(coordParts1[0].ctrlX).toBeCloseTo(137.5, 0);
 		expect(coordParts1[0].ctrlY).toBeCloseTo(307.5, 0);
+		expect(coordParts1Round[0].ctrlX).toBe(138);
+		expect(coordParts1Round[0].ctrlY).toBe(308);
 	});
 
-	const coordParts2 = breakQuadraticBezier(c2, [0.5, 0.75], c1) as QuadraticBezierCoord[];
+	const coordParts2 = breakQuadraticBezier(
+		c2,
+		[0.5, 0.75],
+		c1,
+		true,
+		false
+	) as QuadraticBezierCoord[];
 	it('should break the bezier to 3 Cubic bezier Coords', () => {
 		expect(coordParts2.length).toBe(3);
 		expect(coordParts2[0].type).toBe(CoordType.BezierQuadratic);

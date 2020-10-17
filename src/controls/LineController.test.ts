@@ -17,7 +17,7 @@ describe('Test LineController', () => {
 	test('Append coords for line with moveTo', () => {
 		const coords = line.moveTo(25, 30).lineTo(50, 70).getCoords();
 		expect(coords).toEqual([
-			{ type: CoordType.Linear, x: 25, y: 30 },
+			{ type: CoordType.Linear, x: 25, y: 30, move: true },
 			{ type: CoordType.Linear, x: 50, y: 70 },
 		]);
 	});
