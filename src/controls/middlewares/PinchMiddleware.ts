@@ -7,7 +7,7 @@ import {
 import { Coord, CoordType } from '../comps/interfaces';
 import DeformGeoMiddleware from '../comps/middelwares/render-middlewares/DeformGeoMiddleware';
 import { coordBreakersMap, CoordBreaker } from '../comps/utils/line_utils';
-import { CoordsInfo, LinearPinch, PinchOutlineModifier } from './pinch_modifiers';
+import { PinchCoordsFactory, linearPinchCoordsFactory } from './pinch_modifiers';
 
 export type PinchBaseWidthCalculator = (
 	distanceFromBorder: number,
@@ -29,7 +29,7 @@ class PinchMiddleware extends DeformGeoMiddleware {
 
 	private onMouseEvent: (e: MouseEvent) => void | undefined;
 
-	public pinchOutlineModifier: PinchOutlineModifier = LinearPinch;
+	public pinchCoordFactory: PinchCoordsFactory = linearPinchCoordsFactory;
 
 	constructor() {
 		super();
@@ -112,18 +112,11 @@ class PinchMiddleware extends DeformGeoMiddleware {
 			const prevStartCoord = coords[startCoordIndex - 1];
 			const endCoord = coords[endCoordIndex];
 			const prevEndCoord = coords[endCoordIndex - 1];
-			const coordsInfo: CoordsInfo = {
-				startCoordIndex,
-				endCoordIndex,
-				startCoord,
-				prevStartCoord,
-				endCoord,
-				prevEndCoord,
-			};
 			const coordStartBreaker: CoordBreaker = coordBreakersMap[startCoord.type];
 			const coordEndBreaker: CoordBreaker = coordBreakersMap[endCoord.type];
 
 			const mouseCoord: Coord = { type: CoordType.Linear, x: this.mx, y: this.my };
+			const nextCoordIsLinear = endCoord.type === CoordType.Linear;
 
 			if (segmentsRange.length === 1) {
 				// break start and ends in same segment
@@ -134,13 +127,15 @@ class PinchMiddleware extends DeformGeoMiddleware {
 				);
 
 				// insert
-				this.pinchOutlineModifier(
-					coords,
-					coordsInfo,
+				const { coords: pinchCoords, removeNext } = this.pinchCoordFactory(
 					mouseCoord,
-					segmentsRange,
-					coordParts
+					coordParts[0],
+					coordParts[1]
 				);
+
+				coordParts.splice(1, removeNext ? 1 : 0, ...pinchCoords);
+
+				coords.splice(segmentsRange[0], 1, ...coordParts);
 			} else {
 				// break start in one segment and ends in another - might have more segments in between
 				const startCoords = coordStartBreaker(
@@ -150,14 +145,53 @@ class PinchMiddleware extends DeformGeoMiddleware {
 				);
 				const endCoords = coordEndBreaker(endCoord, [p2.percentageOfSegment], prevEndCoord);
 
-				this.pinchOutlineModifier(
-					coords,
-					coordsInfo,
-					mouseCoord,
-					segmentsRange,
-					startCoords,
-					endCoords
-				);
+				if (!endCoords) {
+					throw 'missing endParts';
+				}
+
+				// replace start
+				coords[startCoordIndex] = startCoords[0];
+
+				if (startCoordIndex > endCoordIndex) {
+					// jumps over shape's end and back to the start and more
+					const {
+						coords: pinchCoords,
+						removeNext,
+						removePrevious,
+					} = this.pinchCoordFactory(mouseCoord, startCoords[0], endCoords[0]);
+
+					//debugger;
+
+					// remove all cords after startCoord
+					coords.length = startCoordIndex;
+					// push first startCoord
+					coords.push(startCoords[0]);
+					// push newly henerated coords
+					pinchCoords.forEach(c => coords.push(c));
+					//coords.push(pinchCoords[0]);
+					// remove all cord before and including endCoord
+					coords.splice(0, endCoordIndex);
+					// add to start first endCoord
+					if (!removeNext) {
+						coords.unshift(endCoords[0]);
+					}
+					// add to start new generated coords - it was already included somewhere else
+					coords.unshift(...pinchCoords);
+				} else {
+					const {
+						coords: pinchCoords,
+						removeNext,
+						removePrevious,
+					} = this.pinchCoordFactory(mouseCoord, startCoords[0], endCoords[0]);
+					// break start index at lower index than break end index (not going over shape's end)
+					coords.splice(endCoordIndex, 1, ...endCoords);
+					if (endCoordIndex - startCoordIndex > 1) {
+						// remove coords between break start and end
+						coords.splice(startCoordIndex + 1, endCoordIndex - startCoordIndex - 1);
+					}
+
+					coords.splice(startCoordIndex + 1, removeNext ? 1 : 0, ...pinchCoords);
+				}
 			}
 		}
 		return coords;

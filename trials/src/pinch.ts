@@ -36,19 +36,19 @@ path.moveTo(300, 200)
 	.lineTo(300, 200);
 */
 // open bezier
-/*
-path.moveTo(200, 50)
-.lineTo(300, 50)
-.cubicTo(400, 50, 450, 100, 500, 150)
-.cubicTo(450, 350, 250, -75, 300, 150);
-*/
-//path.moveTo(200, 100).cubicTo(200, 200, 400, 200, 400, 100);
 
+path.moveTo(200, 50)
+	.lineTo(300, 50)
+	.cubicTo(400, 50, 450, 100, 500, 150)
+	.cubicTo(450, 350, 250, -75, 300, 150);
+
+//path.moveTo(200, 100).cubicTo(200, 200, 400, 200, 400, 100);
+/*
 path.moveTo(200, 300)
 	.cubicTo(200, 400, 400, 400, 400, 300)
 	.lineTo(400, 100)
 	.cubicTo(400, 50, 200, 50, 200, 300);
-
+*/
 // closed bezier
 /*
 path.moveTo(200, 50)
