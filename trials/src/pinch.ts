@@ -21,9 +21,9 @@ const createCircle = (color: string, x = 0, y = 0, radius = 2) => {
 	return circle;
 };
 
-//const path = new PolylineController(createSVGElement('polyline', svg));
-const path = new PathController(createSVGElement('path', svg));
-//path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100).lineTo(200, 50);
+const path = new PolylineController(createSVGElement('polyline', svg));
+//const path = new PathController(createSVGElement('path', svg));
+path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100).lineTo(200, 50);
 /*
 path.moveTo(300, 200)
 	.lineTo(350, 250)
@@ -36,12 +36,12 @@ path.moveTo(300, 200)
 	.lineTo(300, 200);
 */
 // open bezier
-
+/*
 path.moveTo(200, 50)
 	.lineTo(300, 50)
 	.cubicTo(400, 50, 450, 100, 500, 150)
 	.cubicTo(450, 350, 250, -75, 300, 150);
-
+*/
 //path.moveTo(200, 100).cubicTo(200, 200, 400, 200, 400, 100);
 /*
 path.moveTo(200, 300)
@@ -51,11 +51,10 @@ path.moveTo(200, 300)
 */
 // closed bezier
 /*
-path.moveTo(200, 50)
-	.lineTo(300, 50)
-	.cubicTo(400, 50, 450, 100, 500, 150)
-	.cubicTo(450, 350, 125, 175, 300, 125)
-	.lineTo(200, 50);
+path.moveTo(150, 80)
+	.cubicTo(350, 50, 400, 200, 550, 250)
+	.cubicTo(500, 450, 75, 275, 150, 225)
+	.cubicTo(150, 225, 200, 155, 150, 80);
 */
 // not closed rect
 //path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100);
@@ -78,9 +77,11 @@ const pf = (nearBaseWidth: number, farBaseWidth: number, maxDistance: number) =>
 	};
 };
 
+//const startPoint = createCircle('#f00', path.getCoords()[0].x, path.getCoords()[0].y, 5);
+
 const mw = new PinchMiddleware();
 mw.options.stopOnFirstIntersection = false;
-mw.pinchBaseWidthCalculator = pf(5, 750, 300);
+mw.pinchBaseWidthCalculator = 30; //pf(5, 750, 300);
 path.addRenderMiddleware(mw);
 mw.attachListeners();
 svg.addEventListener('mousemove', () => {

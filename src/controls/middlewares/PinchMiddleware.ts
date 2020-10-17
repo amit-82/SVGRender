@@ -160,23 +160,29 @@ class PinchMiddleware extends DeformGeoMiddleware {
 						removePrevious,
 					} = this.pinchCoordFactory(mouseCoord, startCoords[0], endCoords[0]);
 
-					//debugger;
-
 					// remove all cords after startCoord
 					coords.length = startCoordIndex;
-					// push first startCoord
+					// push first startCoord (end of shape)
 					coords.push(startCoords[0]);
-					// push newly henerated coords
+					// push newly generated coords to the end
 					pinchCoords.forEach(c => coords.push(c));
-					//coords.push(pinchCoords[0]);
 					// remove all cord before and including endCoord
 					coords.splice(0, endCoordIndex);
 					// add to start first endCoord
 					if (!removeNext) {
 						coords.unshift(endCoords[0]);
+					} else {
+						coords.splice(0, endCoordIndex, endCoords[1]);
 					}
-					// add to start new generated coords - it was already included somewhere else
-					coords.unshift(...pinchCoords);
+
+					// ass move to to shape's start
+					const lastPinchCord = pinchCoords[pinchCoords.length - 1];
+					coords.unshift({
+						type: CoordType.Linear,
+						move: true,
+						x: lastPinchCord.x,
+						y: lastPinchCord.y,
+					});
 				} else {
 					const {
 						coords: pinchCoords,

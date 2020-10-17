@@ -17,11 +17,8 @@ export const linearPinchCoordsFactory: PinchCoordsFactory = (
 	previousCoord: Coord,
 	nextCoord: Coord
 ) => {
-	console.log(previousCoord, nextCoord);
-
 	const nextCoordIsLinear = nextCoord.type === CoordType.Linear;
-	// TODO: once bezier is handeled - dont instantiate
-	let coords: Coord[];
+	let coords;
 	if (nextCoordIsLinear) {
 		coords = [target];
 	} else {
