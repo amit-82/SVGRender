@@ -7,7 +7,11 @@ import {
 import { Coord, CoordType } from '../comps/interfaces';
 import DeformGeoMiddleware from '../comps/middelwares/render-middlewares/DeformGeoMiddleware';
 import { coordBreakersMap, CoordBreaker } from '../comps/utils/line_utils';
-import { PinchCoordsFactory, linearPinchCoordsFactory } from './pinch_modifiers';
+import {
+	PinchCoordsFactory,
+	linearPinchCoordsFactory,
+	curvePinchCoordFactory,
+} from './pinch_modifiers';
 
 export type PinchBaseWidthCalculator = (
 	distanceFromBorder: number,
@@ -130,10 +134,12 @@ class PinchMiddleware extends DeformGeoMiddleware {
 				const { coords: pinchCoords, removeNext } = this.pinchCoordFactory(
 					mouseCoord,
 					coordParts[0],
-					coordParts[1]
+					[coordParts[1]],
+					coordParts[2]
 				);
 
-				coordParts.splice(1, removeNext ? 1 : 0, ...pinchCoords);
+				//coordParts.splice(1, removeNext ? 1 : 0, ...pinchCoords);
+				coordParts.splice(1, 1, ...pinchCoords);
 
 				coords.splice(segmentsRange[0], 1, ...coordParts);
 			} else {
@@ -158,7 +164,12 @@ class PinchMiddleware extends DeformGeoMiddleware {
 						coords: pinchCoords,
 						removeNext,
 						removePrevious,
-					} = this.pinchCoordFactory(mouseCoord, startCoords[0], endCoords[0]);
+					} = this.pinchCoordFactory(
+						mouseCoord,
+						startCoords[0],
+						[startCoords[1], endCoords[0]],
+						endCoords[1]
+					);
 
 					// remove all cords after startCoord
 					coords.length = startCoordIndex;
@@ -188,7 +199,12 @@ class PinchMiddleware extends DeformGeoMiddleware {
 						coords: pinchCoords,
 						removeNext,
 						removePrevious,
-					} = this.pinchCoordFactory(mouseCoord, startCoords[0], endCoords[0]);
+					} = this.pinchCoordFactory(
+						mouseCoord,
+						startCoords[0],
+						[startCoords[1], endCoords[0]],
+						endCoords[1]
+					);
 					// break start index at lower index than break end index (not going over shape's end)
 					coords.splice(endCoordIndex, 1, ...endCoords);
 					if (endCoordIndex - startCoordIndex > 1) {
