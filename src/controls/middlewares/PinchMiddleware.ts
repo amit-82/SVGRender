@@ -33,7 +33,8 @@ class PinchMiddleware extends DeformGeoMiddleware {
 
 	private onMouseEvent: (e: MouseEvent) => void | undefined;
 
-	public pinchCoordFactory: PinchCoordsFactory = linearPinchCoordsFactory;
+	//public pinchCoordFactory: PinchCoordsFactory = linearPinchCoordsFactory;
+	public pinchCoordFactory: PinchCoordsFactory = curvePinchCoordFactory;
 
 	constructor() {
 		super();

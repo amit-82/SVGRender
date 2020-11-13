@@ -1,4 +1,5 @@
 import { Coord, CoordType, CubicBezierCoord } from '../comps/interfaces';
+import { create2CubicBeziers } from '../comps/utils/bezier_utils';
 
 export interface PinchCoordsFactoryResult {
 	coords: Coord[];
@@ -33,7 +34,18 @@ export const curvePinchCoordFactory: PinchCoordsFactory = (
 	replacedCoords: Coord[],
 	nextCoord: Coord
 ) => {
-	const coords: Coord[] = [];
-
-	throw 'not implemented yet';
+	console.log(replacedCoords);
+	const lastReplaced = replacedCoords[replacedCoords.length - 1];
+	//const coords = create2CubicBeziers({ x: target.x, y: target.y! }, previousCoord, lastReplaced);
+	const coords = create2CubicBeziers(
+		{ x: target.x, y: target.y! },
+		replacedCoords,
+		previousCoord,
+		lastReplaced
+	);
+	return {
+		coords,
+		removePrevious: false,
+		removeNext: true,
+	};
 };

@@ -262,3 +262,87 @@ const getPointsCoordHandlerMap: CoordTyped = {
 };
 export const getPointsOfCoord = (coord: Coord): number[] =>
 	getPointsCoordHandlerMap[coord.type](coord);
+
+type GetCoordControlPoint = (coord: Coord, prevCoord?: Coord) => Point;
+
+const getFirstControlPoint: GetCoordControlPoint = (
+	coord: Coord,
+	prevCoord: Coord = { x: 0, y: 0, type: CoordType.Linear, move: true }
+) => {
+	switch (coord.type) {
+		case CoordType.BezierCubic:
+		case CoordType.BezierQuadratic:
+			return {
+				x: (coord as QuadraticBezierCoord).ctrlX,
+				y: (coord as QuadraticBezierCoord).ctrlY,
+			};
+		case CoordType.BezierMirror:
+			throw `not implmeneted type ${coord.type}`;
+	}
+	return { x: prevCoord.x, y: prevCoord.y! };
+};
+
+const getLastControlPoint: GetCoordControlPoint = (coord: Coord) => {
+	switch (coord.type) {
+		case CoordType.BezierCubic:
+			return { x: (coord as CubicBezierCoord).ctrlX2, y: (coord as CubicBezierCoord).ctrlY2 };
+		case CoordType.BezierQuadratic:
+			return {
+				x: (coord as QuadraticBezierCoord).ctrlX,
+				y: (coord as QuadraticBezierCoord).ctrlY,
+			};
+		case CoordType.BezierMirror:
+			throw `not implmeneted type ${coord.type}`;
+	}
+
+	return { x: coord.x, y: coord.y! };
+};
+
+export const mergeToCubicBezier = (startCoord: Coord, endCoord: Coord) => {
+	const { x: ctrlX, y: ctrlY } = getFirstControlPoint(startCoord);
+	const { x: ctrlX2, y: ctrlY2 } = getLastControlPoint(endCoord || startCoord);
+	return {
+		type: CoordType.BezierCubic,
+		ctrlX,
+		ctrlY,
+		ctrlX2,
+		ctrlY2,
+		x: endCoord.x,
+		y: endCoord.y,
+	} as CubicBezierCoord;
+};
+
+export const create2CubicBeziers = (
+	target: Point,
+	replacedCoords: Coord[],
+	prevCoord: Coord,
+	nextCoord: Coord,
+	baseStartStrength = 0.25,
+	baseEndStrength = 0.25,
+	tipStartStrength = 0.25,
+	tipEndStrength = 0.25
+): [CubicBezierCoord, CubicBezierCoord] => {
+	const baseXslop = nextCoord.x - prevCoord.x;
+	const baseYslop = nextCoord.y! - prevCoord.y!;
+
+	let targetCurve: QuadraticBezierCoord = {
+		type: CoordType.BezierQuadratic,
+		ctrlX: target.x - baseXslop * tipStartStrength,
+		ctrlY: target.y! - baseYslop * tipStartStrength,
+		x: target.x,
+		y: target.y,
+	};
+
+	const coord1 = mergeToCubicBezier(replacedCoords[0], targetCurve);
+
+	targetCurve = {
+		type: CoordType.BezierQuadratic,
+		ctrlX: target.x + baseXslop * tipEndStrength,
+		ctrlY: target.y + baseYslop * tipEndStrength,
+		x: target.x,
+		y: target.y,
+	};
+	const coord2 = mergeToCubicBezier(targetCurve, replacedCoords[1] || replacedCoords[0]);
+
+	return [coord1, coord2];
+};

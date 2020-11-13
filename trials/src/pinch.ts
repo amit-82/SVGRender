@@ -50,12 +50,14 @@ path.moveTo(200, 300)
 	.cubicTo(400, 50, 200, 50, 200, 300);
 */
 // closed bezier
-
+/*
 path.moveTo(150, 80)
 	.cubicTo(350, 50, 400, 200, 550, 250)
 	.cubicTo(500, 450, 75, 275, 150, 225)
 	.cubicTo(150, 225, 200, 155, 150, 80);
+*/
 
+path.moveTo(150, 80).lineTo(450, 80).cubicTo(400, 200, 200, 200, 150, 80);
 // not closed rect
 //path.moveTo(200, 50).lineTo(300, 50).lineTo(300, 100).lineTo(200, 100);
 // closed rect
